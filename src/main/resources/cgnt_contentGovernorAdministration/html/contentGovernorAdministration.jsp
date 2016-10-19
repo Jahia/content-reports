@@ -168,11 +168,6 @@
                             </ul>
                         </li>
                         <li class="divider"></li>
-                        <li><label class="tree-toggler nav-header"><fmt:message key="cgnt_contentGovernor.menu.contentTools"/></label>
-                            <ul class="nav nav-list tree">
-                                <li><a href="#">Option 1</a></li>
-                            </ul>
-                        </li>
                     </ul>
                 </div>
             </div>
