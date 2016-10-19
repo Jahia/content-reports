@@ -39,6 +39,12 @@
             <div class="col-md-6" >
 
                 <div class="row">
+                    <div class="col-md-12">
+                        <label class="label-form"> <fmt:message key="cgnt_contentGovernor.report.selectPath"/> </label>
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col-md-2">
                         <button type="button" class="btn btn-default" onclick="callTreeView('pathTxtRBT')">
                             <span class="glyphicon glyphicon-folder-open"></span>
