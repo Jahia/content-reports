@@ -740,6 +740,11 @@ function fillReportPageWithoutTitle(baseUrl, labelLoading, labelInsertTitle){
         // clear all content from table
         table.clear().draw();
 
+        if(data.items.length == 0){
+            //stop loading message
+            ajaxindicatorstop();
+        }
+
         // adding new content to table
         $.each( data.items, function( index, val ) {
             var items = [];
@@ -756,6 +761,9 @@ function fillReportPageWithoutTitle(baseUrl, labelLoading, labelInsertTitle){
             //stop loading message
             ajaxindicatorstop();
         });
+
+
+
     });
 }
 
@@ -883,6 +891,11 @@ function fillReportPageWithoutDescription(baseUrl, loadingLabel, labelInsertDesc
 
         // clear all content from table
         table.clear().draw();
+
+        if(data.items.length == 0){
+            //stop loading message
+            ajaxindicatorstop();
+        }
 
         // adding new content to table
         $.each( data.items, function( index, val ) {
