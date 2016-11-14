@@ -5,5 +5,6 @@
 
     <bean class="org.jahia.modules.governor.action.GovernorReportAction"/>
     <bean class="org.jahia.modules.governor.action.PathPickerAction"/>
+    <bean class="org.jahia.modules.governor.action.GovernorJcrAction"/>
 
 </beans>

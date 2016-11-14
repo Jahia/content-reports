@@ -19,6 +19,7 @@
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
 <template:addResources type="css" resources="
             bootstrap/bootstrap.css,
+            bootstrap/sweetalert.css,
             datatables/jquery.dataTables.min.css,
             datatables/buttons.dataTables.min.css,
             bootstrap/datepicker.css,
@@ -26,9 +27,11 @@
 
 <template:addResources type="javascript" resources="
             jquery.min.js,
+            jquery/jquery.sheepItPlugin.js,
             datatables/jquery.dataTables.min.js,
             bootstrap/bootstrap.js,
             bootstrap/bootstrap-datepicker.js,
+            bootstrap/sweetalert.js,
             bootstrap-config-grid.js,
             chartjs/Chart.bundle.js,
             datatables/dataTables.buttons.min.js,
@@ -51,7 +54,7 @@
             <div class="col-md-2" STYLE="/*background-color: #f5f5f5;*/" >
                 <div style="overflow-x: hidden; min-height: 100px;">
                     <ul class="nav nav-list">
-                        <li><label class="tree-toggler nav-header"><fmt:message key="cgnt_contentGovernor.menu.contentReports"/></label>
+                        <li><label class="tree-toggler nav-header">> <fmt:message key="cgnt_contentGovernor.menu.contentReports"/></label>
                             <ul class="nav nav-list tree">
                                 <li>
                                     <a class="nav-menu-link" href="#" onclick="showView('1')">
@@ -59,7 +62,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <label class="tree-toggler nav-header"><fmt:message key="cgnt_contentGovernor.menu.contentReports.byDate"/></label>
+                                    <label class="tree-toggler nav-header">> <fmt:message key="cgnt_contentGovernor.menu.contentReports.byDate"/></label>
                                     <!--a href="#" class="tree-toggler">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.byDate"/>
                                     </a-->
@@ -78,7 +81,7 @@
                                 </li>
 
                                 <li>
-                                    <label class="tree-toggler nav-header"><fmt:message key="cgnt_contentGovernor.menu.contentReports.byType"/></label>
+                                    <label class="tree-toggler nav-header">> <fmt:message key="cgnt_contentGovernor.menu.contentReports.byType"/></label>
                                     <!--a href="#" class="tree-toggler">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.byDate"/>
                                     </a-->
@@ -98,32 +101,32 @@
 
 
                                 <li>
-                                    <a href="#" onclick="showView('6')">
+                                    <a class="nav-menu-link" href="#" onclick="showView('6')">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.byStatus"/>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" onclick="showView('7')">
+                                    <a class="nav-menu-link" href="#" onclick="showView('7')">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.byLanguage"/>
                                     </a>
                                 </li>
 
                                 <li>
-                                    <label class="tree-toggler nav-header"> <fmt:message key="cgnt_contentGovernor.menu.contentReports.byMetadata"/></label>
+                                    <label class="tree-toggler nav-header">> <fmt:message key="cgnt_contentGovernor.menu.contentReports.byMetadata"/></label>
 
                                     <ul class="nav nav-list tree">
                                         <li>
-                                            <a href="#" onclick="showView('9')">
+                                            <a class="nav-menu-link" href="#" onclick="showView('9')">
                                                 <fmt:message key="cgnt_contentGovernor.menu.contentReports.pagesWithoutTitle"/>
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#" onclick="showView('10')">
+                                            <a class="nav-menu-link" href="#" onclick="showView('10')">
                                                 <fmt:message key="cgnt_contentGovernor.menu.contentReports.pagesWithoutKeywords"/>
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#" onclick="showView('11')">
+                                            <a class="nav-menu-link" href="#" onclick="showView('11')">
                                                 <fmt:message key="cgnt_contentGovernor.menu.contentReports.pagesWithoutDescription"/>
                                             </a>
                                         </li>
@@ -131,37 +134,37 @@
                                 </li>
 
                                 <li>
-                                    <a href="#" onclick="showView('12')">
+                                    <a class="nav-menu-link" href="#" onclick="showView('12')">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.contentFromAnotherSite"/>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" onclick="showView('13')">
+                                    <a class="nav-menu-link" href="#" onclick="showView('13')">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.byOrphanContent"/>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" onclick="showView('14')">
+                                    <a class="nav-menu-link" href="#" onclick="showView('14')">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.lockedContent"/>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" onclick="showView('15')">
+                                    <a class="nav-menu-link" href="#" onclick="showView('15')">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.contentWaitingPublication"/>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" onclick="showView('16')">
+                                    <a class="nav-menu-link" href="#" onclick="showView('16')">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.overview"/>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" onclick="showView('17')">
+                                    <a class="nav-menu-link" href="#" onclick="showView('17')">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.customCacheContent"/>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" onclick="showView('18')">
+                                    <a class="nav-menu-link" href="#" onclick="showView('18')">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.aclInheritanceBreak"/>
                                     </a>
                                 </li>

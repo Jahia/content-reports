@@ -28,6 +28,7 @@
 <fmt:message key="cgnt_contentGovernor.menu.contentReports.detailsBy" var="labelDetailsBy"/>
 <fmt:message key="cgnt_contentGovernor.report.label.contentCreated" var="labelCreatedBy"/>
 <fmt:message key="cgnt_contentGovernor.report.loading" var="labelLoading"/>
+<fmt:message key="cgnt_contentGovernor.report.label.addKeywords" var="labelAddKeywords"/>
 <c:url value="${url.base}${docPath}${renderContext.mainResource.node.path}" var="currentNodePath"/>
 
 
@@ -40,7 +41,7 @@
                 <!-- search button -->
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="button" class="btn btn-default" onclick="fillReportPageWithoutKeywords('${currentNodePath}', '${labelLoading}')">
+                        <button type="button" class="btn btn-default" onclick="fillReportPageWithoutKeywords('${currentNodePath}', '${labelLoading}', '${labelAddKeywords}')">
                             <span class="glyphicon glyphicon-search"></span> <fmt:message key="cgnt_contentGovernor.report.search"/>
                         </button>
                     </div>
@@ -76,5 +77,122 @@
 
     </div>
 </div>
+
+
+
+<!-- nModal Window: add keyeords -->
+<div id="addKeywordsPageModel" class="nModal fade window-detail-nModal" role="dialog">
+    <div class="nModal-dialog">
+
+        <!-- nModal content-->
+        <div class="nModal-content">
+            <div class="nModal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="nModal-body">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h5 class="panel-title" id="title-addKeywords-modal"></h5>
+                    </div>
+                    <div>&nbsp;</div>
+                    <div  class="panel-body" style="margin-left: 10px">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <label class="label-form"> <fmt:message key="cgnt_contentGovernor.report.label.keywords"/></label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5">
+                                <input type="hidden" id="input-node-path-keywords" name="input-node-path-keywords" />
+
+                                <!-- sheepIt Form -->
+                                <div id="sheepItForm">
+
+                                    <!-- Form template-->
+                                    <div id="sheepItForm_template">
+                                        <label for="sheepItForm_#index#_keyword"><fmt:message key="cgnt_contentGovernor.report.label.keyword"/> <span id="sheepItForm_label"></span></label>
+                                        <input id="sheepItForm_#index#_keyword" name="node[keywords][#index#][keyword]" type="text" size="10" maxlength="100" class="form-control" style="width: 90%"/>
+                                        <a id="sheepItForm_remove_current">
+                                            <img class="delete" src="<c:url value="${url.currentModule}/images/cross.png"/>" width="16" height="16" border="0">
+                                        </a>
+                                    </div>
+                                    <!-- /Form template-->
+
+                                    <div>&nbsp;</div>
+                                    <!-- No forms template -->
+                                    <div id="sheepItForm_noforms_template">
+                                        <fmt:message key="cgnt_contentGovernor.report.label.noKeywords"/>
+                                    </div>
+                                    <!-- /No forms template-->
+
+                                    <div>&nbsp;</div>
+                                    <!-- Controls -->
+                                    <div id="sheepItForm_controls" style="float: left">
+                                        <div id="sheepItForm_add">
+                                            <a><span><fmt:message key="cgnt_contentGovernor.report.label.addKeyword"/></span></a>
+                                        </div>
+                                        <div id="sheepItForm_remove_all">
+                                            <a><span><fmt:message key="cgnt_contentGovernor.report.label.removeAll"/></span></a>
+                                        </div>
+                                    </div>
+                                    <!-- /Controls -->
+
+                                </div>
+                                <!-- /sheepIt Form -->
+
+                            </div>
+                        </div>
+
+                        <!-- search button -->
+                        <div class="row">
+                            <div class="col-md-5">&nbsp;</div>
+                        </div>
+
+                        <!-- search button -->
+                        <div class="row">
+                            <div class="col-md-5">
+                                <button type="button" class="btn btn-default" onclick="modalSaveKeywords('${currentNodePath}', '${labelLoading}', '${labelAddKeywords}')">
+                                    <fmt:message key="cgnt_contentGovernor.button.save"/>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="nModal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<template:addResources>
+    <script type="text/javascript">
+        var sheepItForm = {};
+
+        $(document).ready(function() {
+
+            sheepItForm = $('#sheepItForm').sheepIt({
+                separator: '',
+                allowRemoveLast: false,
+                allowRemoveCurrent: true,
+                allowRemoveAll: true,
+                allowAdd: true,
+                allowAddN: false,
+                maxFormsCount: 10,
+                minFormsCount: 0,
+                iniFormsCount: 1
+            });
+
+        });
+
+    </script>
+</template:addResources>
 
 

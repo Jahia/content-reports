@@ -28,6 +28,7 @@
 <fmt:message key="cgnt_contentGovernor.menu.contentReports.detailsBy" var="labelDetailsBy"/>
 <fmt:message key="cgnt_contentGovernor.report.label.contentCreated" var="labelCreatedBy"/>
 <fmt:message key="cgnt_contentGovernor.report.loading" var="labelLoading"/>
+<fmt:message key="cgnt_contentGovernor.report.publish" var="labelPublish"/>
 <c:url value="${url.base}${docPath}${renderContext.mainResource.node.path}" var="currentNodePath"/>
 
 <div class="panel">
@@ -60,7 +61,7 @@
                 <!-- search button -->
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="button" class="btn btn-default" onclick="fillReportByStatus('${currentNodePath}', '${labelYes}', '${labelNo}', '${labelLoading}')">
+                        <button type="button" class="btn btn-default" onclick="fillReportByStatus('${currentNodePath}', '${labelYes}', '${labelNo}', '${labelLoading}', '${labelPublish}')">
                             <span class="glyphicon glyphicon-search"></span> <fmt:message key="cgnt_contentGovernor.report.search"/>
                         </button>
                     </div>
@@ -119,6 +120,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="nModal-body">
+                <!-- Table -->
                 <div class="panel panel-primary panel-primary-datatables filterable">
                     <div class="panel-heading">
                         <h5 class="panel-title" id="rba-status-grid-detail"></h5>
@@ -129,6 +131,7 @@
                             <tr>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.title"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.type"/></th>
+                                <th><fmt:message key="cgnt_contentGovernor.report.column.language"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.created"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.lastModified"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.by"/></th>

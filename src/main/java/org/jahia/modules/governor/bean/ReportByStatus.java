@@ -1,6 +1,7 @@
 package org.jahia.modules.governor.bean;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.StringUtils;
 import org.jahia.api.Constants;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.utils.i18n.Messages;
@@ -76,6 +77,9 @@ public class ReportByStatus implements IReport {
             jsonArrayItemDetail = new JSONArray();
             for (JCRNodeWrapper nodeItem : (ArrayList<JCRNodeWrapper>) dataMap.get(key).get(PROPERTY_LIST)) {
                 jsonObjectSubItemDetail = new JSONObject();
+                jsonObjectSubItemDetail.put("path", nodeItem.getPath());
+                jsonObjectSubItemDetail.put("canonicalPath", nodeItem.getCanonicalPath());
+                jsonObjectSubItemDetail.put("identifier", nodeItem.getIdentifier());
                 jsonObjectSubItemDetail.put("title", nodeItem.hasProperty("jcr:title") ? nodeItem.getPropertyAsString("jcr:title") : "");
                 jsonObjectSubItemDetail.put("displayableName", nodeItem.getDisplayableName());
                 jsonObjectSubItemDetail.put("name", nodeItem.getName());
@@ -89,9 +93,9 @@ public class ReportByStatus implements IReport {
                 jsonObjectSubItemDetail.put("lastModifiedBy", nodeItem.getModificationUser());
                 jsonObjectSubItemDetail.put("published", nodeItem.hasProperty("j:published") ? true : false);
                 jsonObjectSubItemDetail.put("lock", nodeItem.isLocked() ? true : false);
+                jsonObjectSubItemDetail.put("language", StringUtils.isNotEmpty(nodeItem.getLanguage()) ? nodeItem.getLanguage() : "");
                 jsonArrayItemDetail.put(jsonObjectSubItemDetail);
             }
-
             jsonObjectItem.put(PROPERTY_ITEMS, jsonArrayItemDetail);
             jArray.put(jsonObjectItem);
         }

@@ -28,6 +28,7 @@
 <fmt:message key="cgnt_contentGovernor.menu.contentReports.detailsBy" var="labelDetailsBy"/>
 <fmt:message key="cgnt_contentGovernor.report.label.contentCreated" var="labelCreatedBy"/>
 <fmt:message key="cgnt_contentGovernor.report.loading" var="labelLoading"/>
+<fmt:message key="cgnt_contentGovernor.report.publish" var="labelPublish"/>
 <c:url value="${url.base}${docPath}${renderContext.mainResource.node.path}" var="currentNodePath"/>
 
 
@@ -40,7 +41,7 @@
                 <!-- search button -->
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="button" class="btn btn-default" onclick="fillReportByLanguage('${currentNodePath}', '${labelYes}', '${labelNo}', '${labelLoading}')">
+                        <button type="button" class="btn btn-default" onclick="fillReportByLanguage('${currentNodePath}', '${labelYes}', '${labelNo}', '${labelLoading}', '${labelPublish}')">
                             <span class="glyphicon glyphicon-search"></span> <fmt:message key="cgnt_contentGovernor.report.search"/>
                         </button>
                     </div>
@@ -99,7 +100,8 @@
                     <table width="100%" class="display governor-data-table" id="byLanguageDetailTable" cellspacing="0">
                         <thead>
                             <tr>
-                                <th><fmt:message key="cgnt_contentGovernor.report.column.title"/></th>
+                                <th><fmt:message key="cgnt_contentGovernor.report.column.name"/></th>
+                                <th><fmt:message key="cgnt_contentGovernor.report.column.langContent"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.type"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.created"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.lastModified"/></th>

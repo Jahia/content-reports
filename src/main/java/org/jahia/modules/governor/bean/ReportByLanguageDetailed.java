@@ -78,6 +78,8 @@ public class ReportByLanguageDetailed implements IReport {
             this.itemMap.put("published", this.langInformation.getNode().hasProperty("j:published") ? "true" : "false");
             this.itemMap.put("lock", this.langInformation.getNode().isLocked() ? "true" : "false");
             this.itemMap.put("language", this.langInformation.getNode().getProperty(Constants.JCR_LANGUAGE).getString());
+            this.itemMap.put("path", this.langInformation.getNode().getPath());
+            this.itemMap.put("langTitleOrText", this.langInformation.getNode().hasProperty("jcr:title") ? this.langInformation.getNode().getProperty("jcr:title").getString() : this.langInformation.getNode().hasProperty("text") ? this.langInformation.getNode().getProperty("text").getString() : "" );
         }
 
         /* adding the node lang information to map */

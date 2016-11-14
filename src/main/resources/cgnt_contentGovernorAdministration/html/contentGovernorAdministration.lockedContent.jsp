@@ -28,6 +28,7 @@
 <fmt:message key="cgnt_contentGovernor.menu.contentReports.detailsBy" var="labelDetailsBy"/>
 <fmt:message key="cgnt_contentGovernor.report.label.contentCreated" var="labelCreatedBy"/>
 <fmt:message key="cgnt_contentGovernor.report.loading" var="labelLoading"/>
+<fmt:message key="cgnt_contentGovernor.report.label.unlock" var="labelUnlock"/>
 <c:url value="${url.base}${docPath}${renderContext.mainResource.node.path}" var="currentNodePath"/>
 
 
@@ -40,7 +41,7 @@
                 <!-- search button -->
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="button" class="btn btn-default" onclick="fillReportLockedContent('${currentNodePath}', '${labelLoading}')">
+                        <button type="button" class="btn btn-default" onclick="fillReportLockedContent('${currentNodePath}', '${labelLoading}', '${labelUnlock}')">
                             <span class="glyphicon glyphicon-search"></span> <fmt:message key="cgnt_contentGovernor.report.search"/>
                         </button>
                     </div>
@@ -67,6 +68,7 @@
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.author"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.lockedBy"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.usedInPage"/></th>
+                                <th><fmt:message key="cgnt_contentGovernor.report.column.action"/></th>
                             </tr>
                         </thead>
                         <tbody></tbody>

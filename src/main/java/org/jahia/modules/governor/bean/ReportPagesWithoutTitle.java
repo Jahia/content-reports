@@ -93,6 +93,7 @@ public class ReportPagesWithoutTitle implements IReport {
             for (String langKey : ((HashMap<String, String>) this.dataMap.get(path).get("translations")).keySet()) {
                 jsonObjectItem2 = new JSONObject();
                 jsonObjectItem2.put("value", ((HashMap<String, String>) this.dataMap.get(path).get("translations")).get(langKey));
+                jsonObjectItem2.put("lang", langKey);
                 jArray2.put(jsonObjectItem2);
             }
             jsonObjectItem.put("translations", jArray2);

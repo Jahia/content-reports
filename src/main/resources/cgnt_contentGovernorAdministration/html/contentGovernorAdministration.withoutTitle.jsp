@@ -28,6 +28,7 @@
 <fmt:message key="cgnt_contentGovernor.menu.contentReports.detailsBy" var="labelDetailsBy"/>
 <fmt:message key="cgnt_contentGovernor.report.label.contentCreated" var="labelCreatedBy"/>
 <fmt:message key="cgnt_contentGovernor.report.loading" var="labelLoading"/>
+<fmt:message key="cgnt_contentGovernor.report.label.insertTitle" var="insertTitle"/>
 <c:url value="${url.base}${docPath}${renderContext.mainResource.node.path}" var="currentNodePath"/>
 
 
@@ -40,7 +41,7 @@
                 <!-- search button -->
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="button" class="btn btn-default" onclick="fillReportPageWithoutTitle('${currentNodePath}', '${labelLoading}')">
+                        <button type="button" class="btn btn-default" onclick="fillReportPageWithoutTitle('${currentNodePath}', '${labelLoading}', '${insertTitle}')">
                             <span class="glyphicon glyphicon-search"></span> <fmt:message key="cgnt_contentGovernor.report.search"/>
                         </button>
                     </div>
@@ -77,3 +78,59 @@
 
     </div>
 </div>
+
+
+
+
+<!-- nModal Window: Insert Title -->
+<div id="insertTitlePageModel" class="nModal fade window-detail-nModal" role="dialog">
+    <div class="nModal-dialog">
+
+        <!-- nModal content-->
+        <div class="nModal-content">
+            <div class="nModal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="nModal-body">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h5 class="panel-title" id="insert-title-modal-title"></h5>
+                    </div>
+                    <div>&nbsp;</div>
+                    <div  class="panel-body" style="margin-left: 10px">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <label class="label-form"> <fmt:message key="cgnt_contentGovernor.report.form.insertTitle"/></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <input type="hidden" id="input-lang" name="input-lang" />
+                                <input type="hidden" id="input-node-path" name="input-node-path" />
+                                <input type="text" class="form-control" id="input-title" name="input-title"/>
+                            </div>
+                        </div>
+
+
+
+                        <!-- search button -->
+                        <div class="row">
+                            <div class="col-md-5">
+                                <button type="button" class="btn btn-default" onclick="modalSaveTitle('${currentNodePath}', '${labelLoading}', '${insertTitle}')">
+                                    <fmt:message key="cgnt_contentGovernor.button.save"/>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="nModal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
