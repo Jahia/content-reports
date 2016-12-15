@@ -9,6 +9,8 @@ import org.jahia.services.content.*;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.Resource;
 import org.jahia.services.render.URLResolver;
+import org.jahia.services.workflow.Workflow;
+import org.jahia.services.workflow.WorkflowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.jcr.Node;
@@ -240,5 +242,25 @@ public class GovernorJcrAction extends Action {
         return unlocked;
     }
 
+
+
+
+    private void test(JCRNodeWrapper node){
+
+
+        //node.
+
+
+        List<Workflow> wfList = WorkflowService.getInstance().getActiveWorkflows(node, Locale.forLanguageTag(node.getLanguage()), Locale.forLanguageTag(node.getLanguage()));
+
+
+        wfList.get(0).getWorkflowDefinition().
+
+        //WorkflowService.getInstance().t
+        //JCRPublicationService.getInstance().
+
+
+       // final Workflow workflow = workflowProvider.getWorkflow(Long.toString(task.getTaskData().getProcessInstanceId()), null);
+    }
 
 }
