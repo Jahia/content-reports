@@ -242,25 +242,4 @@ public class GovernorJcrAction extends Action {
         return unlocked;
     }
 
-
-
-
-    private void test(JCRNodeWrapper node){
-
-
-        //node.
-
-
-        List<Workflow> wfList = WorkflowService.getInstance().getActiveWorkflows(node, Locale.forLanguageTag(node.getLanguage()), Locale.forLanguageTag(node.getLanguage()));
-
-
-        wfList.get(0).getWorkflowDefinition().
-
-        //WorkflowService.getInstance().t
-        //JCRPublicationService.getInstance().
-
-
-       // final Workflow workflow = workflowProvider.getWorkflow(Long.toString(task.getTaskData().getProcessInstanceId()), null);
-    }
-
 }
