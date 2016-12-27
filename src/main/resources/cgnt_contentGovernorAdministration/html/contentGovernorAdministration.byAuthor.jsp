@@ -32,12 +32,10 @@
 <c:set var="principalGridLabel" value="${labelReport} ${labelAuthor}"/>
 <c:url value="${url.base}${docPath}${renderContext.mainResource.node.path}" var="currentNodePath"/>
 
-
-
 <div class="panel">
     <div class="panel-body">
         <div class="row">
-            <!-- div tabla y contenidos -->
+            <!-- div table and contents -->
             <div class="col-md-6" >
 
                 <!-- select type of search -->
@@ -154,7 +152,7 @@
         </div>
 
         <div class="row">
-            <!-- div tabla -->
+            <!-- div table -->
             <div class="col-md-12" >
                     <canvas id="canvas"></canvas>
             </div>

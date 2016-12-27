@@ -43,6 +43,11 @@
             datatables/buttons.print.min.js,
             governor-app.js"/>
 
+<c:set var="selectedLang" value="${fn:split(fn:split(currentLocale, '_')[0], '-')[0]}"/>
+<input type="hidden" name="selectedLang" id="selectedLang" value="${selectedLang}">
+<input type="hidden" name="selectedBaseUrl" id="selectedBaseUrl" value="${url.currentModule}">
+
+
 <div class="panel panel-primary">
     <div class="panel-heading">
         <fmt:message key="cgnt_contentGovernor"/>
