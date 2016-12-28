@@ -13,8 +13,6 @@ $(document).ready(function () {
     var selectedLang = $('#selectedLang').val();
     var selectedBaseUrl = $('#selectedBaseUrl').val();
     var langFileUrl = getDataTablesLang(selectedBaseUrl, selectedLang);
-    
-  //salert(selectedLang)
 
     $('label.tree-toggler').click(function () {
         $(this).parent().children('ul.tree').toggle(300);
