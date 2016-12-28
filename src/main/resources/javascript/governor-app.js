@@ -8,9 +8,13 @@ $(document).ready(function () {
         (month<10 ? '0' : '') + month + '/' +
         (day<10 ? '0' : '') + day;
 
-    //Report title
+  //Report title
     var reportTitle = "Report";
-
+    var selectedLang = $('#selectedLang').val();
+    var selectedBaseUrl = $('#selectedBaseUrl').val();
+    var langFileUrl = getDataTablesLang(selectedBaseUrl, selectedLang);
+    
+  //salert(selectedLang)
 
     $('label.tree-toggler').click(function () {
         $(this).parent().children('ul.tree').toggle(300);
@@ -21,10 +25,12 @@ $(document).ready(function () {
 
     $('.datepicker').datepicker().on('changeDate', function(e){
         $(this).datepicker('hide');
-    });;
-
-
+    });
+    
     $('.governor-data-table').DataTable( {
+        "language": {
+            "url": langFileUrl
+        },
         "pagingType": "full_numbers",
         dom: 'Bfrtip',
         buttons: [
@@ -297,5 +303,33 @@ function unlockNode(baseUrl, nodePath, cb)
     });
 }
 
+
+
+/**
+ * get datatables lang
+ */
+
+function getDataTablesLang(baseUrl, lang){
+	var url = baseUrl + '/css/datatables/lang/';
+
+	if(lang.toLowerCase() === 'en')
+		url += 'English.json';
+	else if(lang.toLowerCase() === 'fr')
+		url += 'French.json';
+	else if(lang.toLowerCase() === 'es')
+		url += 'Spanish.json';
+	else if(lang.toLowerCase() === 'pr')
+		url += 'Portuguese.json';
+	else if(lang.toLowerCase() === 'jn')
+		url += 'Japanese.json';
+	else if(lang.toLowerCase() === 'de')
+		url += 'German.json';
+	else if(lang.toLowerCase() === 'it')
+		url += 'Italian.json';
+	else
+		url += 'English.json';
+	
+	return url;
+}
 
 
