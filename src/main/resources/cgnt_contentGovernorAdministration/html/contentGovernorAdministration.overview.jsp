@@ -66,7 +66,7 @@
                         <thead>
                             <tr>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.pages"/></th>
-                                <th><fmt:message key="cgnt_contentGovernor.report.column.templates"/></th>
+                                <th><fmt:message key="cgnt_contentGovernor.report.column.installedModules"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.registeredUsers"/></th>
                             </tr>
                         </thead>
