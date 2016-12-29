@@ -9,8 +9,6 @@ import org.jahia.services.content.*;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.Resource;
 import org.jahia.services.render.URLResolver;
-import org.jahia.services.workflow.Workflow;
-import org.jahia.services.workflow.WorkflowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.jcr.Node;
@@ -66,6 +64,9 @@ public class GovernorJcrAction extends Action {
                     return (isOk ? ActionResult.OK_JSON : ActionResult.BAD_REQUEST );
                 case "4":
                     isOk = unlockNode(jcrNodePath.replaceAll("'",""));
+                    return (isOk ? ActionResult.OK_JSON : ActionResult.BAD_REQUEST );
+                case "5":
+                    isOk = unlockAllNodes(jcrNodePath.replaceAll("'",""));
                     return (isOk ? ActionResult.OK_JSON : ActionResult.BAD_REQUEST );
                 default:
                     throw new GovernorException("Invalid jcrActionId: " + jcrActionId);
@@ -241,5 +242,47 @@ public class GovernorJcrAction extends Action {
 
         return unlocked;
     }
+
+
+    /**
+     * unlock node and nodes under the parent node.
+     *
+     * @param nodePath {@link String}
+     * @return isUnlocked {@link Boolean}
+     */
+    private boolean unlockAllNodes(final String nodePath) {
+        boolean unlocked = false;
+
+        try {
+            JCRTemplate.getInstance().doExecuteWithSystemSession(new JCRCallback<Object>() {
+                public Object doInJCR(JCRSessionWrapper session) throws RepositoryException {
+                    simpleUnlockNode(session.getNode(nodePath));
+                    return null;
+                }
+            });
+
+            unlocked = true;
+            logger.debug("unlockNode(), unlock node[" + nodePath + "] .");
+        } catch (RepositoryException e) {
+            logger.error("unlockNode(), error trying to unlock the node [" + nodePath + "].", e);
+        }
+
+        return unlocked;
+    }
+
+
+
+    private void simpleUnlockNode(JCRNodeWrapper parentNode) throws RepositoryException {
+        /* unlocking the parent node */
+        parentNode.clearAllLocks();
+
+        /* unlocking all the childNodes */
+        if(parentNode.hasNodes()){
+            for (JCRNodeWrapper childNode: parentNode.getNodes()) {
+                simpleUnlockNode(childNode);
+            }
+        }
+    }
+
 
 }

@@ -283,13 +283,15 @@ function saveKeywordsNode(baseUrl, nodePath, keywords, cb)
 /**
  * Unlock node
  */
-function unlockNode(baseUrl, nodePath, cb)
+function unlockNode(baseUrl, nodePath, unlockAll,  cb)
 {
     var actionUrl =  baseUrl + '.GovernorJcr.do';
+    var idMethod  = (unlockAll ? '5' : '4');
+
     $.ajax({
         type: "POST",
         url: actionUrl,
-        data: "jcrActionId=4&jcrNodePath='" + nodePath + "'",
+        data: "jcrActionId=" + idMethod + "&jcrNodePath='" + nodePath + "'",
         success: function(msg){
             swal("Node Unlocked!", "Path [" + nodePath + "].", "success");
             cb(true);

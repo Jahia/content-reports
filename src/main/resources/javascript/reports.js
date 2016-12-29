@@ -1019,7 +1019,7 @@ function fillReportOrphanContent(baseUrl, loadingLabel){
  *       REPORTS LOCKED CONTENT       *
  **************************************/
 
-function fillReportLockedContent(baseUrl, loadingLabel, labelUnlock){
+function fillReportLockedContent(baseUrl, loadingLabel, labelUnlock, labelUnlockAll, labelUnlockQuestion, labelUnlockAllQuestion, labelUnlockYes){
     var actionUrl = getReportActionUrl(baseUrl, 15, null);
 
     // the loading message
@@ -1040,7 +1040,8 @@ function fillReportLockedContent(baseUrl, loadingLabel, labelUnlock){
                 data.items[index].nodeAuthor,
                 data.items[index].nodeLockedBy,
                 "<a href='" + data.items[index].nodeUsedInPageUrl + "' target='_blank' >" +  data.items[index].nodeUsedInPagePath + "</a>",
-                "<a href=\"#\" onclick=\"unlockLockedContent('" + baseUrl + "','" + loadingLabel + "','" + labelUnlock + "','" + data.items[index].nodePath + "')\" >" + labelUnlock + "</a>"
+                "<a href=\"#\" onclick=\"unlockLockedContent('" + baseUrl + "','" + loadingLabel + "','" + labelUnlockYes + "','" + labelUnlock + "','" + labelUnlockAll + "','" + labelUnlockQuestion + "','" + labelUnlockAllQuestion + "','" + data.items[index].nodePath + "'," + false + ")\" >" + labelUnlock + "</a>" + "&nbsp;" +
+                "<a href=\"#\" onclick=\"unlockLockedContent('" + baseUrl + "','" + loadingLabel + "','" + labelUnlockYes + "','" + labelUnlock + "','" + labelUnlockAll + "','" + labelUnlockQuestion + "','" + labelUnlockAllQuestion + "','" + data.items[index].nodePath + "'," + true + ")\" >" + labelUnlockAll + "</a>"
             ] ).draw();
         });
 
@@ -1050,22 +1051,24 @@ function fillReportLockedContent(baseUrl, loadingLabel, labelUnlock){
 }
 
 
-function unlockLockedContent(baseUrl, loadingLabel, labelUnlock, nodePath){
+function unlockLockedContent(baseUrl, loadingLabel, labelUnlockYes, labelUnlock, labelUnlockAll, labelUnlockQuestion, labelUnlockAllQuestion, nodePath, unlockAll){
      swal({
-            title: "Are you sure to unlock the node?",
+            //title: "Are you sure to unlock the node?",
+            title: (unlockAll ? labelUnlockAllQuestion : labelUnlockQuestion),
             text: "Node [" + nodePath + "].",
             type: "warning",
             showCancelButton: true,
             confirmButtonClass: "btn-danger",
-            confirmButtonText: "Yes, Unlock it!",
+           // confirmButtonText: "Yes, Unlock it!",
+            confirmButtonText: labelUnlockYes,
             closeOnConfirm: false
         },
         function(){
-            unlockNode(baseUrl, nodePath, function (param) {
+            unlockNode(baseUrl, nodePath, unlockAll, function (param) {
                 if (param) {
                    // swal("Unlocked!", "The node [" + nodePath + "] has been Unlocked.", "success");
                    // fillReportPageWithoutDescription(baseUrl, labelLoading, labelInsertDescription);
-                    fillReportLockedContent(baseUrl, loadingLabel, labelUnlock);
+                    fillReportLockedContent(baseUrl, loadingLabel, labelUnlock, labelUnlockAll, labelUnlockQuestion, labelUnlockAllQuestion);
                 }
             });
 

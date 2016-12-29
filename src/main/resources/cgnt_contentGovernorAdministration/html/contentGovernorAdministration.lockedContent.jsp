@@ -29,6 +29,10 @@
 <fmt:message key="cgnt_contentGovernor.report.label.contentCreated" var="labelCreatedBy"/>
 <fmt:message key="cgnt_contentGovernor.report.loading" var="labelLoading"/>
 <fmt:message key="cgnt_contentGovernor.report.label.unlock" var="labelUnlock"/>
+<fmt:message key="cgnt_contentGovernor.report.label.unlockAll" var="labelUnlockAll"/>
+<fmt:message key="cgnt_contentGovernor.report.label.unlock.question" var="labelUnlockQuestion"/>
+<fmt:message key="cgnt_contentGovernor.report.label.unlockAll.question" var="labelUnlockAllQuestion"/>
+<fmt:message key="cgnt_contentGovernor.report.label.unlock.yes" var="labelUnlockYes"/>
 <c:url value="${url.base}${docPath}${renderContext.mainResource.node.path}" var="currentNodePath"/>
 
 
@@ -41,7 +45,7 @@
                 <!-- search button -->
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="button" class="btn btn-default" onclick="fillReportLockedContent('${currentNodePath}', '${labelLoading}', '${labelUnlock}')">
+                        <button type="button" class="btn btn-default" onclick="fillReportLockedContent('${currentNodePath}', '${labelLoading}', '${labelUnlock}', '${labelUnlockAll}', '${labelUnlockQuestion}', '${labelUnlockAllQuestion}', '${labelUnlockYes}')">
                             <span class="glyphicon glyphicon-search"></span> <fmt:message key="cgnt_contentGovernor.report.search"/>
                         </button>
                     </div>
