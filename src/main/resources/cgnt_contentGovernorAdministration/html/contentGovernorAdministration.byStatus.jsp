@@ -137,7 +137,6 @@
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.by"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.published"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.lock"/></th>
-                                <th><fmt:message key="cgnt_contentGovernor.report.column.action"/></th>
                             </tr>
                         </thead>
                         <tbody></tbody>

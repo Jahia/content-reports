@@ -27,7 +27,6 @@
 
 <template:addResources type="javascript" resources="
             jquery.min.js,
-            jquery/jquery.sheepItPlugin.js,
             datatables/jquery.dataTables.min.js,
             bootstrap/bootstrap.js,
             bootstrap/bootstrap-datepicker.js,

@@ -610,31 +610,9 @@ function fillReportByStatusDetail(baseUrl, id, yesLabel, noLabel, loadingLabel, 
             currentItemsReportByStatus[id].items[index].lastModified,
             currentItemsReportByStatus[id].items[index].lastModifiedBy,
             ((currentItemsReportByStatus[id].items[index].published) === 'true' ? yesLabel : noLabel),
-            ((currentItemsReportByStatus[id].items[index].lock) === 'true' ? yesLabel : noLabel),
-            "<button type=\"button\" class=\"btn btn-default\"  onclick=\"removeAndReloadStatusDetailGrid(" + id + "," + index + ",'" + baseUrl + "','"+ currentItemsReportByStatus[id].items[index].path +"','" + yesLabel + "','" + noLabel + "','" + loadingLabel + "','" + publishLabel + "')\" >" + publishLabel + "</button>"
+            ((currentItemsReportByStatus[id].items[index].lock) === 'true' ? yesLabel : noLabel)
         ] ).draw();
     });
-}
-
-
-function removeAndReloadStatusDetailGrid(id, parentIndex, baseUrl, path, yesLabel, noLabel, loadingLabel, publishLabel) {
-
-
-    publishNode(baseUrl, path, function (param) {
-        if (param) {
-            var itemCount = currentItemsReportByStatus[id].items.length - 1;
-            if (itemCount <= 0) {
-                // close the window modal for the status grid
-                $('#statusDetailModel').modal('hide');
-            } else {
-                var table = $('#byStatusDetailTable').DataTable();
-                var query = ":eq(" + parentIndex + ")";
-                table.row(query).remove().draw( false );
-            }
-            fillReportByStatus(baseUrl, yesLabel, noLabel, loadingLabel, publishLabel);
-        }
-    })
-
 }
 
 
@@ -695,7 +673,6 @@ function fillReportByLanguageDetail(baseUrl, language ,yesLabel, noLabel, canPub
 
         // adding new content to table
         $.each( data.items, function( index, val ) {
-            var actionContent = (canPublish == 'true' ?  "<a href=\"#\" onclick=\"removeAndReloadLanguageDetailGrid('" + canPublish + "','" + baseUrl + "','"+ data.items[index].path +"','" + yesLabel + "','" + noLabel + "','" + loadingLabel + "','" + publishLabel + "','" + language + "')\" >[" + publishLabel + "]</a>" : "&nbsp;"  )
             table.row.add( [
                         data.items[index].name,
                         checkUndefined(data.items[index].langTitleOrText),
@@ -704,24 +681,12 @@ function fillReportByLanguageDetail(baseUrl, language ,yesLabel, noLabel, canPub
                         checkUndefined(data.items[index].lastModified),
                         checkUndefined(data.items[index].lastModifiedBy),
                         ((data.items[index].published) === 'true' ? yesLabel : noLabel),
-                        ((data.items[index].lock) === 'true' ? yesLabel : noLabel),
-                        actionContent
+                        ((data.items[index].lock) === 'true' ? yesLabel : noLabel)
             ] ).draw();
         });
 
     });
 }
-
-
-
-function removeAndReloadLanguageDetailGrid(canPublish, baseUrl, path, yesLabel, noLabel, loadingLabel, publishLabel, language) {
-
-    publishNodeLanguage(baseUrl, path, language, function (param) {
-        fillReportByLanguageDetail(baseUrl, language ,yesLabel, noLabel, canPublish, loadingLabel, publishLabel);
-    })
-
-}
-
 
 /********************************
  *  REPORTS PAGES WITHOUT TITLE *
@@ -750,10 +715,7 @@ function fillReportPageWithoutTitle(baseUrl, labelLoading, labelInsertTitle){
             var items = [];
             items.push("<a href='" + data.items[index].nodeUrl + "' target='_blank' >" +  data.items[index].nodePath + "</a>");
             for (var k in data.items[index].translations){
-                var linkAddTitle =  "<a href=\"#\" onclick=\"openModalSaveTitle('" + data.items[index].nodePath + "','" + data.items[index].translations[k].lang + "')\" >" + labelInsertTitle + "</a>";
-                var columnValue = data.items[index].translations[k].value;
-                var columnContent = (isEmpty(columnValue) ? linkAddTitle : columnValue);
-                items.push(columnContent);
+                items.push(checkUndefined(data.items[index].translations[k].value));
             }
 
             table.row.add(items).draw();
@@ -780,21 +742,6 @@ function openModalSaveTitle(path, lang){
     });
 }
 
-function modalSaveTitle(baseUrl, labelLoading, labelInsertTitle){
-    var lang = $('#input-lang').val();
-    var nodePath = $('#input-node-path').val();
-    var titleVal = $('#input-title').val();
-
-    savePropertyNode(baseUrl, nodePath, "jcr:title", titleVal, lang, function (param) {
-        if (param) {
-            $('#insertTitlePageModel').modal('hide');
-            fillReportPageWithoutTitle(baseUrl, labelLoading, labelInsertTitle);
-        }
-    });
-
-}
-
-
 /***********************************
  *  REPORTS PAGES WITHOUT KEYWORDS *
  ***********************************/
@@ -816,62 +763,15 @@ function fillReportPageWithoutKeywords(baseUrl, loadingLabel, labelAddKeywords){
 
         // adding new content to table
         $.each( data.items, function( index, val ) {
-            var linkAddKeywords =  "<a href=\"#\" onclick=\"openModalAddKeywords('" + data.items[index].nodePath + "')\" >" + labelAddKeywords + "</a>";
             table.row.add( [
                 "<a href='" + data.items[index].nodeUrl + "' target='_blank' >" +  data.items[index].nodeTitle + "</a>" ,
-                data.items[index].nodePath,
-                linkAddKeywords
+                data.items[index].nodePath
             ] ).draw();
         });
 
         //stop loading message
         ajaxindicatorstop();
     });
-}
-
-function openModalAddKeywords(path){
-    $('#title-addKeywords-modal').html(path);
-    $('#input-node-path-keywords').val(path);
-
-    //clean all content
-    sheepItForm.removeAllForms();
-
-    // open the window modal for insert title
-    $('#addKeywordsPageModel').modal({
-        show: 'true'
-    });
-}
-
-function modalSaveKeywords(baseUrl, labelLoading, labelAddKeywords){
-    var keywords = '';
-    var nodePath = $('#input-node-path-keywords').val();
-
-
-    // Get all forms forms
-    var forms = sheepItForm.getForms();
-
-    // build the keywords getting each form
-    for (x in forms) {
-        // var index = forms[x].getPosition() - 1;
-        // var value = $('#sheepItForm_' + index + '_keyword').val();
-        var value = $('#sheepItForm_' + x + '_keyword').val();
-        if(!isEmpty(value)){
-            if(keywords.length > 0) {keywords += ',';}
-            keywords += value;
-        }
-    }
-
-    if(!isEmpty(keywords)){
-        saveKeywordsNode(baseUrl, nodePath, keywords, function (param) {
-            if (param) {
-                $('#addKeywordsPageModel').modal('hide');
-                fillReportPageWithoutKeywords(baseUrl, labelLoading, labelAddKeywords);
-            }
-        });
-    }else{
-        swal("Error!", "While trying to save the Node [" + nodePath + "]. Keywords not found..", "error");
-    }
-
 }
 
 
@@ -903,11 +803,7 @@ function fillReportPageWithoutDescription(baseUrl, loadingLabel, labelInsertDesc
             items.push("<a href='" + data.items[index].nodeUrl + "' target='_blank' >" +  data.items[index].nodeTitle + "</a>");
             items.push(data.items[index].nodePath);
             for (var k in data.items[index].translations){
-
-                var linkAddDescription =  "<a href=\"#\" onclick=\"openModalSaveDescription('" + data.items[index].nodePath + "','" + data.items[index].translations[k].lang + "')\" >" + labelInsertDescription + "</a>";
-                var columnValue = data.items[index].translations[k].value;
-                var columnContent = (isEmpty(columnValue) ? linkAddDescription : columnValue);
-                items.push(columnContent);
+                items.push( checkUndefined(data.items[index].translations[k].value));
             }
 
             table.row.add(items).draw();
@@ -917,35 +813,6 @@ function fillReportPageWithoutDescription(baseUrl, loadingLabel, labelInsertDesc
         });
     });
 }
-
-function openModalSaveDescription(path, lang){
-
-    $('#insert-description-modal').html(path + '&nbsp;[' + lang + ']');
-    $('#input-lang-description').val(lang);
-    $('#input-node-path-description').val(path);
-    $('#input-description').val('');
-
-    // open the window modal for insert title
-    $('#insertDescriptionPageModel').modal({
-        show: 'true'
-    });
-}
-
-
-function modalSaveDescription(baseUrl, labelLoading, labelInsertDescription){
-    var lang = $('#input-lang-description').val();
-    var nodePath = $('#input-node-path-description').val();
-    var titleVal = $('#input-description').val();
-
-    savePropertyNode(baseUrl, nodePath, "jcr:description", titleVal, lang, function (param) {
-        if (param) {
-            $('#insertDescriptionPageModel').modal('hide');
-            fillReportPageWithoutDescription(baseUrl, labelLoading, labelInsertDescription);
-        }
-    });
-
-}
-
 
 /**************************************
  *  REPORTS CONTENT FROM ANOTHER SITE *
@@ -1039,41 +906,13 @@ function fillReportLockedContent(baseUrl, loadingLabel, labelUnlock, labelUnlock
                 capitalize(data.items[index].nodeTypeTechName),
                 data.items[index].nodeAuthor,
                 data.items[index].nodeLockedBy,
-                "<a href='" + data.items[index].nodeUsedInPageUrl + "' target='_blank' >" +  data.items[index].nodeUsedInPagePath + "</a>",
-                "<a href=\"#\" onclick=\"unlockLockedContent('" + baseUrl + "','" + loadingLabel + "','" + labelUnlockYes + "','" + labelUnlock + "','" + labelUnlockAll + "','" + labelUnlockQuestion + "','" + labelUnlockAllQuestion + "','" + data.items[index].nodePath + "'," + false + ")\" >" + labelUnlock + "</a>" + "&nbsp;" +
-                "<a href=\"#\" onclick=\"unlockLockedContent('" + baseUrl + "','" + loadingLabel + "','" + labelUnlockYes + "','" + labelUnlock + "','" + labelUnlockAll + "','" + labelUnlockQuestion + "','" + labelUnlockAllQuestion + "','" + data.items[index].nodePath + "'," + true + ")\" >" + labelUnlockAll + "</a>"
+                "<a href='" + data.items[index].nodeUsedInPageUrl + "' target='_blank' >" +  data.items[index].nodeUsedInPagePath + "</a>"
             ] ).draw();
         });
 
         //stop loading message
         ajaxindicatorstop()
     });
-}
-
-
-function unlockLockedContent(baseUrl, loadingLabel, labelUnlockYes, labelUnlock, labelUnlockAll, labelUnlockQuestion, labelUnlockAllQuestion, nodePath, unlockAll){
-     swal({
-            //title: "Are you sure to unlock the node?",
-            title: (unlockAll ? labelUnlockAllQuestion : labelUnlockQuestion),
-            text: "Node [" + nodePath + "].",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-           // confirmButtonText: "Yes, Unlock it!",
-            confirmButtonText: labelUnlockYes,
-            closeOnConfirm: false
-        },
-        function(){
-            unlockNode(baseUrl, nodePath, unlockAll, function (param) {
-                if (param) {
-                   // swal("Unlocked!", "The node [" + nodePath + "] has been Unlocked.", "success");
-                   // fillReportPageWithoutDescription(baseUrl, labelLoading, labelInsertDescription);
-                    fillReportLockedContent(baseUrl, loadingLabel, labelUnlock, labelUnlockAll, labelUnlockQuestion, labelUnlockAllQuestion);
-                }
-            });
-
-        });
-
 }
 
 

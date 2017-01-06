@@ -72,7 +72,6 @@
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.author"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.lockedBy"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.usedInPage"/></th>
-                                <th><fmt:message key="cgnt_contentGovernor.report.column.action"/></th>
                             </tr>
                         </thead>
                         <tbody></tbody>
