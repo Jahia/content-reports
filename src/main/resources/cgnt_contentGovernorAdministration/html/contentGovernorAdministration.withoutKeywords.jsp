@@ -65,7 +65,6 @@
                             <tr>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.title"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.pagePath"/></th>
-                                <th><fmt:message key="cgnt_contentGovernor.report.column.action"/></th>
                             </tr>
                         </thead>
                         <tbody></tbody>
