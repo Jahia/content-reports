@@ -98,6 +98,7 @@
                     </div>
                     <div>&nbsp;</div>
                     <div  class="panel-body" style="margin-left: 10px">
+                      <div class="addKeywordsModalBg">
                         <div class="row">
                             <div class="col-md-5">
                                 <label class="label-form"> <fmt:message key="cgnt_contentGovernor.report.form.insertDescription"/></label>
@@ -116,18 +117,19 @@
                         <!-- search button -->
                         <div class="row">
                             <div class="col-md-5">
-                                <button type="button" class="btn btn-default" onclick="modalSaveDescription('${currentNodePath}', '${labelLoading}', '${insertDescription}')">
-                                    <fmt:message key="cgnt_contentGovernor.button.save"/>
-                                </button>
                             </div>
                         </div>
                     </div>
+                  </div>
 
                 </div>
 
             </div>
             <div class="nModal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default modalSaveBtn" onclick="modalSaveDescription('${currentNodePath}', '${labelLoading}', '${insertDescription}')">
+                    <fmt:message key="cgnt_contentGovernor.button.save"/>
+                </button>
             </div>
         </div>
 

@@ -126,7 +126,7 @@ text-transform: uppercase;
 }
 .nModal-content {
     position: relative;
-    background-color: #fff;
+    background-color: #fafafa;
     -webkit-background-clip: padding-box;
     background-clip: padding-box;
     border: 1px solid #999;
@@ -330,6 +330,10 @@ a.dt-button:hover:not(.disabled) {
   margin-left: -14px;
 }
 
+.nModal-body .panel-primary {
+  background: #fafafa !important;
+}
+
 .row hr {
   /*border-top: 1px dashed #e5e5e5;*/
   border-bottom: 0;
@@ -421,6 +425,7 @@ table.dataTable.no-footer {
 .well .panel-primary-datatables {
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
   border-radius: 2px;
+  background: #fff !important;
 }
 
 table.dataTable.stripe tbody tr.odd, table.dataTable.display tbody tr.odd {
@@ -449,7 +454,7 @@ table.dataTable.hover tbody tr:hover, table.dataTable.display tbody tr:hover {
 
 button.btn.btn-default {
   border: none;
-  background: #673AB7;
+  background: #00BCD4;
   color: #fff;
   text-transform: uppercase;
   height: 32px;
@@ -458,6 +463,7 @@ button.btn.btn-default {
   font-family: Roboto, sans-serif;
   letter-spacing: 1px;
   outline: none;
+  text-shadow: none;
 }
 
 .sa-button-container .btn-primary {
@@ -465,7 +471,7 @@ button.btn.btn-default {
   border-radius: 2px;
   border: none;
   text-shadow: none;
-  background: #673AB7;
+  background: #00BCD4;
   text-transform: uppercase;
   height: 32px;
   padding: 0 18px;
@@ -486,6 +492,20 @@ button.btn.btn-default {
   font-weight: 600;
   letter-spacing: 1px;
   color: #03A9F4;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+#sheepItForm_remove_all a {
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #E91E63;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 2px 6px;
 }
 
 .nModal-body .panel-body input {
@@ -498,9 +518,28 @@ button.btn.btn-default {
   margin-right: 15px;
 }
 
+.modalSaveBtn {
+  color: #607D8B !important;
+  margin-top: -8px;
+}
+
+.noKeywordsText {
+  background: #fafafa;
+  padding: 8px;
+  text-align: center;
+  color: #757575;
+}
+
+.addKeywordsModalBg {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 2px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
+
 .sa-button-container .btn-primary:hover,
 .sa-button-container .btn-primary:focus {
-  background-color: #7E57C2;
+  background-color: #4DD0E1;
 }
 
 .sa-confirm-button-container .btn-danger {
@@ -545,14 +584,29 @@ button.btn.btn-default .glyphicon {
   margin-bottom: 0;
   box-sizing: content-box;
   max-height: 22px;
-  /*margin-left: 12px;*/
-  box-shadow: none;
+  margin-left: 8px;
+  box-shadow: none !important;
   border: none;
   background: #fafafa;
   border-bottom: 1px dashed #9E9E9E;
   border-radius: 0;
   width: 64%;
   outline: none;
+}
+
+@media only screen and (max-width: 1080px) {
+
+  .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+    margin-left: 30px;
+  }
+
+}
+
+.panel-body .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background: #EEEEEE !important;
+  color: initial !important;
+  border-radius: 20px;
+  border-color: #EEEEEE !important;
 }
 
 .label-form {
@@ -564,6 +618,24 @@ button.btn.btn-default .glyphicon {
 
 .node-treeviewpath {
   color: #424242 !important;
+}
+
+.treeview .list-group {
+  background: white;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  border-radius: 2px;
+  margin-left: 2px;
+  padding: 8px 0;
+}
+
+.treeview .list-group-item:first-child {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.treeview .list-group-item:last-child {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 .panel-body canvas {
@@ -581,7 +653,7 @@ button.btn.btn-default .glyphicon {
 }
 
 .nModal-header {
-  padding-bottom: 30px;
+  padding-bottom: 0;
   visibility: hidden;
 }
 
@@ -592,7 +664,7 @@ button.btn.btn-default .glyphicon {
 .nModal-footer button.btn.btn-default,
 .nModal-content .panel-body button.btn.btn-default {
   background: transparent;
-  color: #673AB7;
+  color: #00BCD4;
   box-shadow: none;
 }
 
@@ -690,10 +762,6 @@ input.datepicker.form-control.invalid {
   outline: none;
 }
 
-.sweet-alert .sa-icon.sa-success .sa-placeholder {
-  border: none;
-}
-
-.sweet-alert .sa-icon.sa-success .sa-line {
-  background-color: #607D8B;
+.sweet-alert .sa-icon {
+  display: none !important;
 }

@@ -94,8 +94,8 @@
                     <div class="panel-heading">
                         <h5 class="panel-title" id="title-addKeywords-modal"></h5>
                     </div>
-                    <div>&nbsp;</div>
                     <div  class="panel-body" style="margin-left: 10px">
+                      <div class="addKeywordsModalBg">
                         <div class="row">
                             <div class="col-md-5">
                                 <label class="label-form"> <fmt:message key="cgnt_contentGovernor.report.label.keywords"/></label>
@@ -121,14 +121,14 @@
 
                                     <div>&nbsp;</div>
                                     <!-- No forms template -->
-                                    <div id="sheepItForm_noforms_template">
+                                    <div id="sheepItForm_noforms_template" class="noKeywordsText">
                                         <fmt:message key="cgnt_contentGovernor.report.label.noKeywords"/>
                                     </div>
                                     <!-- /No forms template-->
 
                                     <div>&nbsp;</div>
                                     <!-- Controls -->
-                                    <div id="sheepItForm_controls" style="float: left">
+                                    <div id="sheepItForm_controls" style="float: left;margin-bottom: 30px;">
                                         <div id="sheepItForm_add">
                                             <a><span><fmt:message key="cgnt_contentGovernor.report.label.addKeyword"/></span></a>
                                         </div>
@@ -152,18 +152,20 @@
                         <!-- search button -->
                         <div class="row">
                             <div class="col-md-5">
-                                <button type="button" class="btn btn-default" onclick="modalSaveKeywords('${currentNodePath}', '${labelLoading}', '${labelAddKeywords}')">
-                                    <fmt:message key="cgnt_contentGovernor.button.save"/>
-                                </button>
+
                             </div>
                         </div>
                     </div>
+                  </div>
 
                 </div>
 
             </div>
             <div class="nModal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default modalSaveBtn" onclick="modalSaveKeywords('${currentNodePath}', '${labelLoading}', '${labelAddKeywords}')">
+                    <fmt:message key="cgnt_contentGovernor.button.save"/>
+                </button>
             </div>
         </div>
 
@@ -194,5 +196,3 @@
 
     </script>
 </template:addResources>
-
-

@@ -173,9 +173,7 @@ function ajaxindicatorstart(text)
         'margin':'auto',
         'font-size':'16px',
         'z-index':'10',
-        'color':'#ffffff',
-        'line-height':'48px'
-
+        'color':'transparent'
     });
 
     jQuery('#resultLoading .bg').height('100%');
