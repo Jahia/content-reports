@@ -54,20 +54,20 @@
     </div>
 
     <div class="panel-body">
-        <div class="row">
+        <div class="">
             <!-- Column for menu -->
-            <div class="col-md-2" STYLE="/*background-color: #f5f5f5;*/" >
+            <div class="col-md-2" STYLE="margin-top: 15px;" >
                 <div style="overflow-x: hidden; min-height: 100px;">
                     <ul class="nav nav-list">
-                        <li><label class="tree-toggler nav-header">> <fmt:message key="cgnt_contentGovernor.menu.contentReports"/></label>
-                            <ul class="nav nav-list tree">
+                        <li style="position: fixed;"><label class="tree-toggler nav-header" style="cursor:default;pointer-events:none;"><fmt:message key="cgnt_contentGovernor.menu.contentReports"/></label>
+                            <ul class="nav nav-list tree forceVisible">
                                 <li>
                                     <a class="nav-menu-link" href="#" onclick="showView('1')">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.byAuthor"/>
                                     </a>
                                 </li>
                                 <li>
-                                    <label class="tree-toggler nav-header">> <fmt:message key="cgnt_contentGovernor.menu.contentReports.byDate"/></label>
+                                    <label class="tree-toggler nav-header"><fmt:message key="cgnt_contentGovernor.menu.contentReports.byDate"/></label>
                                     <!--a href="#" class="tree-toggler">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.byDate"/>
                                     </a-->
@@ -86,7 +86,7 @@
                                 </li>
 
                                 <li>
-                                    <label class="tree-toggler nav-header">> <fmt:message key="cgnt_contentGovernor.menu.contentReports.byType"/></label>
+                                    <label class="tree-toggler nav-header"><fmt:message key="cgnt_contentGovernor.menu.contentReports.byType"/></label>
                                     <!--a href="#" class="tree-toggler">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.byDate"/>
                                     </a-->
@@ -117,7 +117,7 @@
                                 </li>
 
                                 <li>
-                                    <label class="tree-toggler nav-header">> <fmt:message key="cgnt_contentGovernor.menu.contentReports.byMetadata"/></label>
+                                    <label class="tree-toggler nav-header"><fmt:message key="cgnt_contentGovernor.menu.contentReports.byMetadata"/></label>
 
                                     <ul class="nav nav-list tree">
                                         <li>
@@ -175,13 +175,12 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="divider"></li>
                     </ul>
                 </div>
             </div>
 
             <!-- Column for report content -->
-            <div class="col-md-10" style="border-color: black; border-style: hidden">
+            <div class="col-md-10" style="border-left: 1px solid rgba(0,0,0,.14);padding-left: 0 !important;min-height: 100%;position: absolute;right: 0;background: #fafafa;">
                 <!-- By Author: report A -->
                 <div id="report-1" class="div-report">
                     <template:include view="byAuthor"/>
