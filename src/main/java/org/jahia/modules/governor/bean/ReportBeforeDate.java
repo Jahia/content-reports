@@ -20,7 +20,6 @@ import java.util.*;
 public class ReportBeforeDate extends QueryReport {
 
     private Map<String, Integer> dataMap;
-    private List<Map<String, String>> dataList;
 
     private String searchPath;
     private String strDate;
@@ -35,7 +34,6 @@ public class ReportBeforeDate extends QueryReport {
         super(siteNode);
         this.searchPath = path;
         this.strDate = date;
-        this.dataList = new ArrayList<Map<String, String>>();
         this.dataMap = new HashMap<String, Integer>();
         this.useSystemUser = useSystemUser;
     }

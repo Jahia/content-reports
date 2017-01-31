@@ -29,9 +29,6 @@ public class ReportContentFromAnotherSite extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportContentFromAnotherSite.class);
     protected static final String BUNDLE = "resources.content-governor";
 
-    List<Map<String, String>> dataList;
-
-
     /**
      * Instantiates a new Report pages without title.
      *
@@ -39,7 +36,6 @@ public class ReportContentFromAnotherSite extends QueryReport {
      */
     public ReportContentFromAnotherSite(JCRSiteNode siteNode) {
         super(siteNode);
-        this.dataList = new ArrayList<>();
     }
 
     @Override

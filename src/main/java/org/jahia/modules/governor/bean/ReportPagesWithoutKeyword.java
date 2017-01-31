@@ -24,8 +24,6 @@ public class ReportPagesWithoutKeyword extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportPagesWithoutKeyword.class);
     private static final String BUNDLE = "resources.content-governor";
 
-    protected Map<String, Map<String, Object>> dataMap;
-
     /**
      * Instantiates a new Report pages without keyword.
      *
@@ -33,12 +31,11 @@ public class ReportPagesWithoutKeyword extends QueryReport {
      */
     public ReportPagesWithoutKeyword(JCRSiteNode siteNode) {
         super(siteNode);
-        this.dataMap = new HashMap<>();
     }
 
     @Override
     public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
-        fillReport(session, "SELECT * FROM [jnt:page] AS item WHERE ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])", offset, limit);
+        fillReport(session, "SELECT * FROM [jnt:page] AS item WHERE ISDESCENDANTNODE(item,['" + siteNode.getPath() + "']) and [j:keywords] is null", offset, limit);
     }
 
     /**
@@ -49,52 +46,12 @@ public class ReportPagesWithoutKeyword extends QueryReport {
      */
     public void addItem(JCRNodeWrapper node) throws RepositoryException {
         // if pages translation without title
-        if (isWithoutKeywordsContent(node)) {
-            this.dataMap.put(node.getPath(), new HashedMap());
-            this.dataMap.get(node.getPath()).put("nodePath", node.getPath());
-            this.dataMap.get(node.getPath()).put("nodeUrl", node.getUrl());
-            this.dataMap.get(node.getPath()).put("nodeName", node.getName());
-            this.dataMap.get(node.getPath()).put("nodeDisplayableName", node.getDisplayableName());
-            this.dataMap.get(node.getPath()).put("nodeTitle", (node.hasI18N(this.defaultLocale) && node.getI18N(this.defaultLocale).hasProperty("jcr:title")) ? node.getI18N(this.defaultLocale).getProperty("jcr:title").getString() : "");
-        }
+        HashedMap map = new HashedMap();
+        map.put("nodePath", node.getPath());
+        map.put("nodeUrl", node.getUrl());
+        map.put("nodeName", node.getName());
+        map.put("nodeDisplayableName", node.getDisplayableName());
+        map.put("nodeTitle", (node.hasI18N(this.defaultLocale) && node.getI18N(this.defaultLocale).hasProperty("jcr:title")) ? node.getI18N(this.defaultLocale).getProperty("jcr:title").getString() : "");
+        this.dataList.add(map);
     }
-
-    /**
-     * getJson
-     *
-     * @return {@link JSONObject}
-     * @throws JSONException
-     * @throws RepositoryException
-     */
-    public JSONObject getJson() throws JSONException, RepositoryException {
-
-        JSONObject jsonObject = new JSONObject();
-        JSONArray jArray = new JSONArray();
-
-        for (String path : this.dataMap.keySet()) {
-            jArray.put(new JSONObject(this.dataMap.get(path)));
-        }
-
-        jsonObject.put("siteName", siteNode.getName());
-        jsonObject.put("siteDisplayableName", siteNode.getDisplayableName());
-        jsonObject.put("items", jArray);
-        return jsonObject;
-    }
-
-    /**
-     * isWithoutKeywordsContent
-     * <p> check if the node contains the
-     * key j:keyword in the metadata content.</p>
-     *
-     * @param parentNode {@link JCRNodeWrapper}
-     * @return boolean {@link Boolean}
-     * @throws RepositoryException
-     */
-    private Boolean isWithoutKeywordsContent(JCRNodeWrapper parentNode) throws RepositoryException {
-        if(parentNode.isNodeType("jmix:keywords") &&  parentNode.hasProperty("j:keywords"))
-            return Boolean.FALSE;
-
-        return Boolean.TRUE;
-    }
-
 }
