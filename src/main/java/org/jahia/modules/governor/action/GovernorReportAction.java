@@ -44,7 +44,7 @@ public class GovernorReportAction extends Action {
 
             report.execute(session,
                     req.getParameter("offset") != null ? Integer.parseInt(req.getParameter("offset")) : 0,
-                    req.getParameter("limit") != null ? Integer.parseInt(req.getParameter("limit")) : 5000);
+                    req.getParameter("limit") != null ? Integer.parseInt(req.getParameter("limit")) : 10);
 
             return new ActionResult(HttpServletResponse.SC_OK,null, report.getJson());
         } catch (GovernorException gex) {
@@ -83,11 +83,11 @@ public class GovernorReportAction extends Action {
             case "8":
                 return new ReportByLanguageDetailed(renderContext.getSite(), req.getParameter("reqLang"));
             case "10":
-                return new ReportPagesWithoutTitle(renderContext.getSite());
+                return new ReportPagesWithoutTitle(renderContext.getSite(), req.getParameter("language"));
             case "11":
                 return new ReportPagesWithoutKeyword(renderContext.getSite());
             case "12":
-                return new ReportPagesWithoutDescription(renderContext.getSite());
+                return new ReportPagesWithoutDescription(renderContext.getSite(), req.getParameter("language"));
             case "13":
                 return new ReportContentFromAnotherSite(renderContext.getSite());
             case "14":
