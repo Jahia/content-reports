@@ -2,6 +2,7 @@ package org.jahia.modules.governor.bean;
 
 import org.apache.commons.lang.StringUtils;
 import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,6 +10,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -20,18 +22,13 @@ import java.util.Map;
 
 /**
  * The ReportPagesWithoutDescription Class.
- *
+ * <p>
  * Created by Juan Carlos Rodas.
  */
-public class ReportPagesWithoutDescription implements IReport {
-
-    protected DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    protected static final String BUNDLE = "resources.content-governor";
-    protected Locale locale = LocaleContextHolder.getLocale();
-    private Locale defaultLocale;
+public class ReportPagesWithoutDescription extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportPagesWithoutDescription.class);
-    protected JCRSiteNode siteNode;
-    protected Map<String, Locale> localeMap;
+    protected static final String BUNDLE = "resources.content-governor";
+
     protected Map<String, Map<String, Object>> dataMap;
 
 
@@ -41,24 +38,22 @@ public class ReportPagesWithoutDescription implements IReport {
      * @param siteNode the site node {@link JCRSiteNode}
      */
     public ReportPagesWithoutDescription(JCRSiteNode siteNode) {
-        this.siteNode = siteNode;
-        this.localeMap = new HashMap<>();
+        super(siteNode);
         this.dataMap = new HashMap<>();
+    }
 
-        for (Locale ilocale : siteNode.getLanguagesAsLocales())
-            this.localeMap.put(ilocale.toString(), locale);
-
-        this.defaultLocale = this.localeMap.get(siteNode.getDefaultLanguage());
+    @Override
+    public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
+        fillReport(session, "SELECT * FROM [jnt:page] AS item WHERE ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])", offset, limit);
     }
 
     /**
      * addItem
      *
      * @param node {@link JCRNodeWrapper}
-     * @param contentType {@link SEARCH_CONTENT_TYPE}
      * @throws RepositoryException
      */
-    public void addItem(JCRNodeWrapper node, SEARCH_CONTENT_TYPE contentType) throws RepositoryException {
+    public void addItem(JCRNodeWrapper node) throws RepositoryException {
         Map<String, String> translationsMap = new HashMap<>();
         Integer noTitleCounter = 0;
         for (String lang : this.localeMap.keySet()) {

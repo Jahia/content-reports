@@ -4,6 +4,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.services.content.JCRContentUtils;
 import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,16 +22,9 @@ import java.util.*;
  *
  * Created by Juan Carlos Rodas.
  */
-public class ReportLockedContent implements IReport {
-
-    protected DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    protected static final String BUNDLE = "resources.content-governor";
-    protected Locale locale = LocaleContextHolder.getLocale();
-    protected Locale defaultLocale;
+public class ReportLockedContent extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportLockedContent.class);
-    protected JCRSiteNode siteNode;
-    List<Map<String, String>> dataList;
-    protected Map<String, Locale> localeMap;
+    protected static final String BUNDLE = "resources.content-governor";
 
 
     /**
@@ -38,25 +32,23 @@ public class ReportLockedContent implements IReport {
      *
      * @param siteNode the site node {@link JCRSiteNode}
      */
-    public ReportLockedContent(JCRSiteNode siteNode) throws RepositoryException {
-        this.siteNode  = siteNode;
-        this.localeMap = new HashMap<>();
-        this.dataList  = new ArrayList<>();
+    public ReportLockedContent(JCRSiteNode siteNode) {
+        super(siteNode);
+    }
 
-        for (Locale ilocale : siteNode.getLanguagesAsLocales())
-            this.localeMap.put(ilocale.toString(), locale);
-
-        this.defaultLocale = this.localeMap.get(siteNode.getDefaultLanguage());
+    @Override
+    public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
+        String pageQueryStr = "SELECT * FROM [jmix:editorialContent] AS item WHERE [jcr:lockOwner] is not null and ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])";
+        fillReport(session, pageQueryStr, offset, limit);
     }
 
     /**
      * addItem
      *
      * @param node {@link JCRNodeWrapper}
-     * @param contentType {@link SEARCH_CONTENT_TYPE}
      * @throws RepositoryException
      */
-    public void addItem(JCRNodeWrapper node, SEARCH_CONTENT_TYPE contentType) throws RepositoryException {
+    public void addItem(JCRNodeWrapper node) throws RepositoryException {
 
         if(node.isLocked()){
             JCRNodeWrapper itemParentPage = node;
@@ -76,43 +68,18 @@ public class ReportLockedContent implements IReport {
             nodeMap.put("nodeTypeAlias", node.getPrimaryNodeType().getAlias());
             nodeMap.put("nodeAuthor", node.getCreationUser());
             nodeMap.put("nodeLockedBy", node.getLockOwner());
-            nodeMap.put("nodeUsedInPageName", itemParentPage.getName());
-            nodeMap.put("nodeUsedInPageDisplayableName", itemParentPage.getDisplayableName());
-            nodeMap.put("nodeUsedInPagePath", itemParentPage.getPath());
-            nodeMap.put("nodeUsedInPageUrl", itemParentPage.getUrl());
-            nodeMap.put("nodeUsedInPageTitle", (itemParentPage.hasI18N(this.locale) && itemParentPage.getI18N(this.defaultLocale).hasProperty("jcr:title")) ? itemParentPage.getI18N(this.defaultLocale).getProperty("jcr:title").getString() : "");
+            if (itemParentPage != null) {
+                nodeMap.put("nodeUsedInPageName", itemParentPage.getName());
+                nodeMap.put("nodeUsedInPageDisplayableName", itemParentPage.getDisplayableName());
+                nodeMap.put("nodeUsedInPagePath", itemParentPage.getPath());
+                nodeMap.put("nodeUsedInPageUrl", itemParentPage.getUrl());
+                nodeMap.put("nodeUsedInPageTitle", (itemParentPage.hasI18N(this.locale) && itemParentPage.getI18N(this.defaultLocale).hasProperty("jcr:title")) ? itemParentPage.getI18N(this.defaultLocale).getProperty("jcr:title").getString() : "");
+            }
             nodeMap.put("nodeDisplayableName", node.getDisplayableName());
             nodeMap.put("nodeTitle", (node.hasI18N(this.locale) && node.getI18N(this.defaultLocale).hasProperty("jcr:title")) ? node.getI18N(this.defaultLocale).getProperty("jcr:title").getString() : "");
             nodeMap.put("displayTitle", StringUtils.isNotEmpty(nodeMap.get("nodeTitle")) ? nodeMap.get("nodeTitle") : nodeMap.get("nodeName"));
             this.dataList.add(nodeMap);
         }
-    }
-
-    /**
-     * getJson
-     *
-     * @return {@link JSONObject}
-     * @throws JSONException
-     * @throws RepositoryException
-     */
-    public JSONObject getJson() throws JSONException, RepositoryException {
-
-        JSONObject jsonObject = new JSONObject();
-        JSONArray jArray = new JSONArray();
-        JSONObject jsonObjectItem;
-
-        for (Map<String, String> nodeMap : this.dataList) {
-            jsonObjectItem = new JSONObject();
-            for (String key: nodeMap.keySet()) {
-                jsonObjectItem.put(key, nodeMap.get(key));
-            }
-            jArray.put(jsonObjectItem);
-        }
-
-        jsonObject.put("siteName", siteNode.getName());
-        jsonObject.put("siteDisplayableName", siteNode.getDisplayableName());
-        jsonObject.put("items", jArray);
-        return jsonObject;
     }
 
 

@@ -1,7 +1,9 @@
 package org.jahia.modules.governor.bean;
 
+import org.jahia.exceptions.JahiaException;
 import org.jahia.services.content.JCRContentUtils;
 import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.services.workflow.Workflow;
 import org.jahia.services.workflow.WorkflowService;
@@ -21,16 +23,11 @@ import java.util.*;
  *
  * Created by Juan Carlos Rodas.
  */
-public class ReportContentWaitingPublication implements IReport {
-
-    protected DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    protected static final String BUNDLE = "resources.content-governor";
-    protected Locale locale = LocaleContextHolder.getLocale();
-    protected Locale defaultLocale;
+public class ReportContentWaitingPublication extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportContentWaitingPublication.class);
-    protected JCRSiteNode siteNode;
+    protected static final String BUNDLE = "resources.content-governor";
+
     List<WaitingPublicationElement> dataList;
-    protected Map<String, Locale> localeMap;
 
 
     /**
@@ -38,48 +35,25 @@ public class ReportContentWaitingPublication implements IReport {
      *
      * @param siteNode the site node {@link JCRSiteNode}
      */
-    public ReportContentWaitingPublication(JCRSiteNode siteNode) throws RepositoryException {
-        this.siteNode  = siteNode;
-        this.localeMap = new HashMap<>();
+    public ReportContentWaitingPublication(JCRSiteNode siteNode) {
+        super(siteNode);
         this.dataList  = new ArrayList<>();
-
-        for (Locale ilocale : siteNode.getLanguagesAsLocales())
-            this.localeMap.put(ilocale.toString(), locale);
-
-        this.defaultLocale = this.localeMap.get(siteNode.getDefaultLanguage());
     }
 
-    /**
-     * hasActiveWorkflows
-     * <p> returns true if the node have some active workflow,
-     * otherwise return false.</p>
-     *
-     * @param node {@link JCRNodeWrapper}
-     * @return {@link Boolean}
-     */
-    private Boolean hasActiveWorkflows(JCRNodeWrapper node){
-        for (String lang : localeMap.keySet()) {
-            List<Workflow> wlist = WorkflowService.getInstance().getActiveWorkflows(node, localeMap.get(lang), localeMap.get(lang));
-            if(wlist.size() > 0 ) return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
+    @Override
+    public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException, JahiaException {
+        String pageQueryStr = "SELECT * FROM [jmix:workflow] AS item WHERE [j:processId] is not null and ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])";
+        fillReport(session, pageQueryStr, offset, limit);
     }
 
     /**
      * addItem
      *
      * @param node {@link JCRNodeWrapper}
-     * @param contentType {@link SEARCH_CONTENT_TYPE}
      * @throws RepositoryException
      */
-    public void addItem(JCRNodeWrapper node, SEARCH_CONTENT_TYPE contentType) throws RepositoryException {
-        if(hasActiveWorkflows(node)){
-            JCRNodeWrapper itemParentPage = node;
-            if(!node.isNodeType("jnt:page")){
-                itemParentPage = JCRContentUtils.getParentOfType(node, "jnt:page");
-            }
+    public void addItem(JCRNodeWrapper node) throws RepositoryException {
             dataList.add(new WaitingPublicationElement(node, localeMap));
-        }
     }
 
     /**

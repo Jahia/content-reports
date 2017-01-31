@@ -8,16 +8,17 @@ import org.jahia.services.content.decorator.JCRSiteNode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import javax.jcr.RepositoryException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * ReportByAuthor Class.
- *
+ * <p>
  * Created by Juan Carlos Rodas.
  */
-public class ReportByAuthor extends QueryReport {
+public class ReportByAuthorDetailed extends QueryReport {
 
     private final String PROPERTY_COUNT = "itemCount";
     private final String PROPERTY_AUTHOR_DETAIL = "authorDetail";
@@ -28,15 +29,17 @@ public class ReportByAuthor extends QueryReport {
     private String searchPath;
     private SearchContentType reportType;
     private SearchActionType actionType;
+    private String propertyName;
+    private String username;
 
     /**
      * The ReportByAuthor constructor.
      *
-     * @param reportType {@link SearchContentType}
-     * @param actionType {@link SearchActionType}
+     * @param reportType    {@link SearchContentType}
+     * @param actionType    {@link SearchActionType}
      * @param useSystemUser {@link Boolean}
      */
-    public ReportByAuthor(JCRSiteNode siteNode, String path, SearchContentType reportType, SearchActionType actionType, Boolean useSystemUser) {
+    public ReportByAuthorDetailed(JCRSiteNode siteNode, String username, String path, SearchContentType reportType, SearchActionType actionType, Boolean useSystemUser) {
         super(siteNode);
         this.searchPath = path;
         this.useSystemUser = useSystemUser;
@@ -44,29 +47,30 @@ public class ReportByAuthor extends QueryReport {
         this.actionType = actionType;
         this.dataMap = new HashMap<>();
         this.totalItems = 0;
+
+        propertyName = "";
+        if (actionType.equals(SearchActionType.CREATION))
+            propertyName = "jcr:createdBy";
+        else if (actionType.equals(SearchActionType.UPDATE))
+            propertyName = "jcr:lastModifiedBy";
+        this.username = username;
     }
 
     @Override
     public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException, JahiaException {
         String strQuery = "SELECT * FROM ";
-        strQuery += (reportType.equals(BaseReport.SearchContentType.PAGE) ? "[jnt:page] " : "[jmix:editorialContent] ");
-        strQuery += "AS item WHERE ISDESCENDANTNODE(item,['" + searchPath + "'])";
+        strQuery += (reportType.equals(SearchContentType.PAGE) ? "[jnt:page] " : "[jmix:editorialContent] ");
+        strQuery += "AS item WHERE [" + propertyName + "]='" + username + "' AND ISDESCENDANTNODE(item,['" + searchPath + "'])";
         fillReport(session, strQuery, offset, limit);
     }
 
     /**
      * addItem
+     *
      * @param node {@link JCRNodeWrapper}
      * @throws RepositoryException
      */
     public void addItem(JCRNodeWrapper node) throws RepositoryException {
-
-        String propertyName = "";
-        if (actionType.equals(SearchActionType.CREATION))
-            propertyName = "jcr:createdBy";
-        else if (actionType.equals(SearchActionType.UPDATE))
-            propertyName = "jcr:lastModifiedBy";
-
         if (node.hasProperty(propertyName)) {
             String userName = node.getPropertyAsString(propertyName);
             if (userName.equalsIgnoreCase("system") && !useSystemUser)

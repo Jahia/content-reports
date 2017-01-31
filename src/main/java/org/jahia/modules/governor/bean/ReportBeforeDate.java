@@ -1,6 +1,9 @@
 package org.jahia.modules.governor.bean;
 
+import org.jahia.exceptions.JahiaException;
 import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.content.JCRSessionWrapper;
+import org.jahia.services.content.decorator.JCRSiteNode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,32 +17,42 @@ import java.util.*;
  *
  * Created by Juan Carlos Rodas.
  */
-public class ReportBeforeDate implements IReport {
+public class ReportBeforeDate extends QueryReport {
 
     private Map<String, Integer> dataMap;
     private List<Map<String, String>> dataList;
+
+    private String searchPath;
+    private String strDate;
     private Boolean useSystemUser;
-    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
      * The ReportBeforeDate Constructor.
      *
      * @param useSystemUser
      */
-    public ReportBeforeDate(Boolean useSystemUser){
-        this.setDataList(new ArrayList<Map<String, String>>());
-        this.setDataMap(new HashMap<String, Integer>());
+    public ReportBeforeDate(JCRSiteNode siteNode, String path, String date, Boolean useSystemUser){
+        super(siteNode);
+        this.searchPath = path;
+        this.strDate = date;
+        this.dataList = new ArrayList<Map<String, String>>();
+        this.dataMap = new HashMap<String, Integer>();
         this.useSystemUser = useSystemUser;
+    }
+
+    @Override
+    public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException, JahiaException {
+        String strQuery = "SELECT * FROM [jmix:editorialContent] AS item WHERE ISDESCENDANTNODE(item,['" + searchPath + "']) and item.[jcr:lastModified] <= CAST('" + strDate + "T23:59:59.999Z' AS DATE)";
+        fillReport(session, strQuery, offset, limit);
     }
 
     /**
      * addItem
      *
      * @param node @{@link JCRNodeWrapper}
-     * @param contentType @{@link IReport.SEARCH_CONTENT_TYPE}
      * @throws RepositoryException
      */
-    public void addItem(JCRNodeWrapper node, SEARCH_CONTENT_TYPE contentType) throws RepositoryException {
+    public void addItem(JCRNodeWrapper node) throws RepositoryException {
         String propertyName = "jcr:lastModifiedBy";
         Date itemDate = node.getLastModifiedAsDate();
         Map<String, String> nodeMap;
@@ -61,14 +74,14 @@ public class ReportBeforeDate implements IReport {
             nodeMap.put("type", node.getPrimaryNodeTypeName());
             nodeMap.put("typeName", node.getPrimaryNodeTypeName().split(":")[1]);
 
-            getDataList().add(nodeMap);
+            dataList.add(nodeMap);
 
 
             /*setting the counter*/
-            if(getDataMap().containsKey(dateFormat.format(itemDate)))
-                getDataMap().put(dateFormat.format(itemDate), getDataMap().get(dateFormat.format(itemDate)) + 1);
+            if(dataMap.containsKey(dateFormat.format(itemDate)))
+                dataMap.put(dateFormat.format(itemDate), dataMap.get(dateFormat.format(itemDate)) + 1);
             else
-                getDataMap().put(dateFormat.format(itemDate), 1);
+                dataMap.put(dateFormat.format(itemDate), 1);
         }
     }
 
@@ -81,7 +94,6 @@ public class ReportBeforeDate implements IReport {
     public JSONObject getJson() throws JSONException {
         JSONObject jsonObject = new JSONObject();
         JSONArray jArray = new JSONArray();
-        JSONObject jsonObjectItem = null;
         JSONArray jsonArrayLabels = new JSONArray();;
         JSONArray jsonArrayValues = new JSONArray();
 
@@ -92,13 +104,8 @@ public class ReportBeforeDate implements IReport {
         }
 
         /* filling the table data */
-        for (Map<String, String> itemMap : getDataList()){
-            jsonObjectItem = new JSONObject();
-            jsonObjectItem.put("date", itemMap.get("date"));
-            jsonObjectItem.put("nodeName", itemMap.get("nodeName"));
-            jsonObjectItem.put("type", itemMap.get("type"));
-            jsonObjectItem.put("typeName", itemMap.get("typeName"));
-            jArray.put(jsonObjectItem);
+        for (Map<String, String> itemMap :dataList){
+            jArray.put(new JSONObject(itemMap));
         }
 
         jsonObject.put("items",jArray);
@@ -108,39 +115,4 @@ public class ReportBeforeDate implements IReport {
         return jsonObject;
     }
 
-    /**
-     * getDataMap
-     *
-     * @return {@link Map}
-     */
-    public Map<String, Integer> getDataMap() {
-        return dataMap;
-    }
-
-    /**
-     * setDataMap
-     *
-     * @param dataMap {@link Map}
-     */
-    public void setDataMap(Map<String, Integer> dataMap) {
-        this.dataMap = dataMap;
-    }
-
-    /**
-     * getDataList
-     *
-     * @return {@link List}
-     */
-    public List<Map<String, String>> getDataList() {
-        return dataList;
-    }
-
-    /**
-     * setDataList
-     *
-     * @param dataList {@link List}
-     */
-    public void setDataList(List<Map<String, String>> dataList) {
-        this.dataList = dataList;
-    }
 }

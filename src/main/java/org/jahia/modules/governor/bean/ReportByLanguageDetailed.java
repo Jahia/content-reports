@@ -1,7 +1,9 @@
 package org.jahia.modules.governor.bean;
 
 import org.jahia.api.Constants;
+import org.jahia.exceptions.JahiaException;
 import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,15 +20,14 @@ import java.util.*;
  *
  * Created by Juan Carlos Rodas.
  */
-public class ReportByLanguageDetailed implements IReport {
+public class ReportByLanguageDetailed extends QueryReport {
 
-    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private JCRSiteNode siteNode;
+    private static Logger logger = LoggerFactory.getLogger(ReportByLanguageDetailed.class);
+
     private List<Map<String, String>> listMap;
     private Map<String, String> itemMap;
     private NodeLangInformation langInformation;
     private String language;
-    private static Logger logger = LoggerFactory.getLogger(ReportByLanguageDetailed.class);
 
     /**
      * The constructor for the class.
@@ -35,19 +36,23 @@ public class ReportByLanguageDetailed implements IReport {
      * @param language {@link String}
      */
     public ReportByLanguageDetailed(JCRSiteNode siteNode, String language) {
-        this.siteNode = siteNode;
+        super(siteNode);
         this.listMap = new ArrayList<>();
         this.language = language;
+    }
+
+    @Override
+    public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException, JahiaException {
+        fillReport(session, "SELECT item.* FROM [jmix:editorialContent] AS item WHERE ISDESCENDANTNODE(item,['" + siteNode.getPath() + "']) ORDER BY item.date ", offset, limit);
     }
 
     /**
      * addItem
      *
      * @param node {@link JCRNodeWrapper}
-     * @param contentType {@link SEARCH_CONTENT_TYPE}
      * @throws RepositoryException
      */
-    public void addItem(JCRNodeWrapper node, SEARCH_CONTENT_TYPE contentType) throws RepositoryException {
+    public void addItem(JCRNodeWrapper node) throws RepositoryException {
         this.langInformation = getLanguageInformation(node);
 
         /* adding the item information */
@@ -96,17 +101,10 @@ public class ReportByLanguageDetailed implements IReport {
     public JSONObject getJson() throws JSONException, RepositoryException {
         JSONObject jsonObject = new JSONObject();
         JSONArray jArray = new JSONArray();
-        JSONObject jsonObjectItem;
 
         /* get all items from list */
         for (Map<String, String> itemMap : this.listMap) {
-            jsonObjectItem = new JSONObject();
-
-            /* adding each item to json  */
-            for (String keyMap : itemMap.keySet())
-                jsonObjectItem.put(keyMap, itemMap.get(keyMap));
-
-            jArray.put(jsonObjectItem);
+            jArray.put(new JSONObject(itemMap));
         }
 
         jsonObject.put("language", language);
