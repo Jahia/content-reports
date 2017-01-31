@@ -86,9 +86,12 @@ function fillReportByAuthorDetail(id, gridBaseTitle, totalLabel){
     $('#rba-secondary-grid-detail').html(gridBaseTitle + '&nbsp' + gridTitle);
 
     // open the window modal for the author grid
-    $('#authorDetailModel').modal({
+    setTimeout(function(){
+      $('#authorDetailModel').modal({
         show: 'true'
-    });
+      });
+    }, 40);
+
 
     // getting the table
     var table = $('#byAuthorDetailTable').DataTable();
@@ -149,7 +152,7 @@ function drawReportByAuthorChart(labelArray, dataArray) {
         labels: labelArray,
         datasets: [{
             label:'Total',
-            backgroundColor: "rgba(220,220,220,0.5)",
+            backgroundColor: "#ECEFF1",
             data: dataArray
         }]
     };
@@ -165,10 +168,13 @@ function drawReportByAuthorChart(labelArray, dataArray) {
         options: {
             elements: {
                 rectangle: {
-                    borderWidth: 2,
-                    borderColor: 'rgb(51, 153, 225)',
+                    borderWidth: 0,
+                    borderColor: 'transparent',
                     borderSkipped: 'bottom'
                 }
+            },
+            legend: {
+              display: false
             },
             responsive: true,
             scales: {
@@ -263,12 +269,12 @@ function drawReportByAllDateChart(labelArray, dataArray, dataArray2) {
         labels: labelArray,
         datasets: [{
             label:'Pages',
-            backgroundColor: "rgba(220,220,220,0.5)",
+            backgroundColor: "#ECEFF1",
             data: dataArray
         },
         {
             label:'Content',
-            backgroundColor: "rgba(151,187,205,0.5)",
+            backgroundColor: "#9FA8DA",
             data: dataArray2
         }]
     };
@@ -284,10 +290,13 @@ function drawReportByAllDateChart(labelArray, dataArray, dataArray2) {
         options: {
             elements: {
                 rectangle: {
-                    borderWidth: 2,
-                    borderColor: 'rgb(51, 153, 225)',
+                    borderWidth: 0,
+                    borderColor: 'transparent',
                     borderSkipped: 'bottom'
                 }
+            },
+            legend: {
+              display: false
             },
             responsive: true,
             scales: {
@@ -366,7 +375,7 @@ function drawReportBeforeDateChart(labelArray, dataArray) {
         labels: labelArray,
         datasets: [{
             label:'Content',
-            backgroundColor: "rgba(220,220,220,0.5)",
+            backgroundColor: "#ECEFF1",
             data: dataArray
         }]
     };
@@ -382,10 +391,13 @@ function drawReportBeforeDateChart(labelArray, dataArray) {
         options: {
             elements: {
                 rectangle: {
-                    borderWidth: 2,
-                    borderColor: 'rgb(51, 153, 225)',
+                    borderWidth: 0,
+                    borderColor: 'transparent',
                     borderSkipped: 'bottom'
                 }
+            },
+            legend: {
+              display: false
             },
             responsive: true,
             scales: {
@@ -529,7 +541,13 @@ function fillReportByTypeDetailed(baseUrl, totalLabel, loadingLabel){
         var ctx = document.getElementById("canvasReportByTypeDetailed").getContext("2d");
         byTypeDetailChart = new Chart(ctx, {
             type: 'pie',
-            data: pieChartData
+            data: pieChartData,
+            options: {
+                legend: {
+                  display: true,
+                  position: 'left'
+              }
+            }
         });
     }
 }

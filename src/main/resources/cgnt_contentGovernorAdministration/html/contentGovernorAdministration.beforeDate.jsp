@@ -46,7 +46,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <input type="text" class="datepicker form-control" value="" id="dateRDB" name="dateRDB" data-date-format="yyyy-mm-dd" >
+                        <input type="text" class="datepicker form-control" value="" id="dateRDB" name="dateRDB" data-date-format="yyyy-mm-dd" placeholder="yyy-mm-dd">
                     </div>
                 </div>
 

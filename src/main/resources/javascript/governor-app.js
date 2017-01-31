@@ -24,7 +24,7 @@ $(document).ready(function () {
     $('.datepicker').datepicker().on('changeDate', function(e){
         $(this).datepicker('hide');
     });
-    
+
     $('.governor-data-table').DataTable( {
         "language": {
             "url": langFileUrl
@@ -173,8 +173,7 @@ function ajaxindicatorstart(text)
         'margin':'auto',
         'font-size':'16px',
         'z-index':'10',
-        'color':'#ffffff'
-
+        'color':'transparent'
     });
 
     jQuery('#resultLoading .bg').height('100%');
@@ -216,8 +215,6 @@ function getDataTablesLang(baseUrl, lang){
 		url += 'Italian.json';
 	else
 		url += 'English.json';
-	
+
 	return url;
 }
-
-
