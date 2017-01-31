@@ -3,7 +3,10 @@ package org.jahia.modules.governor.bean;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.jahia.api.Constants;
+import org.jahia.exceptions.JahiaException;
 import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.content.JCRSessionWrapper;
+import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.utils.i18n.Messages;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,7 +22,7 @@ import java.util.*;
  *
  * Created by Juan Carlos Rodas.
  */
-public class ReportByStatus implements IReport {
+public class ReportByStatus extends BaseReport {
 
     private final String PROPERTY_NAME = "name";
     private final String PROPERTY_LIST = "list";
@@ -32,18 +35,25 @@ public class ReportByStatus implements IReport {
     /**
      * The class constructor.
      */
-    public ReportByStatus() {
+    public ReportByStatus(JCRSiteNode siteNode, String path) {
+        super(siteNode);
         this.dataMap = new HashMap<>();
+    }
+
+    @Override
+    public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException, JahiaException {
+//        String strQuery = "SELECT * FROM [jmix:editorialContent] AS item WHERE ISDESCENDANTNODE(item,['" + searchPath + "'])";
+//        return fillIreport(session, strQuery, new ReportByStatus(), null).getJson();
+
     }
 
     /**
      * addItem
      *
      * @param node {@link JCRNodeWrapper}
-     * @param contentType {@link SEARCH_CONTENT_TYPE}
      * @throws RepositoryException
      */
-    public void addItem(JCRNodeWrapper node, SEARCH_CONTENT_TYPE contentType) throws RepositoryException {
+    public void addItem(JCRNodeWrapper node) throws RepositoryException {
         if (node.hasProperty(Constants.WORKINPROGRESS))
             addItemDataToList("WIP", "cgnt_contentGovernor.status.workInProgress", "work in progress", node);
         else if (node.getLastPublishedAsDate() != null && node.getLastPublishedAsDate().before(node.getLastModifiedAsDate()))

@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
+
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
@@ -22,18 +23,12 @@ import java.util.*;
 /**
  * Created by Juan Carlos Rodas on 5/09/201.
  */
-public class ReportOrphanContent implements IReport {
-
-    protected DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    protected static final String BUNDLE = "resources.content-governor";
-    protected Locale locale = LocaleContextHolder.getLocale();
-    protected Locale defaultLocale;
+public class ReportOrphanContent extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportOrphanContent.class);
-    protected JCRSiteNode siteNode;
-    List<Map<String, String>> dataList;
-    protected Map<String, Locale> localeMap;
-    JCRSessionWrapper session;
+    protected static final String BUNDLE = "resources.content-governor";
+
     private Map<String, JCRNodeWrapper> userMap;
+
 
 
     /**
@@ -41,32 +36,32 @@ public class ReportOrphanContent implements IReport {
      *
      * @param siteNode the site node {@link JCRSiteNode}
      */
-    public ReportOrphanContent(JCRSiteNode siteNode, JCRSessionWrapper session) throws RepositoryException {
-        this.siteNode  = siteNode;
-        this.session   = session;
-        this.localeMap = new HashMap<>();
-        this.dataList  = new ArrayList<>();
-        this.userMap   = new HashedMap();
+    public ReportOrphanContent(JCRSiteNode siteNode) {
+        super(siteNode);
+        this.siteNode = siteNode;
+        this.userMap = new HashedMap();
+    }
 
-        for (Locale ilocale : siteNode.getLanguagesAsLocales())
-            this.localeMap.put(ilocale.toString(), locale);
-
-        this.defaultLocale = this.localeMap.get(siteNode.getDefaultLanguage());
-        this.fillUserData();
+    @Override
+    public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
+        this.fillUserData(session);
+        String pageQueryStr = "SELECT * FROM [jnt:page] AS item WHERE ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])";
+        String contentQueryStr = "SELECT * FROM [jmix:editorialContent] AS item WHERE ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])";
+        fillReport(session, pageQueryStr, offset, limit);
+        fillReport(session, contentQueryStr, offset, limit);
     }
 
     /**
      * addItem
      *
-     * @param node {@link JCRNodeWrapper}
-     * @param contentType {@link SEARCH_CONTENT_TYPE}
+     * @param node        {@link JCRNodeWrapper}
      * @throws RepositoryException
      */
-    public void addItem(JCRNodeWrapper node, SEARCH_CONTENT_TYPE contentType) throws RepositoryException {
+    public void addItem(JCRNodeWrapper node) throws RepositoryException {
 
-        if(!node.getCreationUser().equalsIgnoreCase("system") && !this.userMap.containsKey(node.getCreationUser())){
+        if (!node.getCreationUser().equalsIgnoreCase("system") && !this.userMap.containsKey(node.getCreationUser())) {
             JCRNodeWrapper itemParentPage = node;
-            if(!node.isNodeType("jnt:page")){
+            if (!node.isNodeType("jnt:page")) {
                 itemParentPage = JCRContentUtils.getParentOfType(node, "jnt:page");
             }
 
@@ -94,38 +89,12 @@ public class ReportOrphanContent implements IReport {
     }
 
     /**
-     * getJson
-     *
-     * @return {@link JSONObject}
-     * @throws JSONException
-     * @throws RepositoryException
-     */
-    public JSONObject getJson() throws JSONException, RepositoryException {
-        JSONObject jsonObject = new JSONObject();
-        JSONArray jArray = new JSONArray();
-        JSONObject jsonObjectItem;
-
-        for (Map<String, String> nodeMap : this.dataList) {
-            jsonObjectItem = new JSONObject();
-            for (String key: nodeMap.keySet()) {
-                jsonObjectItem.put(key, nodeMap.get(key));
-            }
-            jArray.put(jsonObjectItem);
-        }
-
-        jsonObject.put("siteName", siteNode.getName());
-        jsonObject.put("siteDisplayableName", siteNode.getDisplayableName());
-        jsonObject.put("items", jArray);
-        return jsonObject;
-    }
-
-    /**
      * fillUserData
      * <p>fill the user map with the user nodes from jahia. </p>
      *
      * @throws RepositoryException
      */
-    private void fillUserData() throws RepositoryException {
+    private void fillUserData(JCRSessionWrapper session) throws RepositoryException {
         String queryStr = "SELECT * FROM [jnt:user] ";
         // Getting the items  nodes.
         Query query = session.getWorkspace().getQueryManager().createQuery(queryStr, Query.JCR_SQL2);
@@ -135,6 +104,7 @@ public class ReportOrphanContent implements IReport {
             this.userMap.put(nodeItem.getName(), nodeItem);
         }
     }
+
 
 
 }

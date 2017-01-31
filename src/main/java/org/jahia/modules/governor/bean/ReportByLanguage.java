@@ -1,6 +1,8 @@
 package org.jahia.modules.governor.bean;
 
+import org.jahia.exceptions.JahiaException;
 import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,10 +17,9 @@ import java.util.Locale;
  *
  * Created by Juan Carlos Rodas.
  */
-public class ReportByLanguage implements IReport {
+public class ReportByLanguage extends BaseReport {
 
     private static Logger logger = LoggerFactory.getLogger(ReportByLanguage.class);
-    private JCRSiteNode siteNode;
 
     /**
      * The constructor for the class.
@@ -26,17 +27,12 @@ public class ReportByLanguage implements IReport {
      * @param siteNode {@link JCRSiteNode}
      */
     public ReportByLanguage(JCRSiteNode siteNode) {
-        this.siteNode = siteNode;
+        super(siteNode);
     }
 
-    /**
-     * addItem
-     *
-     * @param node {@link JCRNodeWrapper}
-     * @param contentType {@link SEARCH_CONTENT_TYPE}
-     * @throws RepositoryException
-     */
-    public void addItem(JCRNodeWrapper node, SEARCH_CONTENT_TYPE contentType) throws RepositoryException {}
+    @Override
+    public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException, JahiaException {
+    }
 
     /**
      * getJson

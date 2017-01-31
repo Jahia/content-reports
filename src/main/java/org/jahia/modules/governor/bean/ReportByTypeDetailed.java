@@ -1,7 +1,10 @@
 package org.jahia.modules.governor.bean;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.jahia.exceptions.JahiaException;
 import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.content.JCRSessionWrapper;
+import org.jahia.services.content.decorator.JCRSiteNode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,7 +16,7 @@ import java.util.*;
  *
  * Created by Juan Carlos Rodas.
  */
-public class ReportByTypeDetailed implements IReport {
+public class ReportByTypeDetailed extends BaseReport {
 
     private Map<String, Map<String, Object>> dataMap;
     private Integer totalCount = 0;
@@ -21,18 +24,25 @@ public class ReportByTypeDetailed implements IReport {
     /**
      * The class constructor.
      */
-    public ReportByTypeDetailed() {
+    public ReportByTypeDetailed(JCRSiteNode siteNode, String path) {
+        super(siteNode);
         this.dataMap = new HashMap<>();
+    }
+
+    @Override
+    public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException, JahiaException {
+//        String strQuery = "SELECT * FROM [jmix:editorialContent] AS item WHERE ISDESCENDANTNODE(item,['" + searchPath + "'])";
+//        return fillIreport(session, strQuery, new ReportByTypeDetailed(), null).getJson();
     }
 
     /**
      * addItem
      *
      * @param node {@link JCRNodeWrapper}
-     * @param contentType {@link SEARCH_CONTENT_TYPE}
+     * @param contentType {@link SearchContentType}
      * @throws RepositoryException
      */
-    public void addItem(JCRNodeWrapper node, SEARCH_CONTENT_TYPE contentType) throws RepositoryException {
+    public void addItem(JCRNodeWrapper node, SearchContentType contentType) throws RepositoryException {
 
         if (!getDataMap().containsKey(node.getPrimaryNodeTypeName())) {
             getDataMap().put(node.getPrimaryNodeTypeName(), new HashedMap());
