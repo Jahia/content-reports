@@ -87,9 +87,9 @@ function fillReportByAuthorDetail(id, gridBaseTitle, totalLabel){
 
     // open the window modal for the author grid
     setTimeout(function(){
-      $('#authorDetailModel').modal({
-        show: 'true'
-      });
+        $('#authorDetailModel').modal({
+            show: 'true'
+        });
     }, 40);
 
 
@@ -113,6 +113,7 @@ function fillReportByAuthorDetail(id, gridBaseTitle, totalLabel){
     $(table.column(1).footer()).html(checkUndefined(currentItemsReportByAuthor[id].itemAuthorDetails.totalCount));
     $(table.column(2).footer()).html("100.00");
 }
+
 
 
 function fillReportByAuthorPages(id, yesLabel, noLabel, gridPagesTitle) {
@@ -203,7 +204,9 @@ function drawReportByAuthorChart(labelArray, dataArray) {
 var byAllDateChart;
 var beforeDateChart;
 
-function fillReportByAllDate(baseUrl, gridLabel, totalLabel, loadingLabel){
+
+
+function fillReportByAllDateAndAuthor(baseUrl, gridLabel, totalLabel, loadingLabel){
 
     var pathTxt = $('#pathTxtRDA').val();
     if(pathTxt=='null' || pathTxt==''){
@@ -218,45 +221,53 @@ function fillReportByAllDate(baseUrl, gridLabel, totalLabel, loadingLabel){
     ajaxindicatorstart(loadingLabel);
 
     var typeAuthor = $("input[name='typeAuthorRDA']:checked").val();
-    var parameters = "&typeAuthor=" + typeAuthor + "&pathTxt='" + pathTxt + "'";
+    var typeSearch = $("input[name='typeOfSearch']:checked").val();
+    var typeDateSearch = $("input[name='typeDateSearch']:checked").val();
+    var typeAuthorSearch = $("input[name='typeAuthorSearch']:checked").val();
+    var dateBegin = $("input[name='dateBegin']").val();
+    var dateEnd = $("input[name='dateEnd']").val();
+    var searchAuthor = $("input[name='searchAuthor']:checked").val();
+    var searchUsername = $("input[name='searchUsername']").val();
+    if (searchAuthor == "on") { searchAuthor = true;} else  { searchAuthor = false; }
+    var searchByDate = $("input[name='searchByDate']:checked").val();
+    if (searchByDate == "on") { searchByDate = true;} else  { searchByDate = false; }
+    var parameters = "&typeAuthor=" + typeAuthor + "&pathTxt='" + pathTxt + "'&typeSearch=" + typeSearch + "&searchByDate=" + searchByDate + "&typeDateSearch=" + typeDateSearch
+        + "&dateEnd=" + dateEnd + "&dateBegin=" + dateBegin + "&searchAuthor=" + searchAuthor + "&searchUsername=" + searchUsername + "&typeAuthorSearch=" + typeAuthorSearch;
 
-    var actionUrl = getReportActionUrl(baseUrl, 2, parameters);
+    var actionUrl = getReportActionUrl(baseUrl, 20, parameters);
 
     $.getJSON( actionUrl, function( data ) {
 
-        var charLabels = [];
-        var chartData= [];
-        var chartData2= [];
+
 
         // setting the table name
         $('#rba-principal-grid-rda').html(gridLabel + '&nbsp(' + typeAuthor + ')');
 
         // getting the table
-        var table = $('#byAllDateTable').DataTable();
+        var table = $('#byAllDateAndAuthorTable').DataTable();
 
         // clear all content from table
         table.clear().draw();
 
         // adding new content to table
         $.each(data.items, function( index, val ) {
-            charLabels.push(data.items[index].year + ' ' + data.items[index].month);
-            chartData.push(data.items[index].pages);
-            chartData2.push(data.items[index].content);
+            alert(data.items[index]);
+
             table.row.add( [
-                data.items[index].year + " " + data.items[index].month,
-                checkUndefined(data.items[index].pages),
-                checkUndefined(data.items[index].content)
+                data.items[index].title,
+                checkUndefined(data.items[index].path),
+                checkUndefined(data.items[index].type),
+                checkUndefined(data.items[index].created),
+                checkUndefined(data.items[index].modified),
+                checkUndefined(data.items[index].published),
+                checkUndefined(data.items[index].locked)
             ] ).draw();
         });
 
         // Update footer
         $(table.column(0).footer()).html(totalLabel);
-        $(table.column(1).footer()).html(checkUndefined(data.totalPages));
-        $(table.column(2).footer()).html(checkUndefined(data.totalContent));
+        $(table.column(1).footer()).html(checkUndefined(data.totalContent));
 
-
-        // drawing the chart
-        drawReportByAllDateChart(charLabels, chartData, chartData2);
 
         //stop loading message
         ajaxindicatorstop();

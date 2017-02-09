@@ -102,6 +102,12 @@ public class GovernorReportAction extends Action {
                 return new ReportCustomCacheContent(renderContext.getSite());
             case "19":
                 return new ReportAclInheritanceStopped(renderContext.getSite());
+            case "20":
+                return new ReportByDateAndAuthor(renderContext.getSite(),
+                        (req.getParameter("typeAuthor").equalsIgnoreCase("created")) ? BaseReport.SearchActionType.CREATION : BaseReport.SearchActionType.UPDATE,
+                        req.getParameter("pathTxt").replaceAll("'", ""), req.getParameter("typeSearch"), true, req.getParameter("searchByDate").equals("true"),
+            req.getParameter("typeDateSearch"), req.getParameter("dateBegin"), req.getParameter("dateEnd"),req.getParameter("searchAuthor").equals("true"),
+                        req.getParameter("searchUsername"), req.getParameter("typeAuthorSearch"));
             default:
                 throw new GovernorException("Invalid reportId: " + reportId);
         }
