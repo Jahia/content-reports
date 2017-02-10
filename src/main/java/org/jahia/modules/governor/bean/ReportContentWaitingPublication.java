@@ -133,6 +133,7 @@ public class ReportContentWaitingPublication extends QueryReport {
             for (String lang : localeMap.keySet()) {
                 List<Workflow> wfList = WorkflowService.getInstance().getActiveWorkflows(node, localeMap.get(lang), localeMap.get(lang));
                 this.elementMap.put(lang, new HashMap());
+
                 this.elementMap.get(lang).put("wfStarted", getWorkflowData( wfList, "startTime"));
                 this.elementMap.get(lang).put("wfName", getWorkflowData( wfList, "name"));
                 this.elementMap.get(lang).put("wfDName", getWorkflowData( wfList, "displayableName"));

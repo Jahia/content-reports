@@ -25,7 +25,7 @@ import java.util.*;
 public class ReportAclInheritanceStopped extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportAclInheritanceStopped.class);
     protected static final String BUNDLE = "resources.content-governor";
-
+    private long totalContent;
 
     /**
      * Instantiates a new Report pages without title.
@@ -38,7 +38,9 @@ public class ReportAclInheritanceStopped extends QueryReport {
 
     @Override
     public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
-        fillReport(session, "SELECT * FROM [jnt:acl] AS item WHERE [j:inherit]=false and ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])", offset, limit);
+        String queryStr = "SELECT * FROM [jnt:acl] AS item WHERE [j:inherit]=false and ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])";
+        fillReport(session, queryStr, offset, limit);
+        totalContent = getTotalCount(session, queryStr);
     }
 
     /**
@@ -68,6 +70,26 @@ public class ReportAclInheritanceStopped extends QueryReport {
         nodeMap.put("displayTitle", StringUtils.isNotEmpty(nodeMap.get("nodeTitle")) ? nodeMap.get("nodeTitle") : nodeMap.get("nodeName"));
         this.dataList.add(nodeMap);
     }
+
+    public JSONObject getJson() throws JSONException, RepositoryException {
+
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jArray = new JSONArray();
+
+        for (Map<String, String> nodeMap : this.dataList) {
+            JSONArray item = new JSONArray();
+            item.put(nodeMap.get("nodeName"));
+            item.put(nodeMap.get("nodePath"));
+            jArray.put(item);        }
+
+        jsonObject.put("recordsTotal", totalContent);
+        jsonObject.put("recordsFiltered", totalContent);
+        jsonObject.put("siteName", siteNode.getName());
+        jsonObject.put("siteDisplayableName", siteNode.getDisplayableName());
+        jsonObject.put("data", jArray);
+        return jsonObject;
+    }
+
 
 
 }

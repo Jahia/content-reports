@@ -57,7 +57,7 @@ public class ReportByUnstranslated extends QueryReport {
 
         query = "SELECT * FROM [" + nodetype + "] AS item WHERE ISDESCENDANTNODE(item,['" + searchPath + "']) ";
         System.out.println(query);
-        fillReport(session, query, offset, 50);
+        fillReport(session, query, offset, 1000); // temporary limit until a real server side pagination is implemented
         setTotalContent(pageMap.size());
     }
 

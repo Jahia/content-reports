@@ -25,7 +25,7 @@ import java.util.*;
 public class ReportLockedContent extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportLockedContent.class);
     protected static final String BUNDLE = "resources.content-governor";
-
+    private long totalContent;
 
     /**
      * Instantiates a new Report pages without title.
@@ -40,6 +40,7 @@ public class ReportLockedContent extends QueryReport {
     public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
         String pageQueryStr = "SELECT * FROM [jmix:editorialContent] AS item WHERE [jcr:lockOwner] is not null and ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])";
         fillReport(session, pageQueryStr, offset, limit);
+        totalContent = getTotalCount(session, pageQueryStr);
     }
 
     /**
@@ -81,6 +82,29 @@ public class ReportLockedContent extends QueryReport {
             this.dataList.add(nodeMap);
         }
     }
+    @Override
+    public JSONObject getJson() throws JSONException, RepositoryException {
+
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jArray = new JSONArray();
+
+        for (Map<String, String> nodeMap : this.dataList) {
+            JSONArray item = new JSONArray();
+            item.put(nodeMap.get("nodeName"));
+            item.put(nodeMap.get("nodeType"));
+            item.put(nodeMap.get("nodeAuthor"));
+            item.put(nodeMap.get("nodeLockedBy"));
+            item.put(nodeMap.get("nodeUsedInPagePath"));
+            jArray.put(item);
+        }
+        jsonObject.put("recordsTotal", totalContent);
+        jsonObject.put("recordsFiltered", totalContent);
+        jsonObject.put("siteName", siteNode.getName());
+        jsonObject.put("siteDisplayableName", siteNode.getDisplayableName());
+        jsonObject.put("data", jArray);
+        return jsonObject;
+    }
+
 
 
 }

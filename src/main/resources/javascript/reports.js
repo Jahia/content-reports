@@ -984,27 +984,33 @@ function fillReportLockedContent(baseUrl, loadingLabel, labelUnlock, labelUnlock
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    $.getJSON( actionUrl, function( data ) {
-        // getting the table
-        var table = $('#lockedContentTable').DataTable();
 
-        // clear all content from table
-        table.clear().draw();
+    initDataTable ("lockedContentTable", actionUrl);
 
-        // adding new content to table
-        $.each( data.items, function( index, val ) {
-            table.row.add( [
-                data.items[index].displayTitle,
-                capitalize(data.items[index].nodeTypeTechName),
-                data.items[index].nodeAuthor,
-                data.items[index].nodeLockedBy,
-                "<a href='" + data.items[index].nodeUsedInPageUrl + "' target='_blank' >" +  data.items[index].nodeUsedInPagePath + "</a>"
-            ] ).draw();
-        });
+    ajaxindicatorstop();
+    /*
+     $.getJSON( actionUrl, function( data ) {
+     // getting the table
+     var table = $('#lockedContentTable').DataTable();
 
-        //stop loading message
-        ajaxindicatorstop()
-    });
+     // clear all content from table
+     table.clear().draw();
+
+     // adding new content to table
+     $.each( data.items, function( index, val ) {
+     table.row.add( [
+     data.items[index].displayTitle,
+     capitalize(data.items[index].nodeTypeTechName),
+     data.items[index].nodeAuthor,
+     data.items[index].nodeLockedBy,
+     "<a href='" + data.items[index].nodeUsedInPageUrl + "' target='_blank' >" +  data.items[index].nodeUsedInPagePath + "</a>"
+     ] ).draw();
+     });
+
+     //stop loading message
+     ajaxindicatorstop()
+
+     });*/
 }
 
 
@@ -1095,6 +1101,11 @@ function fillReportCustomCacheContent(baseUrl, loadingLabel){
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
+    initDataTable ("customCacheContentTable", actionUrl);
+
+    ajaxindicatorstop();
+
+    /*
     $.getJSON( actionUrl, function( data ) {
         // getting the table
         var table = $('#customCacheContentTable').DataTable();
@@ -1115,7 +1126,9 @@ function fillReportCustomCacheContent(baseUrl, loadingLabel){
 
         //stop loading message
         ajaxindicatorstop();
-    });
+     });
+
+        */
 }
 
 
@@ -1130,7 +1143,11 @@ function fillReportPageAclInheritanceBreak(baseUrl, loadingLabel){
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    $.getJSON( actionUrl, function( data ) {
+    initDataTable ("pageAclInheritanceBreakTable", actionUrl);
+
+    ajaxindicatorstop();
+
+   /* $.getJSON( actionUrl, function( data ) {
         // getting the table
         var table = $('#pageAclInheritanceBreakTable').DataTable();
 
@@ -1147,5 +1164,5 @@ function fillReportPageAclInheritanceBreak(baseUrl, loadingLabel){
 
         //stop loading message
         ajaxindicatorstop();
-    });
+    }); */
 }

@@ -51,7 +51,9 @@
                                  j:titleKey="cgnt_contentGovernor"
                                  j:view="default"
                                  jcr:mixinTypes="jmix:rbTitle"
-                                 jcr:primaryType="jnt:contentTemplate">
+                                 j:requiredPermissionNames="contentGovernor"
+
+                                          jcr:primaryType="jnt:contentTemplate">
                             <j:translation_en jcr:language="en"
                                     jcr:mixinTypes="mix:title"
                                     jcr:primaryType="jnt:translation"

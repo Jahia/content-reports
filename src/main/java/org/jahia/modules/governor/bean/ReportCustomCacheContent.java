@@ -26,7 +26,7 @@ import java.util.*;
 public class ReportCustomCacheContent extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportCustomCacheContent.class);
     protected static final String BUNDLE = "resources.content-governor";
-
+    private long totalContent;
 
     /**
      * Instantiates a new Report pages without title.
@@ -39,7 +39,10 @@ public class ReportCustomCacheContent extends QueryReport {
 
     @Override
     public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
-        fillReport(session, "SELECT * FROM [jnt:content] AS item WHERE item.[j:expiration] IS NOT NULL AND ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])", offset, limit);
+        String queryStr = "SELECT * FROM [jnt:content] AS item WHERE item.[j:expiration] IS NOT NULL AND ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])";
+        fillReport(session, queryStr, offset, limit);
+        totalContent = getTotalCount(session, queryStr);
+
     }
 
     /**
@@ -76,6 +79,28 @@ public class ReportCustomCacheContent extends QueryReport {
         nodeMap.put("nodeTitle", (node.hasI18N(this.locale) && node.getI18N(this.defaultLocale).hasProperty("jcr:title")) ? node.getI18N(this.defaultLocale).getProperty("jcr:title").getString() : "");
         nodeMap.put("displayTitle", StringUtils.isNotEmpty(nodeMap.get("nodeTitle")) ? nodeMap.get("nodeTitle") : nodeMap.get("nodeName"));
         this.dataList.add(nodeMap);
+    }
+
+    public JSONObject getJson() throws JSONException, RepositoryException {
+
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jArray = new JSONArray();
+
+        for (Map<String, String> nodeMap : this.dataList) {
+            JSONArray item = new JSONArray();
+            item.put(nodeMap.get("nodeName"));
+            item.put(nodeMap.get("nodeType"));
+            item.put(nodeMap.get("expiration"));
+            item.put(nodeMap.get("nodeAuthor"));
+            item.put(nodeMap.get("nodeUsedInPagePath"));
+            jArray.put(item);        }
+
+        jsonObject.put("recordsTotal", totalContent);
+        jsonObject.put("recordsFiltered", totalContent);
+        jsonObject.put("siteName", siteNode.getName());
+        jsonObject.put("siteDisplayableName", siteNode.getDisplayableName());
+        jsonObject.put("data", jArray);
+        return jsonObject;
     }
 
 
