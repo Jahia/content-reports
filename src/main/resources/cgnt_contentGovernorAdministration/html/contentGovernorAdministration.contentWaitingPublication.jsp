@@ -42,7 +42,7 @@
                 <!-- search button -->
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="button" class="btn btn-default" onclick="fillReportContentWaitingPublication('${currentNodePath}', '${labelToday}', '${labelYesterday}', '${labelDaysAgo}', '${labelLoading}')">
+                        <button type="button" class="btn btn-default" onclick="fillReportContentWaitingPublication('${currentNodePath}', 'labelToday', '${labelYesterday}', '${labelDaysAgo}', '${labelLoading}')">
                             <span class="glyphicon glyphicon-search"></span> <fmt:message key="cgnt_contentGovernor.report.search"/>
                         </button>
                     </div>
