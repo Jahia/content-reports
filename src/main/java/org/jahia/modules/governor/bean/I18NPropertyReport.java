@@ -33,6 +33,7 @@ public class I18NPropertyReport extends BaseReport {
     protected String propertyName;
     protected String definingType;
     private String type;
+    private long dataSetSize;
 
     /**
      * Instantiates a new Report pages without title.
@@ -98,6 +99,7 @@ public class I18NPropertyReport extends BaseReport {
             all.add(StringUtils.substringBeforeLast(row.getPath(), "/"));
 //                }
         }
+        dataSetSize = all.size();
     }
 
     /**
@@ -169,8 +171,8 @@ public class I18NPropertyReport extends BaseReport {
         }
 
 
-        jsonObject.put("recordsTotal", jArray.length());
-        jsonObject.put("recordsFiltered", jArray.length());
+        jsonObject.put("recordsTotal", dataSetSize);
+        jsonObject.put("recordsFiltered", dataSetSize);
         jsonObject.put("data", jArray);
         return jsonObject;
     }

@@ -81,7 +81,6 @@ public class ReportByDateAndAuthor extends QueryReport {
         }
 
         query = "SELECT * FROM [ " + nodetype + " ] AS item WHERE ISDESCENDANTNODE(item,['" + searchPath + "']) " + searchByDateStatement + searchByAuthorStatement;
-        System.out.println(query);
         fillReport(session, query, offset, limit);
         totalContent = getTotalCount(session, query);
     }

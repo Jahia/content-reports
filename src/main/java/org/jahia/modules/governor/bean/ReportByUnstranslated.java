@@ -56,7 +56,6 @@ public class ReportByUnstranslated extends QueryReport {
         if (typeSearch.equals("pages")) { nodetype = "jnt:page"; } else { nodetype = "jmix:editorialContent"; }
 
         query = "SELECT * FROM [" + nodetype + "] AS item WHERE ISDESCENDANTNODE(item,['" + searchPath + "']) ";
-        System.out.println(query);
         fillReport(session, query, offset, 1000); // temporary limit until a real server side pagination is implemented
         setTotalContent(pageMap.size());
     }

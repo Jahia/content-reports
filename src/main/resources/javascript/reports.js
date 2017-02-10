@@ -842,9 +842,14 @@ function fillReportPageWithoutKeywords(baseUrl, loadingLabel, labelAddKeywords){
     var actionUrl = getReportActionUrl(baseUrl, 11, null);
 
     // the loading message
+    // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    $.getJSON( actionUrl, function( data ) {
+    initDataTable ("pageWithoutKeywordsTable", actionUrl);
+
+    ajaxindicatorstop();dicatorstart(loadingLabel);
+
+    /*$.getJSON( actionUrl, function( data ) {
        // console.log(data);
 
         // getting the table
@@ -863,7 +868,7 @@ function fillReportPageWithoutKeywords(baseUrl, loadingLabel, labelAddKeywords){
 
         //stop loading message
         ajaxindicatorstop();
-    });
+    });*/
 }
 
 
@@ -877,6 +882,11 @@ function fillReportPageWithoutDescription(baseUrl, loadingLabel, labelInsertDesc
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
+    initDataTable ("pageWithoutDescriptionTable", actionUrl);
+
+    ajaxindicatorstop();
+
+    /*
     $.getJSON( actionUrl, function( data ) {
         // getting the table
         var table = $('#pageWithoutDescriptionTable').DataTable();
@@ -903,7 +913,7 @@ function fillReportPageWithoutDescription(baseUrl, loadingLabel, labelInsertDesc
             //stop loading message
             ajaxindicatorstop();
         });
-    });
+    }); */
 }
 
 /**************************************

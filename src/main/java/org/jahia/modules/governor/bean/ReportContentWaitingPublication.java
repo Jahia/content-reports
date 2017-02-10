@@ -90,7 +90,6 @@ public class ReportContentWaitingPublication extends QueryReport {
 
                 for (String key2: element.getElementMap().get(key).keySet()) {
                     jsonArrayItem.put( element.getElementMap().get(key).get(key2));
-                    System.out.println(element.getElementMap().get(key) + " - " +element.getElementMap().get(key).get(key2));
                 }
 
             }

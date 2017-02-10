@@ -63,7 +63,6 @@
                     <table width="100%" class="display governor-data-table" id="pageWithoutDescriptionTable" cellspacing="0">
                         <thead>
                             <tr>
-                                <th><fmt:message key="cgnt_contentGovernor.report.column.title"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.pagePath"/></th>
                                 <c:forEach var="lang" items="${renderContext.site.languagesAsLocales}">
                                     <th>${lang}</th>
