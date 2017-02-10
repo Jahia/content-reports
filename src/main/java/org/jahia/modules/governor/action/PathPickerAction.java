@@ -55,7 +55,7 @@ public class PathPickerAction extends Action {
             jsonBuilder.append("nodes:[");
             for(int index = 0; index < childNodeList.size(); index++){
                 if(index > 0) jsonBuilder.append(",");
-                jsonBuilder.append(getSitePathJson(childNodeList.get(index)));
+                jsonBuilder.append(getSitePathJson(childNodeList.get(index)).replaceAll("'", ""));
             }
             jsonBuilder.append("]");
         }

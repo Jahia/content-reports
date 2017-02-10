@@ -15,6 +15,10 @@ function initDataTable (id, url) {
         "serverSide": true,
         "processing": true,
         "paging": true,
+        "dom": 'Blfrtip',
+        "buttons": [
+            'csv'
+        ],
         "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
         "pageLength": 10,
         "ajax": {
