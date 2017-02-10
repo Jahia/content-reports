@@ -46,7 +46,7 @@ public class PathPickerAction extends Action {
      */
     protected String getSitePathJson(JCRNodeWrapper node) throws RepositoryException {
         StringBuilder jsonBuilder = new StringBuilder("{");
-        jsonBuilder.append("text:'").append(node.getDisplayableName()).append("',");
+        jsonBuilder.append("text:'").append(node.getDisplayableName().replaceAll("'", "")).append("',");
         jsonBuilder.append("href:'").append(node.getPath()).append("',");
         /* getting the folder child nodes */
         List<JCRNodeWrapper> childNodeList = JCRContentUtils.getChildrenOfType(node, "jnt:page");
@@ -55,7 +55,7 @@ public class PathPickerAction extends Action {
             jsonBuilder.append("nodes:[");
             for(int index = 0; index < childNodeList.size(); index++){
                 if(index > 0) jsonBuilder.append(",");
-                jsonBuilder.append(getSitePathJson(childNodeList.get(index)).replaceAll("'", ""));
+                jsonBuilder.append(getSitePathJson(childNodeList.get(index)));
             }
             jsonBuilder.append("]");
         }
