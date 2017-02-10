@@ -66,11 +66,11 @@
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.byAuthorAndDate"/>
                                     </a>
                                 </li>
-                                <li>
+                                <!--li>
                                     <a class="nav-menu-link" href="#" onclick="showView('5')">
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.byTypeDetailed"/>
                                     </a>
-                                </li>
+                                </li-->
                                 <li>
                                     <label class="tree-toggler nav-header"><fmt:message key="cgnt_contentGovernor.menu.contentReports.byLanguage"/></label>
 

@@ -851,7 +851,7 @@ function fillReportPageWithoutKeywords(baseUrl, loadingLabel, labelAddKeywords){
 
     initDataTable ("pageWithoutKeywordsTable", actionUrl);
 
-    ajaxindicatorstop();dicatorstart(loadingLabel);
+    ajaxindicatorstop();
 
     /*$.getJSON( actionUrl, function( data ) {
        // console.log(data);
