@@ -4,6 +4,31 @@
 
 
 /* function for url action creation */
+
+function initDataTable (id, url) {
+
+    // getting the table
+    console.log($('#'+id));
+    var table = $('#'+id).DataTable();
+    table.destroy();
+    var table = $('#'+id).DataTable({
+        "serverSide": true,
+        "processing": true,
+        "paging": true,
+        "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+        "pageLength": 10,
+        "ajax": {
+            "type": "GET",
+            "url": url,
+            "dataType": "json",
+            "contentType": 'application/json; charset=utf-8',
+            "complete": function(response) {
+                console.log(response);
+            }
+        }
+    });
+}
+
 function getReportActionUrl(baseUrl, reportId, parameters){
     return  baseUrl + '.GovernorReport.do?reportId=' + reportId + ((parameters==null || parameters=='') ? '' : '&' + parameters);
 }
@@ -208,13 +233,13 @@ var beforeDateChart;
 
 function fillReportByAllDateAndAuthor(baseUrl, gridLabel, totalLabel, loadingLabel){
 
-    var pathTxt = $('#pathTxtRDA').val();
+    var pathTxt = $('#pathTxtRDADA').val();
     if(pathTxt=='null' || pathTxt==''){
-        $('#pathTxtRDA').removeClass("valid").addClass("invalid");
+        $('#pathTxtRDADA').removeClass("valid").addClass("invalid");
         return;
     }
     else{
-        $('#pathTxtRDA').removeClass("invalid");
+        $('#pathTxtRDADA').removeClass("invalid");
     }
 
     // the loading message
@@ -236,31 +261,61 @@ function fillReportByAllDateAndAuthor(baseUrl, gridLabel, totalLabel, loadingLab
 
     var actionUrl = getReportActionUrl(baseUrl, 20, parameters);
 
+ //   $.getJSON( actionUrl, function( data ) {
+
+
+
+        // setting the table name
+        table = initDataTable("byAllDateAndAuthorTable", actionUrl)
+
+
+
+
+        //stop loading message
+        ajaxindicatorstop();
+}
+
+function fillReportByUntranslated(baseUrl, gridLabel, totalLabel, loadingLabel){
+    var pathTxt = $('#pathTxtRDADA').val();
+    if(pathTxt=='null' || pathTxt==''){
+        $('#pathTxtRDAU').removeClass("valid").addClass("invalid");
+        return;
+    }
+    else{
+        $('#pathTxtRDAU').removeClass("invalid");
+    }
+
+    // the loading message
+    ajaxindicatorstart(loadingLabel);
+
+    var selectLanguageBU = $("#selectLanguageBU").val();
+    var selectTypeSearch = $("input[name='typeOfSearchU']:checked").val();
+
+    var parameters = "&pathTxt='" + pathTxt + "&selectLanguageBU="+selectLanguageBU + "&selectTypeSearch=" + selectTypeSearch + "&pathTxt=" + pathTxt;
+    console.log("log: " +selectLanguageBU)
+    var actionUrl = getReportActionUrl(baseUrl, 21, parameters);
+
     $.getJSON( actionUrl, function( data ) {
 
 
 
         // setting the table name
-        $('#rba-principal-grid-rda').html(gridLabel + '&nbsp(' + typeAuthor + ')');
+        $('#rba-principal-grid-rdau').html(gridLabel);
 
         // getting the table
-        var table = $('#byAllDateAndAuthorTable').DataTable();
+        var table = $('#byAllUntranslated').DataTable();
 
         // clear all content from table
         table.clear().draw();
 
         // adding new content to table
         $.each(data.items, function( index, val ) {
-            alert(data.items[index]);
 
             table.row.add( [
                 data.items[index].title,
                 checkUndefined(data.items[index].path),
                 checkUndefined(data.items[index].type),
-                checkUndefined(data.items[index].created),
-                checkUndefined(data.items[index].modified),
-                checkUndefined(data.items[index].published),
-                checkUndefined(data.items[index].locked)
+                checkUndefined(data.items[index].created)
             ] ).draw();
         });
 
@@ -272,6 +327,7 @@ function fillReportByAllDateAndAuthor(baseUrl, gridLabel, totalLabel, loadingLab
         //stop loading message
         ajaxindicatorstop();
     });
+
 }
 
 function drawReportByAllDateChart(labelArray, dataArray, dataArray2) {
@@ -727,9 +783,13 @@ function fillReportPageWithoutTitle(baseUrl, labelLoading, labelInsertTitle){
     // the loading message
     ajaxindicatorstart(labelLoading);
 
+    table = initDataTable("pageWithoutTitleTable", actionUrl)
+    ajaxindicatorstop();
+
+    /*
     $.getJSON( actionUrl, function( data ) {
         // getting the table
-        var table = $('#pageWithoutTitleTable').DataTable();
+         var table = $('#pageWithoutTitleTable').DataTable();
 
         // clear all content from table
         table.clear().draw();
@@ -755,7 +815,10 @@ function fillReportPageWithoutTitle(baseUrl, labelLoading, labelInsertTitle){
 
 
 
+
+
     });
+     */
 }
 
 function openModalSaveTitle(path, lang){
@@ -954,6 +1017,11 @@ function fillReportContentWaitingPublication(baseUrl, labelToday, labelYesterday
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
+    initDataTable ("waitingContentTable", actionUrl);
+
+    ajaxindicatorstop();
+
+    /*
     $.getJSON( actionUrl, function( data ) {
         // getting the table
         var table = $('#waitingContentTable').DataTable();
@@ -980,8 +1048,10 @@ function fillReportContentWaitingPublication(baseUrl, labelToday, labelYesterday
         });
 
         //stop loading message
-        ajaxindicatorstop();
+
     });
+
+    */
 }
 
 

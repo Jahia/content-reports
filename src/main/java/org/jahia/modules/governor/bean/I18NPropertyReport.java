@@ -16,9 +16,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * The ReportPagesWithoutDescription Class.
@@ -140,31 +138,40 @@ public class I18NPropertyReport extends BaseReport {
 
         JSONObject jsonObject = new JSONObject();
         JSONArray jArray = new JSONArray();
-        JSONObject jsonObjectItem;
+        JSONArray jsonArrayItem;
         JSONArray jArray2;
         JSONObject jsonObjectItem2;
 
+        Set<String> languages = siteNode.getLanguages();
+
+
         for (String path : this.dataMap.keySet()) {
-            jsonObjectItem = new JSONObject();
+
+            jsonArrayItem = new JSONArray();
             jArray2 = new JSONArray();
-            jsonObjectItem.put("nodePath", path);
-            jsonObjectItem.put("nodeUrl", (String) this.dataMap.get(path).get("url"));
-            jsonObjectItem.put("nodeName", (String) this.dataMap.get(path).get("name"));
-            jsonObjectItem.put("nodeDisplayableName", (String) this.dataMap.get(path).get("displayableName"));
-            jsonObjectItem.put("nodeTitle", (String) this.dataMap.get(path).get("title"));
+            jsonArrayItem.put(path);
+            jsonObjectItem2 = new JSONObject();
             for (String langKey : ((HashMap<String, String>) this.dataMap.get(path).get("translations")).keySet()) {
-                jsonObjectItem2 = new JSONObject();
-                jsonObjectItem2.put("value", ((HashMap<String, String>) this.dataMap.get(path).get("translations")).get(langKey));
-                jsonObjectItem2.put("lang", langKey);
-                jArray2.put(jsonObjectItem2);
+
+
+                jsonObjectItem2.put(langKey, ((HashMap<String, String>) this.dataMap.get(path).get("translations")).get(langKey));
             }
-            jsonObjectItem.put("translations", jArray2);
-            jArray.put(jsonObjectItem);
+            Iterator<String> iterator = languages.iterator();
+            while(iterator.hasNext()) {
+                String lang = iterator.next();
+                if (jsonObjectItem2.has(lang)) {
+                    jsonArrayItem.put(jsonObjectItem2.get(lang));
+                } else {
+                    jsonArrayItem.put("");
+                }
+            }
+            jArray.put(jsonArrayItem);
         }
 
-        jsonObject.put("siteName", siteNode.getName());
-        jsonObject.put("siteDisplayableName", siteNode.getDisplayableName());
-        jsonObject.put("items", jArray);
+
+        jsonObject.put("recordsTotal", jArray.length());
+        jsonObject.put("recordsFiltered", jArray.length());
+        jsonObject.put("data", jArray);
         return jsonObject;
     }
 

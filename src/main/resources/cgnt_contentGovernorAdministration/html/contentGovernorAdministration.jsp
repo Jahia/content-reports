@@ -71,16 +71,8 @@
                                         <fmt:message key="cgnt_contentGovernor.menu.contentReports.byTypeDetailed"/>
                                     </a>
                                 </li>
-
-
                                 <li>
-                                    <a class="nav-menu-link" href="#" onclick="showView('7')">
-                                        <fmt:message key="cgnt_contentGovernor.menu.contentReports.byLanguage"/>
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <label class="tree-toggler nav-header"><fmt:message key="cgnt_contentGovernor.menu.contentReports.byMetadata"/></label>
+                                    <label class="tree-toggler nav-header"><fmt:message key="cgnt_contentGovernor.menu.contentReports.byLanguage"/></label>
 
                                     <ul class="nav nav-list tree">
                                         <li>
@@ -88,6 +80,21 @@
                                                 <fmt:message key="cgnt_contentGovernor.menu.contentReports.pagesWithoutTitle"/>
                                             </a>
                                         </li>
+                                        <li>
+                                            <a class="nav-menu-link" href="#" onclick="showView('21')">
+                                                <fmt:message key="cgnt_contentGovernor.menu.contentReports.pagesUnstranslated"/>
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+
+
+                                <li>
+                                    <label class="tree-toggler nav-header"><fmt:message key="cgnt_contentGovernor.menu.contentReports.byMetadata"/></label>
+
+                                    <ul class="nav nav-list tree">
+
                                         <li>
                                             <a class="nav-menu-link" href="#" onclick="showView('10')">
                                                 <fmt:message key="cgnt_contentGovernor.menu.contentReports.pagesWithoutKeywords"/>
@@ -178,10 +185,13 @@
                 <div id="report-18" class="div-report">
                     <template:include view="aclInheritanceBreak"/>
                 </div>
-
                 <!-- Report Author and page-->
                 <div id="report-20" class="div-report">
                     <template:include view="byDateAndAuthor"/>
+                </div>
+                <!-- Report untranslated pages-->
+                <div id="report-21" class="div-report">
+                    <template:include view="byUntranslated"/>
                 </div>
             </div>
         </div>

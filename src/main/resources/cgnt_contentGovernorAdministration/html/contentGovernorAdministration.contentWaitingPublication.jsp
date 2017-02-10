@@ -66,10 +66,16 @@
                             <tr>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.title"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.type"/></th>
+                                <th><fmt:message key="cgnt_contentGovernor.report.column.path"/></th>
+                                <th><fmt:message key="cgnt_contentGovernor.report.column.workflowStarted"/></th>
+                                <th><fmt:message key="cgnt_contentGovernor.report.column.workflowName"/></th>
+                                <th><fmt:message key="cgnt_contentGovernor.report.column.workflowType"/></th>
+<%--
                                 <c:forEach var="lang" items="${renderContext.site.languagesAsLocales}">
                                     <th>${lang}: <fmt:message key="cgnt_contentGovernor.report.column.workflowStarted"/></th>
                                     <th>${lang}: <fmt:message key="cgnt_contentGovernor.report.column.workflowName"/></th>
                                 </c:forEach>
+--%>
                             </tr>
                         </thead>
                         <tbody></tbody>

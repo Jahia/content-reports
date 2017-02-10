@@ -26,7 +26,7 @@ import java.util.*;
 public class ReportContentWaitingPublication extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportContentWaitingPublication.class);
     protected static final String BUNDLE = "resources.content-governor";
-
+    private long totalContent;
     List<WaitingPublicationElement> dataList;
 
 
@@ -44,6 +44,7 @@ public class ReportContentWaitingPublication extends QueryReport {
     public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException, JahiaException {
         String pageQueryStr = "SELECT * FROM [jmix:workflow] AS item WHERE [j:processId] is not null and ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])";
         fillReport(session, pageQueryStr, offset, limit);
+        totalContent = getTotalCount(session, pageQueryStr);
     }
 
     /**
@@ -67,37 +68,42 @@ public class ReportContentWaitingPublication extends QueryReport {
 
         JSONObject jsonObject = new JSONObject();
         JSONArray jArray = new JSONArray();
-        JSONObject jsonObjectItem;
+        JSONArray jsonArrayItem;
 
         JSONArray jArray2;
         JSONObject jsonObjectItem2;
 
         for (WaitingPublicationElement element : this.dataList) {
-            jsonObjectItem = new JSONObject();
+            jsonArrayItem = new JSONArray();
             jArray2 = new JSONArray();
-            jsonObjectItem.put("nodeName", element.getName());
-            jsonObjectItem.put("nodeUrl", element.getUrl());
-            jsonObjectItem.put("nodePath", element.getPath());
-            jsonObjectItem.put("nodeTechName", element.getTechName());
-            jsonObjectItem.put("nodeTitle", element.getTitle());
-            jsonObjectItem.put("nodeType", element.getType());
+            jsonArrayItem.put(element.getName());
+            jsonArrayItem.put(element.getType());
+            jsonArrayItem.put(element.getPath());
+
+          //  jsonArrayItem.put("nodeUrl", element.getUrl());
+          //  jsonArrayItem.put("nodePath", element.getPath());
             for (String key: element.getElementMap().keySet()) {
-                jsonObjectItem2 = new JSONObject();
-                jsonObjectItem2.put("lang", key);
+                jsonArrayItem.put(element.getElementMap().get(key).get("wfStarted"));
+                jsonArrayItem.put(element.getElementMap().get(key).get("wfDName"));
+                jsonArrayItem.put(element.getElementMap().get(key).get("wfName"));
+
 
                 for (String key2: element.getElementMap().get(key).keySet()) {
-                    jsonObjectItem2.put(key2, element.getElementMap().get(key).get(key2));
+                    jsonArrayItem.put( element.getElementMap().get(key).get(key2));
+                    System.out.println(element.getElementMap().get(key) + " - " +element.getElementMap().get(key).get(key2));
                 }
-                jArray2.put(jsonObjectItem2);
 
             }
-            jsonObjectItem.put("locales", jArray2);
-            jArray.put(jsonObjectItem);
+           // jsonObjectItem.put("locales", jArray2);
+            jArray.put(jsonArrayItem);
         }
 
+        jsonObject.put("recordsTotal", totalContent);
+        jsonObject.put("recordsFiltered", totalContent);
         jsonObject.put("siteName", siteNode.getName());
         jsonObject.put("siteDisplayableName", siteNode.getDisplayableName());
-        jsonObject.put("items", jArray);
+        jsonObject.put("data", jArray);
+
         return jsonObject;
     }
 

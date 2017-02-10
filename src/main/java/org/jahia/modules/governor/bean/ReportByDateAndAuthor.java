@@ -26,18 +26,17 @@ public class ReportByDateAndAuthor extends QueryReport {
     private Map<String, Map<String, Object>> pageMap;
     private Boolean useSystemUser;
     private SearchActionType actionType;
-    private Integer totalPages = 0;
-    private Integer totalContent = 0;
+    private long totalContent = 0;
     private Locale locale = LocaleContextHolder.getLocale();
     private String searchPath;
     private String typeSearch;
-    Boolean searchByDate;
-    String typeDateSearch;
-    String dateBegin;
-    String dateEnd;
-    Boolean searchByAuthor;
-    String searchUsername;
-    String typeAuthorSearch;
+    private Boolean searchByDate;
+    private String typeDateSearch;
+    private String dateBegin;
+    private String dateEnd;
+    private Boolean searchByAuthor;
+    private String searchUsername;
+    private String typeAuthorSearch;
     /**
      * The Constructor for the class.
      *
@@ -57,7 +56,6 @@ public class ReportByDateAndAuthor extends QueryReport {
         this.typeAuthorSearch = typeAuthorSearch;
         this.useSystemUser = useSystemUser;
         this.actionType = actionType;
-        this.totalPages = 0;
         this.totalContent = 0;
         this.setDataMap(new HashMap<Integer, Map<Integer, Map<String, Integer>>>());
         this.setPageMap(new HashMap<String, Map<String, Object>>());
@@ -85,7 +83,7 @@ public class ReportByDateAndAuthor extends QueryReport {
         query = "SELECT * FROM [ " + nodetype + " ] AS item WHERE ISDESCENDANTNODE(item,['" + searchPath + "']) " + searchByDateStatement + searchByAuthorStatement;
         System.out.println(query);
         fillReport(session, query, offset, limit);
-        setTotalContent(pageMap.size());
+        totalContent = getTotalCount(session, query);
     }
 
     /**
@@ -170,13 +168,12 @@ public class ReportByDateAndAuthor extends QueryReport {
     public JSONObject getJson() throws JSONException {
         JSONObject jsonObject = new JSONObject();
         JSONArray jArray = new JSONArray();
-        JSONObject jsonObjectItem;
+        JSONArray jsonArrayItem;
 
         for (String content : pageMap.keySet()) {
 
-                jsonObjectItem = new JSONObject();
+                /*jsonObjectItem = new JSONObject();
                 jsonObjectItem.put("title", pageMap.get(content).get("name"));
-                //jsonObjectItem.put("month", monthKey);
                 jsonObjectItem.put("created", pageMap.get(content).get("created"));
                 jsonObjectItem.put("modified", pageMap.get(content).get("modified"));
                 jsonObjectItem.put("published", pageMap.get(content).get("published"));
@@ -184,12 +181,23 @@ public class ReportByDateAndAuthor extends QueryReport {
                 jsonObjectItem.put("path", pageMap.get(content).get("path"));
                 jsonObjectItem.put("type", pageMap.get(content).get("type"));
                 /* setting each item to the json object */
-                jArray.put(jsonObjectItem);
+                jsonArrayItem = new JSONArray();
+
+                jsonArrayItem.put(pageMap.get(content).get("name"));
+                jsonArrayItem.put(pageMap.get(content).get("path"));
+                jsonArrayItem.put(pageMap.get(content).get("type"));
+                jsonArrayItem.put(pageMap.get(content).get("created"));
+                jsonArrayItem.put(pageMap.get(content).get("modified"));
+                jsonArrayItem.put(pageMap.get(content).get("published"));
+                jsonArrayItem.put(pageMap.get(content).get("locked"));
+
+                jArray.put(jsonArrayItem);
 
         }
 
-        jsonObject.put("totalContent", jArray.length());
-        jsonObject.put("items", jArray);
+        jsonObject.put("recordsTotal", totalContent);
+        jsonObject.put("recordsFiltered", totalContent);
+        jsonObject.put("data", jArray);
 
         return jsonObject;
     }
@@ -217,9 +225,6 @@ public class ReportByDateAndAuthor extends QueryReport {
      *
      * @return {@link Integer}
      */
-    public Integer getTotalPages() {
-        return totalPages;
-    }
 
     /**
      * setTotalContent
@@ -235,18 +240,10 @@ public class ReportByDateAndAuthor extends QueryReport {
      *
      * @return {@link Integer}
      */
-    public Integer getTotalContent() {
+    public long getTotalContent() {
         return totalContent;
     }
 
-    /**
-     * setTotalPages
-     *
-     * @param totalPages {@link Integer}
-     */
-    public void setTotalPages(Integer totalPages) {
-        this.totalPages = totalPages;
-    }
 
     public Map<String, Map<String, Object>> getPageMap() {
         return pageMap;

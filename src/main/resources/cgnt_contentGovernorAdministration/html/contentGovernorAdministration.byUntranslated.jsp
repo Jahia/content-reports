@@ -1,4 +1,11 @@
 <%@ page language="java" contentType="text/html;charset=UTF-8" %>
+<%@ page import="org.jahia.services.content.decorator.JCRSiteNode,
+                 org.jahia.services.render.Resource" %>
+<%@ page import="org.jahia.utils.LanguageCodeConverters" %>
+<%@ page import="java.util.Comparator" %>
+<%@ page import="java.util.Locale" %>
+<%@ page import="java.util.Set" %>
+<%@ page import="java.util.TreeSet" %>
 <%@ taglib prefix="template" uri="http://www.jahia.org/tags/templateLib" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -31,6 +38,26 @@
 <c:set var="principalGridLabel" value="${labelReport} ${labelDate}"/>
 <c:url value="${url.base}${docPath}${renderContext.mainResource.node.path}" var="currentNodePath"/>
 
+<c:set var="site" value="${renderContext.mainResource.node.resolveSite}"/>
+<c:set var="uiLocale" value="${renderContext.UILocale}"/>
+<c:set var="siteKey" value="${site.name}"/>
+
+<%
+    JCRSiteNode site = (JCRSiteNode) pageContext.getAttribute("site");
+    Resource r = (Resource) request.getAttribute("currentResource");
+    final Locale currentLocale = (Locale) pageContext.getAttribute("uiLocale");
+    Set<Locale> siteLocales = new TreeSet<Locale>(new Comparator<Locale>() {
+        public int compare(Locale o1, Locale o2) {
+            return o1.getDisplayName(currentLocale).compareTo(o2.getDisplayName(currentLocale));
+        }
+    });
+
+    siteLocales.addAll(site.getLanguagesAsLocales());
+    siteLocales.addAll(site.getInactiveLanguagesAsLocales());
+    request.setAttribute("siteLocales", siteLocales);
+    request.setAttribute("availableLocales", LanguageCodeConverters.getSortedLocaleList(currentLocale));
+%>
+
 <div class="panel">
     <div class="panel-body">
         <div class="row">
@@ -47,13 +74,13 @@
                     <div class="col-md-12">
                         <div class="form-check">
                             <label class="form-check-label">
-                                <input class="form-check-input" type="radio" name="typeOfSearch" value="pages" checked="checked">
+                                <input class="form-check-input" type="radio" name="typeOfSearchU" value="pages" checked="checked">
                                 <fmt:message key="cgnt_contentGovernor.report.typeSearch.pagesOnly"/>
                             </label>
                         </div>
                         <div class="form-check">
                             <label class="form-check-label">
-                                <input class="form-check-input" type="radio" name="typeOfSearch"  value="ccntent">
+                                <input class="form-check-input" type="radio" name="typeOfSearchU"  value="ccntent">
                                 <fmt:message key="cgnt_contentGovernor.report.typeSearch.allContent"/>
                             </label>
                         </div>
@@ -61,74 +88,19 @@
                 </div>
 
                 <div class="row"><div class="col-md-12"><hr/></div></div>
-
-                <!-- select of period of time -->
+                <!-- select language -->
                 <div class="row">
                     <div class="col-md-12">
-                        <input class="form-check-input" type="checkbox" name="searchByDate"  checked="checked">
-                        <fmt:message key="cgnt_contentGovernor.report.label.selectDateRange"/>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="radio" name="typeDateSearch" value="created" checked="checked">
-                                <fmt:message key="cgnt_contentGovernor.report.date.created"/>
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="radio" name="typeDateSearch"  value="modified">
-                                <fmt:message key="cgnt_contentGovernor.report.date.modified" />
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <fmt:message key="cgnt_contentGovernor.report.label.startDate"/>
-                        <input type="text" class="datepicker form-control" value="" id="dateBegin" name="dateBegin" data-date-format="yyyy-mm-dd" placeholder="yyy-mm-dd">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <fmt:message key="cgnt_contentGovernor.report.label.endDate"/>
-                        <input type="text" class="datepicker form-control" value="" id="dateEnd" name="dateEnd" data-date-format="yyyy-mm-dd" placeholder="yyy-mm-dd">
-                    </div>
-                </div>
-
-                <div class="row"><div class="col-md-12"><hr/></div></div>
-
-                <!-- Select an author -->
+                        <label class="label-form"> <fmt:message key="cgnt_contentGovernor.report.selectLanguage"/> </label>
+                        <select id="selectLanguageBU" name="selectLanguageBU">
+                            <c:forEach var="locale" items="${siteLocales}">
+                                <c:set var="langAsString">${locale}</c:set>
+                                    <option value="${locale}"><%= ((Locale) pageContext.getAttribute("locale")).getDisplayName(
+                                            currentLocale)%> (${locale})</option>
 
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <input class="form-check-input" type="checkbox" id="selectAuthor" name="searchAuthor"  checked="checked">
-                        <fmt:message key="cgnt_contentGovernor.report.column.selectAuthor"/>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <fmt:message key="cgnt_contentGovernor.report.username"/>
-                        <input type="text" class="form-control" value=""  name="searchUsername">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="radio" name="typeAuthorSearch" value="created" checked="checked">
-                                <fmt:message key="cgnt_contentGovernor.report.typeAuthor.creator"/>
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="radio" name="typeAuthorSearch"  value="modified">
-                                <fmt:message key="cgnt_contentGovernor.report.typeAuthor.lastModifier" />
-                            </label>
-                        </div>
+                            </c:forEach>
+                        </select>
                     </div>
                 </div>
 
@@ -142,13 +114,13 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2">
-                        <button type="button" class="btn btn-default" onclick="callTreeView('pathTxtRDADA')">
+                        <button type="button" class="btn btn-default" onclick="callTreeView('pathTxtRDAU')">
                             <span class="glyphicon glyphicon-folder-open"></span>
                             &nbsp;<fmt:message key="cgnt_contentGovernor.report.browse"/>
                         </button>
                     </div>
                     <div class="col-md-10">
-                        <input type="text" id="pathTxtRDADA" name="pathTxtRDADA" class="form-control" readonly="true"  value="${renderContext.site.path}" >
+                        <input type="text" id="pathTxtRDAU" name="pathTxtRDAU" class="form-control" readonly="true"  value="${renderContext.site.path}" >
                     </div>
                 </div>
 
@@ -157,7 +129,7 @@
                 <!-- search button -->
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="button" class="btn btn-default" onclick="fillReportByAllDateAndAuthor('${currentNodePath}', '${principalGridLabel}', '${labelTotal}', '${labelLoading}')">
+                        <button type="button" class="btn btn-default" onclick="fillReportByUntranslated('${currentNodePath}', '${principalGridLabel}', '${labelTotal}', '${labelLoading}')">
                             <span class="glyphicon glyphicon-search"></span> <fmt:message key="cgnt_contentGovernor.report.search"/>
                         </button>
                     </div>
@@ -172,27 +144,19 @@
             <div class="col-md-12">
                 <div class="panel panel-primary panel-primary-datatables filterable">
                     <div class="panel-heading">
-                        <h5 class="panel-title" id="rba-principal-grid-rda"><fmt:message key="cgnt_contentGovernor.report"/>&nbsp;<fmt:message key="cgnt_contentGovernor.menu.contentReports.byDate"/></h5>
+                        <h5 class="panel-title" id="rba-principal-grid-rdau"><fmt:message key="cgnt_contentGovernor.report"/>&nbsp;<fmt:message key="cgnt_contentGovernor.menu.contentReports.byDate"/></h5>
                     </div>
                     <div>&nbsp;</div>
-                    <table width="100%" class="display governor-data-table" id="byAllDateAndAuthorTable" cellspacing="0">
+                    <table width="100%" class="display governor-data-table" id="byAllUntranslated" cellspacing="0">
                         <thead>
                             <tr>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.title"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.pagePath"/></th>
                                 <th><fmt:message key="cgnt_contentGovernor.report.column.type"/></th>
-                                <th><fmt:message key="cgnt_contentGovernor.report.column.created"/></th>
-                                <th><fmt:message key="cgnt_contentGovernor.report.column.modified"/></th>
-                                <th><fmt:message key="cgnt_contentGovernor.report.column.published"/></th>
-                                <th><fmt:message key="cgnt_contentGovernor.report.column.lock"/></th>
                             </tr>
                         </thead>
                         <tfoot>
                             <tr>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>

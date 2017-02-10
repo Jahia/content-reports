@@ -61,6 +61,12 @@ public abstract class QueryReport extends BaseReport {
         return  query.execute().getNodes();
     }
 
+    protected long getQueryResultCount(String queryStr, JCRSessionWrapper session) throws RepositoryException{
+        // Getting the items  nodes.
+        Query query = session.getWorkspace().getQueryManager().createQuery(queryStr, Query.JCR_SQL2);
+        return  query.execute().getNodes().getSize();
+    }
+
 
     /**
      * fillReport
@@ -87,6 +93,27 @@ public abstract class QueryReport extends BaseReport {
                 logger.error("getAjaxFromQuery: problem executing the jcr:query[" + strQuery + "]", rex);
             }
         }
+    }
+
+    /**
+     * getTotalCount
+     *
+     * @param session {@link JCRSessionWrapper}
+     * @param strQuery {@link String}
+     * @return {@link BaseReport}
+     * @throws JSONException
+     */
+    protected long getTotalCount(JCRSessionWrapper session, String strQuery) throws JSONException {
+        if(StringUtils.isNotEmpty(strQuery)) {
+            try {
+             /* filling the content nodes */
+                return getQueryResultCount(strQuery, session);
+
+            } catch (RepositoryException rex) {
+                logger.error("getAjaxFromQuery: problem executing the jcr:query[" + strQuery + "]", rex);
+            }
+        }
+        return 0;
     }
 
     /**

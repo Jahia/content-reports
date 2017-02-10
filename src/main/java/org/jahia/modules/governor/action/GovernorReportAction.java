@@ -43,8 +43,8 @@ public class GovernorReportAction extends Action {
             BaseReport report = getReport(renderContext, req);
 
             report.execute(session,
-                    req.getParameter("offset") != null ? Integer.parseInt(req.getParameter("offset")) : 0,
-                    req.getParameter("limit") != null ? Integer.parseInt(req.getParameter("limit")) : 10);
+                    req.getParameter("start") != null ? Integer.parseInt(req.getParameter("start")) : 0,
+                    req.getParameter("length") != null ? Integer.parseInt(req.getParameter("length")) : 10);
 
             return new ActionResult(HttpServletResponse.SC_OK,null, report.getJson());
         } catch (GovernorException gex) {
@@ -106,8 +106,11 @@ public class GovernorReportAction extends Action {
                 return new ReportByDateAndAuthor(renderContext.getSite(),
                         (req.getParameter("typeAuthor").equalsIgnoreCase("created")) ? BaseReport.SearchActionType.CREATION : BaseReport.SearchActionType.UPDATE,
                         req.getParameter("pathTxt").replaceAll("'", ""), req.getParameter("typeSearch"), true, req.getParameter("searchByDate").equals("true"),
-            req.getParameter("typeDateSearch"), req.getParameter("dateBegin"), req.getParameter("dateEnd"),req.getParameter("searchAuthor").equals("true"),
+                        req.getParameter("typeDateSearch"), req.getParameter("dateBegin"), req.getParameter("dateEnd"),req.getParameter("searchAuthor").equals("true"),
                         req.getParameter("searchUsername"), req.getParameter("typeAuthorSearch"));
+            case "21":
+                return new ReportByUnstranslated(renderContext.getSite(),
+                        req.getParameter("selectLanguageBU"), req.getParameter("pathTxt").replaceAll("'", ""), req.getParameter("selectTypeSearch"));
             default:
                 throw new GovernorException("Invalid reportId: " + reportId);
         }
