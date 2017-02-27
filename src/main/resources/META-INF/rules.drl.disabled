@@ -1,4 +1,4 @@
-package org.jahia.modules.contentgovernor.rules
+package org.jahia.modules.contentreports.rules
 
 // list any import classes here.
 import org.jahia.services.content.rules.*

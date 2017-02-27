@@ -765,3 +765,10 @@ input.datepicker.form-control.invalid {
 .sweet-alert .sa-icon {
   display: none !important;
 }
+
+.buttons-html5 span {
+    font-size:15px;
+    font-weight:bold;
+    padding:5px;
+    color: #000000;
+}

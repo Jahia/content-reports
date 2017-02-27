@@ -4,8 +4,8 @@
 
 
 /* function for url action creation */
-
-function initDataTable (id, url) {
+// pathCol = number of the column to transform the path into a link
+function initDataTable (id, url, pathCol = -1) {
 
     // getting the table
     console.log($('#'+id));
@@ -15,7 +15,17 @@ function initDataTable (id, url) {
         "serverSide": true,
         "processing": true,
         "paging": true,
+        "searching": false,
         "dom": 'Blfrtip',
+        "orderable": true,
+        "columnDefs": [
+            {
+                "render": function ( data, type, row ) {
+                    return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>";
+                },
+                "targets": pathCol
+            }
+        ],
         "buttons": [
             'csv'
         ],
@@ -27,7 +37,6 @@ function initDataTable (id, url) {
             "dataType": "json",
             "contentType": 'application/json; charset=utf-8',
             "complete": function(response) {
-                console.log(response);
             }
         }
     });
@@ -238,6 +247,7 @@ var beforeDateChart;
 function fillReportByAllDateAndAuthor(baseUrl, gridLabel, totalLabel, loadingLabel){
 
     var pathTxt = $('#pathTxtRDADA').val();
+
     if(pathTxt=='null' || pathTxt==''){
         $('#pathTxtRDADA').removeClass("valid").addClass("invalid");
         return;
@@ -247,7 +257,6 @@ function fillReportByAllDateAndAuthor(baseUrl, gridLabel, totalLabel, loadingLab
     }
 
     // the loading message
-    ajaxindicatorstart(loadingLabel);
 
     var typeAuthor = $("input[name='typeAuthorRDA']:checked").val();
     var typeSearch = $("input[name='typeOfSearch']:checked").val();
@@ -263,6 +272,16 @@ function fillReportByAllDateAndAuthor(baseUrl, gridLabel, totalLabel, loadingLab
     var parameters = "&typeAuthor=" + typeAuthor + "&pathTxt='" + pathTxt + "'&typeSearch=" + typeSearch + "&searchByDate=" + searchByDate + "&typeDateSearch=" + typeDateSearch
         + "&dateEnd=" + dateEnd + "&dateBegin=" + dateBegin + "&searchAuthor=" + searchAuthor + "&searchUsername=" + searchUsername + "&typeAuthorSearch=" + typeAuthorSearch;
 
+
+    if (searchAuthor && searchUsername == '') {
+        $('#searchUsername').removeClass("valid").addClass("invalid");
+        return;
+    } else {
+        $('#searchUsername').removeClass("valid").removeClass("invalid");
+    }
+
+    ajaxindicatorstart(loadingLabel);
+
     var actionUrl = getReportActionUrl(baseUrl, 20, parameters);
 
  //   $.getJSON( actionUrl, function( data ) {
@@ -270,7 +289,7 @@ function fillReportByAllDateAndAuthor(baseUrl, gridLabel, totalLabel, loadingLab
 
 
         // setting the table name
-        table = initDataTable("byAllDateAndAuthorTable", actionUrl)
+        table = initDataTable("byAllDateAndAuthorTable", actionUrl, 1)
 
 
 
@@ -787,42 +806,9 @@ function fillReportPageWithoutTitle(baseUrl, labelLoading, labelInsertTitle){
     // the loading message
     ajaxindicatorstart(labelLoading);
 
-    table = initDataTable("pageWithoutTitleTable", actionUrl)
+    table = initDataTable("pageWithoutTitleTable", actionUrl, 0)
     ajaxindicatorstop();
 
-    /*
-    $.getJSON( actionUrl, function( data ) {
-        // getting the table
-         var table = $('#pageWithoutTitleTable').DataTable();
-
-        // clear all content from table
-        table.clear().draw();
-
-        if(data.items.length == 0){
-            //stop loading message
-            ajaxindicatorstop();
-        }
-
-        // adding new content to table
-        $.each( data.items, function( index, val ) {
-            var items = [];
-            items.push("<a href='" + data.items[index].nodeUrl + "' target='_blank' >" +  data.items[index].nodePath + "</a>");
-            for (var k in data.items[index].translations){
-                items.push(checkUndefined(data.items[index].translations[k].value));
-            }
-
-            table.row.add(items).draw();
-
-            //stop loading message
-            ajaxindicatorstop();
-        });
-
-
-
-
-
-    });
-     */
 }
 
 function openModalSaveTitle(path, lang){
@@ -849,7 +835,7 @@ function fillReportPageWithoutKeywords(baseUrl, loadingLabel, labelAddKeywords){
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    initDataTable ("pageWithoutKeywordsTable", actionUrl);
+    initDataTable ("pageWithoutKeywordsTable", actionUrl, 1);
 
     ajaxindicatorstop();
 
@@ -886,7 +872,7 @@ function fillReportPageWithoutDescription(baseUrl, loadingLabel, labelInsertDesc
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    initDataTable ("pageWithoutDescriptionTable", actionUrl);
+    initDataTable ("pageWithoutDescriptionTable", actionUrl, 0);
 
     ajaxindicatorstop();
 

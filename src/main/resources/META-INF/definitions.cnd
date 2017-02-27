@@ -4,6 +4,6 @@
 <mix = 'http://www.jcp.org/jcr/mix/1.0'>
 
 
-[cgnt:contentGovernorAdministration] > jnt:content, mix:title, jmix:studioOnly, jmix:siteComponent
+[cgnt:contentReportsAdministration] > jnt:content, mix:title, jmix:studioOnly, jmix:siteComponent
 
 

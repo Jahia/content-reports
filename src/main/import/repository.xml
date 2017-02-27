@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <content xmlns:j="http://www.jahia.org/jahia/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0">
     <modules jcr:primaryType="jnt:modules">
-        <content-governor j:dependencies="bootstrap3-components bootstrap3-core default external-provider siteSettings"
+        <content-reports j:dependencies="bootstrap3-components bootstrap3-core default external-provider siteSettings"
                         j:modulePriority="0"
                         j:moduleType="module"
-                        j:title="Content Governor"
+                        j:title="Content Reports"
                         jcr:mixinTypes="jmix:hasExternalProviderExtension"
                         jcr:primaryType="jnt:module">
                 <sources jcr:mixinTypes="jmix:hasExternalProviderExtension"
                   jcr:primaryType="jnt:moduleVersionFolder"
-                  j:staticMountPointProviderKey="module-content-governor-1.0-SNAPSHOT">
+                  j:staticMountPointProviderKey="module-content-reports-1.0-SNAPSHOT">
                     <src jcr:primaryType="jnt:folder">
                         <main jcr:primaryType="jnt:folder">
                             <resources jcr:primaryType="jnt:folder">
@@ -44,32 +44,32 @@
                         <j:translation_en jcr:language="en"
                                  jcr:mixinTypes="mix:title"
                                  jcr:primaryType="jnt:translation"/>
-                        <content-governor j:applyOn="jnt:virtualsite"
+                        <content-reports j:applyOn="jnt:virtualsite"
                                  j:defaultTemplate="false"
                                  j:hiddenTemplate="false"
-                                 j:icon="/modules/content-governor/templates/files/images/administration.png"
-                                 j:titleKey="cgnt_contentGovernor"
+                                 j:icon="/modules/content-reports/templates/files/images/administration.png"
+                                 j:titleKey="cgnt_contentReports"
                                  j:view="default"
                                  jcr:mixinTypes="jmix:rbTitle"
-                                 j:requiredPermissionNames="contentGovernor"
+                                 j:requiredPermissionNames="contentReports"
 
                                           jcr:primaryType="jnt:contentTemplate">
                             <j:translation_en jcr:language="en"
                                     jcr:mixinTypes="mix:title"
                                     jcr:primaryType="jnt:translation"
-                                    jcr:title="Content Governor"/>
+                                    jcr:title="Content Reports"/>
                             <pagecontent jcr:primaryType="jnt:contentList">
-                                <content-governor-administration jcr:primaryType="cgnt:contentGovernorAdministration">
+                                <content-reports-administration jcr:primaryType="cgnt:contentReportsAdministration">
                                     <j:translation_en jcr:language="en"
                                           jcr:mixinTypes="mix:title"
                                           jcr:primaryType="jnt:translation"
                                           jcr:title="Test"/>
-                                </content-governor-administration>
+                                </content-reports-administration>
                             </pagecontent>
-                        </content-governor>
+                        </content-reports>
                     </site-settings-base>
                 </templates>
                 
-            </content-governor>
+            </content-reports>
     </modules>
 </content>

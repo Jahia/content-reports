@@ -53,11 +53,11 @@
     <version>7.1.2.0</version>
   </parent>
   <groupId>org.jahia.modules</groupId>
-  <artifactId>content-governor</artifactId>
+  <artifactId>content-reports</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
-  <name>Content Governor</name>
-  <description>This is the custom module (Content Governor) for running on a Digital Experience Manager server.</description>
+  <name>Content Reports</name>
+  <description>This is the custom module (Content Reports) for running on a Digital Experience Manager server.</description>
   <scm>
     <connection>scm:dummy:uri</connection>
     <developerConnection>scm:dummy:uri</developerConnection>

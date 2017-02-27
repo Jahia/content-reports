@@ -25,18 +25,37 @@ $(document).ready(function () {
         $(this).datepicker('hide');
     });
 
-    $('.governor-data-table').DataTable( {
+    $('.reports-data-table').DataTable( {
         "language": {
             "url": langFileUrl
         },
+        "searching": false,
+        "processing": true,
+
+        "columnDefs": [
+            {
+                "render": function ( data, type, row ) {
+                    return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>";
+                },
+                "targets": 1
+            }
+        ],
         "pagingType": "full_numbers",
-        dom: 'Bfrtip',
+        "dom": 'Blfrtip',
         buttons: [
             'csv'
         ]
 
     } );
 
+
+    $('#dateAndAuthorSearchByDate').change(function(){
+        if( $('#dateAndAuthorSearchByDate').is(':checked') ) {
+            $('.searchableByDate').removeClass('hidden');
+        } else {
+            $('.searchableByDate').addClass('hidden');
+        }
+    });
 
     $(".modal-transparent").on('show.bs.modal', function () {
         setTimeout( function() {
@@ -125,7 +144,7 @@ function diffDaysBetweenToday(startDate)
 function ajaxindicatorstart(text)
 {
     if(jQuery('body').find('#resultLoading').attr('id') != 'resultLoading'){
-        jQuery('body').append('<div id="resultLoading" style="display:none"><div><img src="/modules/content-governor/css/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+        jQuery('body').append('<div id="resultLoading" style="display:none"><div><img src="/modules/content-reports/css/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
     }
 
     jQuery('#resultLoading').css({
