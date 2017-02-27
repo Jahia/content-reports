@@ -3,7 +3,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean class="org.jahia.modules.reports.action.GovernorReportAction"/>
-    <bean class="org.jahia.modules.reports.action.PathPickerAction"/>
+    <bean class="org.jahia.modules.reports.action.GovernorReportAction">
+        <property name="name" value="governorReport" />
+    </bean>
+    <bean class="org.jahia.modules.reports.action.PathPickerAction">
+        <property name="name" value="pathPicker" />
+    </bean>
 
 </beans>

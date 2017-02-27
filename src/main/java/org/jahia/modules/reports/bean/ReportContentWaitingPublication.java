@@ -166,6 +166,8 @@ public class ReportContentWaitingPublication extends QueryReport {
                     logger.info("getVariables:" + wf.getVariables());
                     logger.info("getId:" + wf.getId());
                     logger.info("getWorkflowDefinition:" + wf.getWorkflowDefinition());
+                    logger.info("getAvailableActions:" + wf.getAvailableActions());
+                    logger.info("getAvailableActions:" + wf.getAvailableActions());
 
                     if(field.equalsIgnoreCase("startUser"))
                         sb.append(wf.getStartUser());
