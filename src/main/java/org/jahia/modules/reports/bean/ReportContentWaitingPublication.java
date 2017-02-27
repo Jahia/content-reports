@@ -159,8 +159,14 @@ public class ReportContentWaitingPublication extends QueryReport {
                         sb.append(dateFormat.format(wf.getStartTime()));
                     if(field.equalsIgnoreCase("name"))
                         sb.append(wf.getName());
+                    logger.info("name:" + wf.getName());
                     if(field.equalsIgnoreCase("displayableName"))
                         sb.append(wf.getDisplayName());
+                    logger.info("displayableName:" + wf.getDisplayName());
+                    logger.info("getVariables:" + wf.getVariables());
+                    logger.info("getId:" + wf.getId());
+                    logger.info("getWorkflowDefinition:" + wf.getWorkflowDefinition());
+
                     if(field.equalsIgnoreCase("startUser"))
                         sb.append(wf.getStartUser());
                     if(field.equalsIgnoreCase("provider"))

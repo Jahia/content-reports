@@ -57,6 +57,16 @@ $(document).ready(function () {
         }
     });
 
+
+
+    $('#selectAuthor').change(function(){
+        if( $('#selectAuthor').is(':checked') ) {
+            $('.searchableByAuthor').removeClass('hidden');
+        } else {
+            $('.searchableByAuthor').addClass('hidden');
+        }
+    });
+
     $(".modal-transparent").on('show.bs.modal', function () {
         setTimeout( function() {
             $(".modal-backdrop").addClass("modal-backdrop-transparent");

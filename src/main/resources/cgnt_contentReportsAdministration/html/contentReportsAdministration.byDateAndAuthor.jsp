@@ -110,13 +110,13 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12 searchableByAuthor">
                         <fmt:message key="cgnt_contentReports.report.username"/>
                         <input type="text" class="form-control" value="" id="searchUsername" name="searchUsername">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12 searchableByAuthor">
                         <div class="form-check">
                             <label class="form-check-label">
                                 <input class="form-check-input" type="radio" name="typeAuthorSearch" value="created" checked="checked">
