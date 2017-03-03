@@ -5,7 +5,9 @@ import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.jahia.services.workflow.Workflow;
+import org.jahia.services.workflow.WorkflowAction;
 import org.jahia.services.workflow.WorkflowService;
+import org.jahia.services.workflow.WorkflowTask;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,6 +78,7 @@ public class ReportContentWaitingPublication extends QueryReport {
             jsonArrayItem = new JSONArray();
             jArray2 = new JSONArray();
             jsonArrayItem.put(element.getName());
+
             jsonArrayItem.put(element.getType());
             jsonArrayItem.put(element.getPath());
 
@@ -85,7 +88,8 @@ public class ReportContentWaitingPublication extends QueryReport {
                 jsonArrayItem.put(element.getElementMap().get(key).get("wfStarted"));
                 jsonArrayItem.put(element.getElementMap().get(key).get("wfDName"));
                 jsonArrayItem.put(element.getElementMap().get(key).get("wfName"));
-
+                logger.info(element.getElementMap().get(key).get("wfName"));
+                logger.info(element.getElementMap().get(key).get("name") + element.getTechName() + element.getTitle() + element.getName());
 
                 for (String key2: element.getElementMap().get(key).keySet()) {
                     jsonArrayItem.put( element.getElementMap().get(key).get(key2));
@@ -154,23 +158,32 @@ public class ReportContentWaitingPublication extends QueryReport {
 
             if(wList != null) {
                 for (Workflow wf : wList) {
+                   // logger.info("displayableName:" + wf.getDisplayName());
+                   // logger.info("getVariables:" + wf.getVariables());
+                   // logger.info("getId:" + wf.getId());
+                    Set<WorkflowAction> wfActionSet =  wf.getAvailableActions();
+                    Iterator<WorkflowAction> wfActionIterator = wfActionSet.iterator();
+                   while (wfActionIterator.hasNext())
+                    {
+                        WorkflowAction wfAction = wfActionIterator.next();
+                        if (wfAction instanceof WorkflowTask) {
+                   //         logger.info("get id:" + ((WorkflowTask)wfAction).getId());
+                   //         logger.info("get id:" + ((WorkflowTask)wfAction).getVariables());
+                        }
+                    }
+
                     if (sb.length() > 0) { sb.append(","); }
                     if(field.equalsIgnoreCase("startTime"))
                         sb.append(dateFormat.format(wf.getStartTime()));
                     if(field.equalsIgnoreCase("name"))
                         sb.append(wf.getName());
-                    logger.info("name:" + wf.getName());
+                 //   logger.info("name:" + wf.getName());
                     if(field.equalsIgnoreCase("displayableName"))
                         sb.append(wf.getDisplayName());
-                    logger.info("displayableName:" + wf.getDisplayName());
-                    logger.info("getVariables:" + wf.getVariables());
-                    logger.info("getId:" + wf.getId());
-                    logger.info("getWorkflowDefinition:" + wf.getWorkflowDefinition());
-                    logger.info("getAvailableActions:" + wf.getAvailableActions());
-                    logger.info("getAvailableActions:" + wf.getAvailableActions());
 
                     if(field.equalsIgnoreCase("startUser"))
                         sb.append(wf.getStartUser());
+
                     if(field.equalsIgnoreCase("provider"))
                         sb.append(wf.getProvider());
                     if(field.equalsIgnoreCase("comments"))

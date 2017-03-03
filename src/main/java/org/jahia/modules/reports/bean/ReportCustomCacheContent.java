@@ -24,19 +24,26 @@ public class ReportCustomCacheContent extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportCustomCacheContent.class);
     protected static final String BUNDLE = "resources.content-reports";
     private long totalContent;
+    private int sortCol;
+    private String order;
+    private String[] resultFields = {"j:nodename", "jcr:primaryType", "j:expiration", "j:nodename"};
+
 
     /**
      * Instantiates a new Report pages without title.
      *
      * @param siteNode the site node {@link JCRSiteNode}
      */
-    public ReportCustomCacheContent(JCRSiteNode siteNode) {
+    public ReportCustomCacheContent(JCRSiteNode siteNode, int sortCol, String order) {
         super(siteNode);
+        this.sortCol = sortCol;
+        this.order = order;
     }
 
     @Override
     public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
-        String queryStr = "SELECT * FROM [jnt:content] AS item WHERE item.[j:expiration] IS NOT NULL AND ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])";
+        String orderStatement = " order by item.["+resultFields[sortCol]+"] " + order;
+        String queryStr = "SELECT * FROM [jnt:content] AS item WHERE item.[j:expiration] IS NOT NULL AND ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])" + orderStatement;
         fillReport(session, queryStr, offset, limit);
         totalContent = getTotalCount(session, queryStr);
 
@@ -89,7 +96,8 @@ public class ReportCustomCacheContent extends QueryReport {
             item.put(nodeMap.get("nodeType"));
             item.put(nodeMap.get("expiration"));
             item.put(nodeMap.get("nodeUsedInPagePath"));
-            jArray.put(item);        }
+            jArray.put(item);
+        }
 
         jsonObject.put("recordsTotal", totalContent);
         jsonObject.put("recordsFiltered", totalContent);

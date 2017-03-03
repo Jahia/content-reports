@@ -5,7 +5,7 @@
 
 /* function for url action creation */
 // pathCol = number of the column to transform the path into a link
-function initDataTable (id, url, pathCol = -1) {
+function initDataTable (id, url, pathCol = -1, orderEnabled = true, disabledSortingCols = []) {
 
     // getting the table
     console.log($('#'+id));
@@ -16,6 +16,7 @@ function initDataTable (id, url, pathCol = -1) {
         "processing": true,
         "paging": true,
         "searching": false,
+        "ordering": orderEnabled,
         "dom": 'Blfrtip',
         "orderable": true,
         "columnDefs": [
@@ -24,12 +25,15 @@ function initDataTable (id, url, pathCol = -1) {
                     return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>";
                 },
                 "targets": pathCol
+            }, {
+                "orderable": false,
+                "targets": disabledSortingCols
             }
         ],
         "buttons": [
             'csv'
         ],
-        "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+        "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 1000] ],
         "pageLength": 10,
         "ajax": {
             "type": "GET",
@@ -42,6 +46,34 @@ function initDataTable (id, url, pathCol = -1) {
     });
 }
 
+function initDataTableWithoutAjax (id, pathCol = -1, orderEnabled = true, disabledSortingCols = []) {
+    // getting the table
+    console.log($('#'+id));
+    var table = $('#'+id).DataTable();
+    table.destroy();
+    return $('#'+id).DataTable( {
+
+        "searching": false,
+        "processing": true,
+        "ordering": orderEnabled,
+        "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 1000] ],
+        "columnDefs": [
+            {
+                "render": function ( data, type, row ) {
+                    return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>";
+                },
+                "targets": 1
+            }
+        ],
+        "pagingType": "full_numbers",
+        "dom": 'Blfrtip',
+        buttons: [
+            'csv'
+        ]
+
+    } );
+
+}
 function getReportActionUrl(baseUrl, reportId, parameters){
     return  baseUrl + '.GovernorReport.do?reportId=' + reportId + ((parameters==null || parameters=='') ? '' : '&' + parameters);
 }
@@ -289,7 +321,7 @@ function fillReportByAllDateAndAuthor(baseUrl, gridLabel, totalLabel, loadingLab
 
 
         // setting the table name
-        table = initDataTable("byAllDateAndAuthorTable", actionUrl, 1)
+        table = initDataTable("byAllDateAndAuthorTable", actionUrl, 1, true, [0,1,2,5,6])
 
 
 
@@ -326,7 +358,7 @@ function fillReportByUntranslated(baseUrl, gridLabel, totalLabel, loadingLabel){
         $('#rba-principal-grid-rdau').html(gridLabel);
 
         // getting the table
-        var table = $('#byAllUntranslated').DataTable();
+        var table =  initDataTableWithoutAjax('byAllUntranslated', 1 , true); // $('#byAllUntranslated').DataTable();
 
         // clear all content from table
         table.clear().draw();
@@ -806,7 +838,7 @@ function fillReportPageWithoutTitle(baseUrl, labelLoading, labelInsertTitle){
     // the loading message
     ajaxindicatorstart(labelLoading);
 
-    table = initDataTable("pageWithoutTitleTable", actionUrl, 0)
+    table = initDataTable("pageWithoutTitleTable", actionUrl, 0, false, [])
     ajaxindicatorstop();
 
 }
@@ -835,30 +867,10 @@ function fillReportPageWithoutKeywords(baseUrl, loadingLabel, labelAddKeywords){
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    initDataTable ("pageWithoutKeywordsTable", actionUrl, 1);
+    initDataTable ("pageWithoutKeywordsTable", actionUrl, 1, true, [1]);
 
     ajaxindicatorstop();
 
-    /*$.getJSON( actionUrl, function( data ) {
-       // console.log(data);
-
-        // getting the table
-        var table = $('#pageWithoutKeywordsTable').DataTable();
-
-        // clear all content from table
-        table.clear().draw();
-
-        // adding new content to table
-        $.each( data.items, function( index, val ) {
-            table.row.add( [
-                "<a href='" + data.items[index].nodeUrl + "' target='_blank' >" +  data.items[index].nodeTitle + "</a>" ,
-                data.items[index].nodePath
-            ] ).draw();
-        });
-
-        //stop loading message
-        ajaxindicatorstop();
-    });*/
 }
 
 
@@ -872,38 +884,9 @@ function fillReportPageWithoutDescription(baseUrl, loadingLabel, labelInsertDesc
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    initDataTable ("pageWithoutDescriptionTable", actionUrl, 0);
+    initDataTable ("pageWithoutDescriptionTable", actionUrl, 0, false);
 
     ajaxindicatorstop();
-
-    /*
-    $.getJSON( actionUrl, function( data ) {
-        // getting the table
-        var table = $('#pageWithoutDescriptionTable').DataTable();
-
-        // clear all content from table
-        table.clear().draw();
-
-        if(data.items.length == 0){
-            //stop loading message
-            ajaxindicatorstop();
-        }
-
-        // adding new content to table
-        $.each( data.items, function( index, val ) {
-            var items = [];
-            items.push("<a href='" + data.items[index].nodeUrl + "' target='_blank' >" +  data.items[index].nodeTitle + "</a>");
-            items.push(data.items[index].nodePath);
-            for (var k in data.items[index].translations){
-                items.push( checkUndefined(data.items[index].translations[k].value));
-            }
-
-            table.row.add(items).draw();
-
-            //stop loading message
-            ajaxindicatorstop();
-        });
-    }); */
 }
 
 /**************************************
@@ -985,32 +968,10 @@ function fillReportLockedContent(baseUrl, loadingLabel, labelUnlock, labelUnlock
     ajaxindicatorstart(loadingLabel);
 
 
-    initDataTable ("lockedContentTable", actionUrl);
+    initDataTable ("lockedContentTable", actionUrl, 4, true, [0,4]);
 
     ajaxindicatorstop();
-    /*
-     $.getJSON( actionUrl, function( data ) {
-     // getting the table
-     var table = $('#lockedContentTable').DataTable();
 
-     // clear all content from table
-     table.clear().draw();
-
-     // adding new content to table
-     $.each( data.items, function( index, val ) {
-     table.row.add( [
-     data.items[index].displayTitle,
-     capitalize(data.items[index].nodeTypeTechName),
-     data.items[index].nodeAuthor,
-     data.items[index].nodeLockedBy,
-     "<a href='" + data.items[index].nodeUsedInPageUrl + "' target='_blank' >" +  data.items[index].nodeUsedInPagePath + "</a>"
-     ] ).draw();
-     });
-
-     //stop loading message
-     ajaxindicatorstop()
-
-     });*/
 }
 
 
@@ -1023,41 +984,10 @@ function fillReportContentWaitingPublication(baseUrl, labelToday, labelYesterday
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    initDataTable ("waitingContentTable", actionUrl);
+    initDataTable ("waitingContentTable", actionUrl, 2, false );
 
     ajaxindicatorstop();
 
-    /*
-    $.getJSON( actionUrl, function( data ) {
-        // getting the table
-        var table = $('#waitingContentTable').DataTable();
-
-        // clear all content from table
-        table.clear().draw();
-
-        // adding new content to table
-        $.each( data.items, function( index, val ) {
-            var items = [];
-            items.push( data.items[index].nodeTitle);
-            items.push(capitalize(data.items[index].nodeType));
-            for (var k in data.items[index].locales){
-                var difDays = diffDaysBetweenToday(new Date(data.items[index].locales[k].wfStarted));
-                var timeLabel = "";
-                if(difDays == 0) {timeLabel =  labelToday;}
-                if(difDays == 1) {timeLabel =  labelYesterday;}
-                if(difDays > 1) {timeLabel =  difDays + " " + labelDaysAgo;}
-
-                items.push(capitalize(timeLabel));
-                items.push(data.items[index].locales[k].wfName);
-            }
-            table.row.add(items).draw();
-        });
-
-        //stop loading message
-
-    });
-
-    */
 }
 
 
@@ -1091,44 +1021,16 @@ function fillReportOverview(baseUrl, loadingLabel){
 
 
 
-/**************************************
- *       REPORTS ORPHAN CONTENT       *
- **************************************/
-
 function fillReportCustomCacheContent(baseUrl, loadingLabel){
     var actionUrl = getReportActionUrl(baseUrl, 18, null);
 
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    initDataTable ("customCacheContentTable", actionUrl);
+    initDataTable ("customCacheContentTable", actionUrl, 3, true, [0,3]);
 
     ajaxindicatorstop();
 
-    /*
-    $.getJSON( actionUrl, function( data ) {
-        // getting the table
-        var table = $('#customCacheContentTable').DataTable();
-
-        // clear all content from table
-        table.clear().draw();
-
-        // adding new content to table
-        $.each( data.items, function( index, val ) {
-            table.row.add( [
-                data.items[index].displayTitle,
-                capitalize(data.items[index].nodeTypeTechName),
-                data.items[index].expiration,
-                data.items[index].nodeAuthor,
-                "<a href='" + data.items[index].nodeUsedInPageUrl + "' target='_blank' >" +  data.items[index].nodeUsedInPagePath + "</a>"
-            ] ).draw();
-        });
-
-        //stop loading message
-        ajaxindicatorstop();
-     });
-
-        */
 }
 
 
@@ -1143,26 +1045,8 @@ function fillReportPageAclInheritanceBreak(baseUrl, loadingLabel){
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    initDataTable ("pageAclInheritanceBreakTable", actionUrl);
+    initDataTable ("pageAclInheritanceBreakTable", actionUrl, 1, false);
 
     ajaxindicatorstop();
 
-   /* $.getJSON( actionUrl, function( data ) {
-        // getting the table
-        var table = $('#pageAclInheritanceBreakTable').DataTable();
-
-        // clear all content from table
-        table.clear().draw();
-
-        // adding new content to table
-        $.each( data.items, function( index, val ) {
-            table.row.add( [
-                "<a href='" + data.items[index].nodeUrl + "' target='_blank' >" +  data.items[index].nodeTitle + "</a>",
-                data.items[index].nodePath
-            ] ).draw();
-        });
-
-        //stop loading message
-        ajaxindicatorstop();
-    }); */
 }

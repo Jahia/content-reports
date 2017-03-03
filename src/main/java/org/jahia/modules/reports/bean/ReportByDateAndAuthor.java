@@ -35,14 +35,19 @@ public class ReportByDateAndAuthor extends QueryReport {
     private String dateEnd;
     private Boolean searchByAuthor;
     private String searchUsername;
+    private int sortCol;
+    private String sortOrder;
     private String typeAuthorSearch;
+    private String[] resultFields = {"j:nodename", "j:nodename", "jcr:primaryType", "jcr:created", "jcr:lastModified", "j:published", "j:locktoken"};
+
+
     /**
      * The Constructor for the class.
      *
      * @param actionType    {@link SearchActionType}
      * @param useSystemUser {@link Boolean}
      */
-    public ReportByDateAndAuthor(JCRSiteNode siteNode, SearchActionType actionType, String searchPath, String typeSearch, Boolean useSystemUser, Boolean searchByDate, String typeDateSearch, String dateBegin, String dateEnd, Boolean searchAuthor, String searchUsername, String typeAuthorSearch) {
+    public ReportByDateAndAuthor(JCRSiteNode siteNode, SearchActionType actionType, String searchPath, String typeSearch, Boolean useSystemUser, Boolean searchByDate, String typeDateSearch, String dateBegin, String dateEnd, Boolean searchAuthor, String searchUsername, String typeAuthorSearch, int sortCol, String sortOrder) {
         super(siteNode);
         this.searchPath = searchPath;
         this.typeSearch = typeSearch;
@@ -56,6 +61,8 @@ public class ReportByDateAndAuthor extends QueryReport {
         this.useSystemUser = useSystemUser;
         this.actionType = actionType;
         this.totalContent = 0;
+        this.sortCol = sortCol;
+        this.sortOrder = sortOrder;
         this.setDataMap(new HashMap<Integer, Map<Integer, Map<String, Integer>>>());
         this.setPageMap(new HashMap<String, Map<String, Object>>());
     }
@@ -79,7 +86,10 @@ public class ReportByDateAndAuthor extends QueryReport {
             searchByAuthorStatement = " AND item.["+usernameField+"] = '"+searchUsername+"'";
         }
 
-        query = "SELECT * FROM [ " + nodetype + " ] AS item WHERE ISDESCENDANTNODE(item,['" + searchPath + "']) " + searchByDateStatement + searchByAuthorStatement;
+        String orderStatement = " order by item.["+resultFields[sortCol]+"] " + sortOrder;
+
+        query = "SELECT * FROM [ " + nodetype + " ] AS item WHERE ISDESCENDANTNODE(item,['" + searchPath + "']) " + searchByDateStatement + searchByAuthorStatement + orderStatement;
+        System.out.println(query);
         fillReport(session, query, offset, limit);
         totalContent = getTotalCount(session, query);
     }

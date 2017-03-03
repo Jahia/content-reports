@@ -24,19 +24,25 @@ public class ReportLockedContent extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportLockedContent.class);
     protected static final String BUNDLE = "resources.content-reports";
     private long totalContent;
+    private int sortCol;
+    private String order;
+    private String[] resultFields = {"j:nodename", "jcr:primaryType", "jcr:createdBy", "jcr:lockOwner", "j:nodename"};
 
     /**
      * Instantiates a new Report pages without title.
      *
      * @param siteNode the site node {@link JCRSiteNode}
      */
-    public ReportLockedContent(JCRSiteNode siteNode) {
+    public ReportLockedContent(JCRSiteNode siteNode, int sortCol, String order) {
         super(siteNode);
+        this.sortCol = sortCol;
+        this.order = order;
     }
 
     @Override
     public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
-        String pageQueryStr = "SELECT * FROM [jmix:editorialContent] AS item WHERE [jcr:lockOwner] is not null and ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])";
+        String orderStatement = " order by item.["+resultFields[sortCol]+"] " + order;
+        String pageQueryStr = "SELECT * FROM [jmix:editorialContent] AS item WHERE [jcr:lockOwner] is not null and ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])" + orderStatement;
         fillReport(session, pageQueryStr, offset, limit);
         totalContent = getTotalCount(session, pageQueryStr);
     }
@@ -66,7 +72,7 @@ public class ReportLockedContent extends QueryReport {
             nodeMap.put("nodeTypePrefix", node.getPrimaryNodeType().getPrefix());
             nodeMap.put("nodeTypeAlias", node.getPrimaryNodeType().getAlias());
             nodeMap.put("nodeAuthor", node.getCreationUser());
-            nodeMap.put("nodeLockedBy", node.getLockOwner());
+            nodeMap.put("nodeLockedBy", node.getPropertyAsString("jcr:lockOwner"));
             if (itemParentPage != null) {
                 nodeMap.put("nodeUsedInPageName", itemParentPage.getName());
                 nodeMap.put("nodeUsedInPageDisplayableName", itemParentPage.getDisplayableName());

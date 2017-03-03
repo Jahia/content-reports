@@ -55,6 +55,22 @@ public class GovernorReportAction extends Action {
 
     private BaseReport getReport(RenderContext renderContext, HttpServletRequest req) throws GovernorException {
         String reportId = req.getParameter("reportId");
+        String sortColParam = req.getParameter("order[0][column]");
+        String orderParam = req.getParameter("order[0][dir]");
+
+        int sortCol;
+        String order;
+        if (sortColParam == null) {
+            sortCol = 0; // sort on created data
+        } else {
+            sortCol = Integer.parseInt(sortColParam);
+        }
+        if (orderParam == null) {
+            order = ""; // sort on created data
+        } else {
+            order = orderParam;
+        }
+
         switch (reportId) {
             case "1":
                 return new ReportByAuthor(renderContext.getSite(),
@@ -82,7 +98,7 @@ public class GovernorReportAction extends Action {
             case "10":
                 return new ReportPagesWithoutTitle(renderContext.getSite(), req.getParameter("language"));
             case "11":
-                return new ReportPagesWithoutKeyword(renderContext.getSite());
+                return new ReportPagesWithoutKeyword(renderContext.getSite(), sortCol, order);
             case "12":
                 return new ReportPagesWithoutDescription(renderContext.getSite(), req.getParameter("language"));
             case "13":
@@ -90,13 +106,13 @@ public class GovernorReportAction extends Action {
             case "14":
                 return new ReportOrphanContent(renderContext.getSite());
             case "15":
-                return new ReportLockedContent(renderContext.getSite());
+                return new ReportLockedContent(renderContext.getSite(), sortCol, order);
             case "16":
                 return new ReportContentWaitingPublication(renderContext.getSite());
             case "17":
                 return new ReportOverview(renderContext.getSite());
             case "18":
-                return new ReportCustomCacheContent(renderContext.getSite());
+                return new ReportCustomCacheContent(renderContext.getSite(), sortCol, order);
             case "19":
                 return new ReportAclInheritanceStopped(renderContext.getSite());
             case "20":
@@ -104,7 +120,7 @@ public class GovernorReportAction extends Action {
                         (req.getParameter("typeAuthor").equalsIgnoreCase("created")) ? BaseReport.SearchActionType.CREATION : BaseReport.SearchActionType.UPDATE,
                         req.getParameter("pathTxt").replaceAll("'", ""), req.getParameter("typeSearch"), true, req.getParameter("searchByDate").equals("true"),
                         req.getParameter("typeDateSearch"), req.getParameter("dateBegin"), req.getParameter("dateEnd"),req.getParameter("searchAuthor").equals("true"),
-                        req.getParameter("searchUsername"), req.getParameter("typeAuthorSearch"));
+                        req.getParameter("searchUsername"), req.getParameter("typeAuthorSearch"), sortCol, order);
             case "21":
                 return new ReportByUnstranslated(renderContext.getSite(),
                         req.getParameter("selectLanguageBU"), req.getParameter("pathTxt").replaceAll("'", ""), req.getParameter("selectTypeSearch"));

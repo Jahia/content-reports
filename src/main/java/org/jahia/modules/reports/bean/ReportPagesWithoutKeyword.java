@@ -22,18 +22,26 @@ public class ReportPagesWithoutKeyword extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportPagesWithoutKeyword.class);
     private static final String BUNDLE = "resources.content-reports";
     private long totalContent;
+    private String sortOrder;
+    private int sortCol;
+    private String[] resultFields = {"jcr:title", "j:nodename"};
+
     /**
      * Instantiates a new Report pages without keyword.
      *
      * @param siteNode the site node {@link JCRSiteNode}
      */
-    public ReportPagesWithoutKeyword(JCRSiteNode siteNode) {
+    public ReportPagesWithoutKeyword(JCRSiteNode siteNode, int sortCol, String order) {
         super(siteNode);
+        this.sortCol = sortCol;
+        this.sortOrder = order;
     }
 
     @Override
     public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
-        String query = "SELECT * FROM [jnt:page] AS item WHERE ISDESCENDANTNODE(item,['" + siteNode.getPath() + "']) and [j:keywords] is null";
+        String orderStatement = " order by item.["+resultFields[sortCol]+"] " + sortOrder;
+
+        String query = "SELECT * FROM [jnt:page] AS item WHERE ISDESCENDANTNODE(item,['" + siteNode.getPath() + "']) and [j:keywords] is null" + orderStatement;
         fillReport(session, query, offset, limit);
         totalContent = getTotalCount(session, query);
 

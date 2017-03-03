@@ -30,8 +30,9 @@ $(document).ready(function () {
             "url": langFileUrl
         },
         "searching": false,
+        "Ordering:": false,
         "processing": true,
-
+        "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 1000] ],
         "columnDefs": [
             {
                 "render": function ( data, type, row ) {
