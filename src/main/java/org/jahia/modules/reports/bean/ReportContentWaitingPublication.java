@@ -159,8 +159,10 @@ public class ReportContentWaitingPublication extends QueryReport {
             if(wList != null) {
                 for (Workflow wf : wList) {
                     if (sb.length() > 0) { sb.append(","); }
-                    if(field.equalsIgnoreCase("startTime"))
+                    if(field.equalsIgnoreCase("startTime")) {
                         sb.append(dateFormat.format(wf.getStartTime()));
+                        break;
+                    }
                     if(field.equalsIgnoreCase("name")) {
                         sb.append(wf.getName());
                         break;
@@ -170,8 +172,10 @@ public class ReportContentWaitingPublication extends QueryReport {
                         GWTJahiaWorkflow gwtWD = wh.getGWTJahiaWorkflow(wf);
                         displayableName.put(wf.getId(), gwtWD.getVariables().get("jcr_title").getValues().toArray()[0].toString());
                     }
-                    if(field.equalsIgnoreCase("startUser"))
+                    if(field.equalsIgnoreCase("startUser")) {
                         sb.append(wf.getStartUser());
+                        break;
+                    }
                     if(field.equalsIgnoreCase("provider")) {
                         sb.append(wf.getProvider());
                         break;
