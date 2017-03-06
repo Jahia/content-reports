@@ -188,9 +188,8 @@ public class ReportContentWaitingPublication extends QueryReport {
             }
 
             if(field.equalsIgnoreCase("displayableName")) {
-                Iterator it = displayableName.entrySet().iterator();
-                while (it.hasNext()) {
-                    sb.append(it.next() + "<br />");
+                for (String key : displayableName.keySet()) {
+                    sb.append(displayableName.get(key) + "<br />");
                 }
             }
             return sb.toString();
