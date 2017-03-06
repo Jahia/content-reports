@@ -84,20 +84,14 @@ public class I18NPropertyReport extends BaseReport {
                 withLang = riWithLang.nextRow().getValue("jcr:uuid").getString();
             }
             if (!anyLang.equals(withLang)) {
-//                String primaryNodeType = row.getValue("jcr:primaryType").getString();
-//                    if (!NodeTypeRegistry.getInstance().getNodeType(primaryNodeType).isNodeType(definingType)) {
                 all.add(row.getPath());
-//                    }
             }
         }
 
         RowIterator noProperty = session.getWorkspace().getQueryManager().createQuery("/jcr:root/sites/" + siteNode.getName() + "//element(*," + type + ")/j:translation_" + language + "[not(@" + propertyName + ")]", Query.XPATH).execute().getRows();
         while (noProperty.hasNext()) {
             Row row = noProperty.nextRow();
-//            String primaryNodeType = row.getValue("jcr:primaryType").getString();
-//                if (!NodeTypeRegistry.getInstance().getNodeType(primaryNodeType).isNodeType(definingType)) {
             all.add(StringUtils.substringBeforeLast(row.getPath(), "/"));
-//                }
         }
         dataSetSize = all.size();
     }

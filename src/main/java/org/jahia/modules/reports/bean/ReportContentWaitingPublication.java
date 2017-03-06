@@ -85,8 +85,6 @@ public class ReportContentWaitingPublication extends QueryReport {
             jsonArrayItem.put(element.getType());
             jsonArrayItem.put(element.getPath());
 
-          //  jsonArrayItem.put("nodeUrl", element.getUrl());
-          //  jsonArrayItem.put("nodePath", element.getPath());
             for (String key: element.getElementMap().keySet()) {
                 jsonArrayItem.put(element.getElementMap().get(key).get("wfStarted"));
                 jsonArrayItem.put(element.getElementMap().get(key).get("wfDName"));
@@ -96,7 +94,6 @@ public class ReportContentWaitingPublication extends QueryReport {
                 }
 
             }
-           // jsonObjectItem.put("locales", jArray2);
             jArray.put(jsonArrayItem);
         }
 
