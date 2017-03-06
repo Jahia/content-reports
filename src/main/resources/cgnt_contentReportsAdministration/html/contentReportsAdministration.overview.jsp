@@ -43,6 +43,19 @@
                 <!-- search button -->
                 <div class="row">
                     <div class="col-md-12">
+                        <h1><fmt:message key="cgnt_contentReports.menu.contentReports.overview"/></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <!-- div tabla y contenidos -->
+            <div class="col-md-6" >
+
+                <!-- search button -->
+                <div class="row">
+                    <div class="col-md-12">
                         <button type="button" class="btn btn-default" onclick="fillReportOverview('${currentNodePath}', '${labelLoading}')">
                             <span class="glyphicon glyphicon-search"></span> <fmt:message key="cgnt_contentReports.report.search"/>
                         </button>

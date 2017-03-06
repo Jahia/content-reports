@@ -77,8 +77,9 @@ public class ReportByDateAndAuthor extends QueryReport {
         if (searchByDate) {
             String dateSearchField;
             if (typeDateSearch.equals("modified")) { dateSearchField = "jcr:lastModified"; } else { dateSearchField = "jcr:created";   }
-            if (!dateBegin.isEmpty()) { searchByDateStatement += " AND item.["+dateSearchField+"] >= '"+dateBegin+"T00:00:00.000+00:00' "; }
-            if (!dateEnd.isEmpty())  { searchByDateStatement += " AND item.["+dateSearchField+"] <= '"+dateEnd+"T00:00:00.000+00:00'"; }
+            // cast('2018-01-01T00:00:00.000+02:00' as date)
+            if (!dateBegin.isEmpty()) { searchByDateStatement += " AND item.["+dateSearchField+"] >= cast('"+dateBegin+"T00:00:00.000+00:00' as date) "; }
+            if (!dateEnd.isEmpty())  { searchByDateStatement += " AND item.["+dateSearchField+"] <= cast('"+dateEnd+"T00:00:00.000+00:00' as date)"; }
         }
         if (searchByAuthor) {
             String usernameField;

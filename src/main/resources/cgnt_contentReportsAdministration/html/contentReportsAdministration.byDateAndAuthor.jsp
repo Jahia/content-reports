@@ -36,6 +36,11 @@
         <div class="row">
             <!-- div tabla y contenidos -->
             <div class="col-md-6" >
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="label-form"><h1><fmt:message key="cgnt_contentReports.menu.contentReports.byAuthorAndDate"/></h1></label>
+                    </div>
+                </div>
 
                 <!-- select type of search -->
                 <div class="row">

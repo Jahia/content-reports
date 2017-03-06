@@ -36,7 +36,18 @@
 <div class="panel">
     <div class="panel-body">
         <div class="row">
+            <div class="col-md-6" >
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1><fmt:message key="cgnt_contentReports.menu.contentReports.contentWaitingPublication"/></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
             <!-- div tabla y contenidos -->
+
             <div class="col-md-6" >
 
                 <!-- search button -->

@@ -33,14 +33,7 @@ $(document).ready(function () {
         "Ordering:": false,
         "processing": true,
         "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, 1000] ],
-        "columnDefs": [
-            {
-                "render": function ( data, type, row ) {
-                    return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>";
-                },
-                "targets": 1
-            }
-        ],
+
         "pagingType": "full_numbers",
         "dom": 'Blfrtip',
         buttons: [

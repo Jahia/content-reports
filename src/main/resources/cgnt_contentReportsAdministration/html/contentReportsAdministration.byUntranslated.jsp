@@ -64,6 +64,19 @@
             <!-- div tabla y contenidos -->
             <div class="col-md-6" >
 
+                <!-- search button -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1><fmt:message key="cgnt_contentReports.menu.contentReports.pagesUnstranslated"/></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <!-- div tabla y contenidos -->
+            <div class="col-md-6" >
+
                 <!-- select type of search -->
                 <div class="row">
                     <div class="col-md-12">
@@ -151,7 +164,7 @@
                         <thead>
                             <tr>
                                 <th><fmt:message key="cgnt_contentReports.report.column.title"/></th>
-                                <th><fmt:message key="cgnt_contentReports.report.column.pagePath"/></th>
+                                <th><fmt:message key="cgnt_contentReports.report.column.path"/></th>
                                 <th><fmt:message key="cgnt_contentReports.report.column.type"/></th>
                             </tr>
                         </thead>

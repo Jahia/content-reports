@@ -22,7 +22,7 @@ function initDataTable (id, url, pathCol = -1, orderEnabled = true, disabledSort
         "columnDefs": [
             {
                 "render": function ( data, type, row ) {
-                    return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>";
+                    if (pathCol == -1) { return data; } else { return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>"; }
                 },
                 "targets": pathCol
             }, {
@@ -321,7 +321,7 @@ function fillReportByAllDateAndAuthor(baseUrl, gridLabel, totalLabel, loadingLab
 
 
         // setting the table name
-        table = initDataTable("byAllDateAndAuthorTable", actionUrl, 1, true, [0,1,2,5,6])
+        table = initDataTable("byAllDateAndAuthorTable", actionUrl, -1, true, [0,1,2,5,6])
 
 
 
@@ -358,7 +358,7 @@ function fillReportByUntranslated(baseUrl, gridLabel, totalLabel, loadingLabel){
         $('#rba-principal-grid-rdau').html(gridLabel);
 
         // getting the table
-        var table =  initDataTableWithoutAjax('byAllUntranslated', 1 , true); // $('#byAllUntranslated').DataTable();
+        var table =  initDataTableWithoutAjax('byAllUntranslated', -1 , true); // $('#byAllUntranslated').DataTable();
 
         // clear all content from table
         table.clear().draw();
@@ -984,7 +984,7 @@ function fillReportContentWaitingPublication(baseUrl, labelToday, labelYesterday
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    initDataTable ("waitingContentTable", actionUrl, 2, false );
+    initDataTable ("waitingContentTable", actionUrl, -1, false );
 
     ajaxindicatorstop();
 
