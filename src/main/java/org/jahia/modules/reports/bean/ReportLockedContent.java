@@ -55,7 +55,7 @@ public class ReportLockedContent extends QueryReport {
      */
     public void addItem(JCRNodeWrapper node) throws RepositoryException {
 
-        if(node.isLocked()){
+        //if(node.isLocked()){
             JCRNodeWrapper itemParentPage = node;
             if(!node.isNodeType("jnt:page")){
                 itemParentPage = JCRContentUtils.getParentOfType(node, "jnt:page");
@@ -84,7 +84,7 @@ public class ReportLockedContent extends QueryReport {
             nodeMap.put("nodeTitle", (node.hasI18N(this.locale) && node.getI18N(this.defaultLocale).hasProperty("jcr:title")) ? node.getI18N(this.defaultLocale).getProperty("jcr:title").getString() : "");
             nodeMap.put("displayTitle", StringUtils.isNotEmpty(nodeMap.get("nodeTitle")) ? nodeMap.get("nodeTitle") : nodeMap.get("nodeName"));
             this.dataList.add(nodeMap);
-        }
+        //}
     }
     @Override
     public JSONObject getJson() throws JSONException, RepositoryException {

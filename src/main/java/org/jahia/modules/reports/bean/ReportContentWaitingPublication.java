@@ -133,7 +133,9 @@ public class ReportContentWaitingPublication extends QueryReport {
             this.techName = node.getPrimaryNodeTypeName();
 
             for (String lang : localeMap.keySet()) {
+                logger.info(node + "###" +  lang + "###" + localeMap.get(lang));
                 List<Workflow> wfList = WorkflowService.getInstance().getActiveWorkflows(node, localeMap.get(lang), localeMap.get(lang));
+
                 this.elementMap.put(lang, new HashMap());
                 this.elementMap.get(lang).put("wfStarted", getWorkflowData( wfList, "startTime"));
                 this.elementMap.get(lang).put("wfName", getWorkflowData( wfList, "name"));
