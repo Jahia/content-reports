@@ -7,7 +7,7 @@
 
                                     http://www.jahia.com
 
-        Copyright (C) 2002-2016 Jahia Solutions Group SA. All rights reserved.
+        Copyright (C) 2002-2017 Jahia Solutions Group SA. All rights reserved.
 
         THIS FILE IS AVAILABLE UNDER TWO DIFFERENT LICENSES:
         1/GPL OR 2/JSEL
@@ -59,8 +59,9 @@
   <name>Content Reports</name>
   <description>This is the custom module (Content Reports) for running on a Digital Experience Manager server.</description>
   <scm>
-    <connection>scm:dummy:uri</connection>
-    <developerConnection>scm:dummy:uri</developerConnection>
+    <connection>git@github.com:Jahia/content-reports.git</connection>
+    <developerConnection>git@github.com:Jahia/content-reports.git</developerConnection>
+	<ulr>https://github.com/Jahia/content-reports</ulr>
   </scm>
   <properties>
     <jahia-depends>default,external-provider,siteSettings</jahia-depends>
