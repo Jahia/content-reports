@@ -23,7 +23,7 @@
             datatables/jquery.dataTables.min.css,
             datatables/buttons.dataTables.min.css,
             bootstrap/datepicker.css,
-            governor-style.css"  />
+            content-report-style.css"  />
 
 <template:addResources type="javascript" resources="
             jquery.min.js,
@@ -40,7 +40,7 @@
             datatables/vfs_fonts.js,
             datatables/buttons.html5.min.js,
             datatables/buttons.print.min.js,
-            governor-app.js"/>
+            content-report-app.js"/>
 
 <c:set var="selectedLang" value="${fn:split(fn:split(currentLocale, '_')[0], '-')[0]}"/>
 <input type="hidden" name="selectedLang" id="selectedLang" value="${selectedLang}">

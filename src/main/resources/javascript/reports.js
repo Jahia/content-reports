@@ -75,7 +75,7 @@ function initDataTableWithoutAjax (id, pathCol = -1, orderEnabled = true, disabl
 
 }
 function getReportActionUrl(baseUrl, reportId, parameters){
-    return  baseUrl + '.GovernorReport.do?reportId=' + reportId + ((parameters==null || parameters=='') ? '' : '&' + parameters);
+    return  baseUrl + '.contentReport.do?reportId=' + reportId + ((parameters==null || parameters=='') ? '' : '&' + parameters);
 }
 
 

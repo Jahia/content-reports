@@ -5,7 +5,7 @@ import org.jahia.modules.reports.bean.*;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.bin.Action;
 import org.jahia.bin.ActionResult;
-import org.jahia.modules.reports.exception.GovernorException;
+import org.jahia.modules.reports.exception.ContentReportException;
 import org.jahia.services.render.RenderContext;
 import org.jahia.services.render.Resource;
 import org.jahia.services.render.URLResolver;
@@ -18,18 +18,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * GovernorReportAction Class.
- * Created by Juan Carlos Rodas.
+ * Content report action.
+ * @author Juan Carlos Rodas.
  */
-public class GovernorReportAction extends Action {
+public class ContentReportAction extends Action {
 
     /* the logger fot the class */
-    private static Logger logger = LoggerFactory.getLogger(GovernorReportAction.class);
+    private static Logger logger = LoggerFactory.getLogger(ContentReportAction.class);
 
     @Override
     public ActionResult doExecute(HttpServletRequest req, RenderContext renderContext, Resource resource, JCRSessionWrapper session, Map<String, List<String>> parameters, URLResolver urlResolver) throws Exception {
-        logger.info("doExecute: begins the GovernorReportAction action.");
-
         try {
             /*checking the necessary parameters*/
             if (StringUtils.isEmpty(req.getParameter("reportId"))) {
@@ -44,7 +42,7 @@ public class GovernorReportAction extends Action {
                     req.getParameter("length") != null ? Integer.parseInt(req.getParameter("length")) : 10);
 
             return new ActionResult(HttpServletResponse.SC_OK,null, report.getJson());
-        } catch (GovernorException gex) {
+        } catch (ContentReportException gex) {
             logger.error("doExecute(), Error,", gex);
             return new ActionResult(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (Exception ex) {
@@ -53,7 +51,7 @@ public class GovernorReportAction extends Action {
         }
     }
 
-    private BaseReport getReport(RenderContext renderContext, HttpServletRequest req) throws GovernorException {
+    private BaseReport getReport(RenderContext renderContext, HttpServletRequest req) throws ContentReportException {
         String reportId = req.getParameter("reportId");
         String sortColParam = req.getParameter("order[0][column]");
         String orderParam = req.getParameter("order[0][dir]");
@@ -125,7 +123,7 @@ public class GovernorReportAction extends Action {
                 return new ReportByUnstranslated(renderContext.getSite(),
                         req.getParameter("selectLanguageBU"), req.getParameter("pathTxt").replaceAll("'", ""), req.getParameter("selectTypeSearch"));
             default:
-                throw new GovernorException("Invalid reportId: " + reportId);
+                throw new ContentReportException("Invalid reportId: " + reportId);
         }
 
     }
