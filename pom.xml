@@ -59,8 +59,8 @@
   <name>Content Reports</name>
   <description>This is the custom module (Content Reports) for running on a Digital Experience Manager server.</description>
   <scm>
-    <connection>git@github.com:Jahia/content-reports.git</connection>
-    <developerConnection>git@github.com:Jahia/content-reports.git</developerConnection>
+    <connection>scm:git:git@github.com:Jahia/content-reports.git</connection>
+    <developerConnection>scm:git:git@github.com:Jahia/content-reports.git</developerConnection>
     <url>https://github.com/Jahia/content-reports</url>
   </scm>
   <properties>
