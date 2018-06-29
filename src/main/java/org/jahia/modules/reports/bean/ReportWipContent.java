@@ -60,9 +60,7 @@ import javax.jcr.RepositoryException;
 import java.util.Map;
 
 /**
- * The ReportLockedContent Class.
- * <p>
- * Created by Juan Carlos Rodas.
+ * Created by Francois Pral.
  */
 public class ReportWipContent extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportWipContent.class);
