@@ -2,10 +2,10 @@
  * Created by Juan Carlos Rodas on 11/08/2016.
  */
 
-
 /* function for url action creation */
 // pathCol = number of the column to transform the path into a link
-function initDataTable (id, url, pathCol = -1, orderEnabled = true, disabledSortingCols = []) {
+// severalLinesCol = number of the column to display result on sevreal lines
+function initDataTable (id, url, pathCol = -1, multiLineCols = [], orderEnabled = true, disabledSortingCols = []) {
 
     // getting the table
     console.log($('#'+id));
@@ -22,10 +22,23 @@ function initDataTable (id, url, pathCol = -1, orderEnabled = true, disabledSort
         "columnDefs": [
             {
                 "render": function ( data, type, row ) {
-                    if (pathCol == -1) { return data; } else { return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>"; }
+                    if (pathCol == -1) {
+                        return data;
+                    } else if (data == null) {
+                        return "";
+                    } else {
+                        return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>";
+                    }
                 },
                 "targets": pathCol
-            }, {
+            },
+            {
+                "render": function ( data, type, row ) {
+                        return data.replace(/;/g, "<br/>");
+                },
+                "targets": multiLineCols
+            },
+            {
                 "orderable": false,
                 "targets": disabledSortingCols
             }
@@ -321,7 +334,7 @@ function fillReportByAllDateAndAuthor(baseUrl, gridLabel, totalLabel, loadingLab
 
 
         // setting the table name
-        table = initDataTable("byAllDateAndAuthorTable", actionUrl, -1, true, [0,1,2,5,6])
+        table = initDataTable("byAllDateAndAuthorTable", actionUrl, -1, [], true, [0,1,2,5,6])
 
 
 
@@ -838,7 +851,7 @@ function fillReportPageWithoutTitle(baseUrl, labelLoading, labelInsertTitle){
     // the loading message
     ajaxindicatorstart(labelLoading);
 
-    table = initDataTable("pageWithoutTitleTable", actionUrl, 0, false, [])
+    table = initDataTable("pageWithoutTitleTable", actionUrl, 0, [], false, [])
     ajaxindicatorstop();
 
 }
@@ -867,7 +880,7 @@ function fillReportPageWithoutKeywords(baseUrl, loadingLabel, labelAddKeywords){
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    initDataTable ("pageWithoutKeywordsTable", actionUrl, 1, true, [1]);
+    initDataTable ("pageWithoutKeywordsTable", actionUrl, 1, [], true, [1]);
 
     ajaxindicatorstop();
 
@@ -884,7 +897,7 @@ function fillReportPageWithoutDescription(baseUrl, loadingLabel, labelInsertDesc
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    initDataTable ("pageWithoutDescriptionTable", actionUrl, 0, false);
+    initDataTable ("pageWithoutDescriptionTable", actionUrl, 0, [], false);
 
     ajaxindicatorstop();
 }
@@ -968,12 +981,31 @@ function fillReportLockedContent(baseUrl, loadingLabel, labelUnlock, labelUnlock
     ajaxindicatorstart(loadingLabel);
 
 
-    initDataTable ("lockedContentTable", actionUrl, 4, true, [0,4]);
+    initDataTable ("lockedContentTable", actionUrl, 4, [], true, [0,4]);
 
     ajaxindicatorstop();
 
 }
 
+/**************************************
+ *       REPORTS WIP CONTENT       *
+ **************************************/
+
+function fillReportWipContent(baseUrl, loadingLabel){
+    var pathTxt = $('#pathTxt').val();
+
+    var parameters = "&pathTxt='" + pathTxt;
+    var actionUrl = getReportActionUrl(baseUrl, 22, parameters);
+
+    // the loading message
+    ajaxindicatorstart(loadingLabel);
+
+
+    initDataTable ("wipContentTable", actionUrl, 4, [2], true, [2,4]);
+
+    ajaxindicatorstop();
+
+}
 
 /***************************************
  * REPORTS WAITING PUBLICATION CONTENT *
@@ -984,7 +1016,7 @@ function fillReportContentWaitingPublication(baseUrl, labelToday, labelYesterday
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    initDataTable ("waitingContentTable", actionUrl, -1, false );
+    initDataTable ("waitingContentTable", actionUrl, -1, [], false );
 
     ajaxindicatorstop();
 
@@ -1027,7 +1059,7 @@ function fillReportCustomCacheContent(baseUrl, loadingLabel){
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    initDataTable ("customCacheContentTable", actionUrl, 3, true, [0,3]);
+    initDataTable ("customCacheContentTable", actionUrl, 3, [], true, [0,3]);
 
     ajaxindicatorstop();
 
@@ -1045,7 +1077,7 @@ function fillReportPageAclInheritanceBreak(baseUrl, loadingLabel){
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
-    initDataTable ("pageAclInheritanceBreakTable", actionUrl, 1, false);
+    initDataTable ("pageAclInheritanceBreakTable", actionUrl, 1, [], false);
 
     ajaxindicatorstop();
 

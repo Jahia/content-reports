@@ -68,6 +68,11 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a class="nav-menu-link" href="#" onclick="showView('22')">
+                                        <fmt:message key="cgnt_contentReports.menu.contentReports.wipContent"/>
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="nav-menu-link" href="#" onclick="showView('15')">
                                         <fmt:message key="cgnt_contentReports.menu.contentReports.contentWaitingPublication"/>
                                     </a>
@@ -116,7 +121,7 @@
                                 <li>
                                     <label class="tree-toggler nav-header"><fmt:message key="cgnt_contentReports.menu.contentReports.system"/></label>
 
-                                    <ul class="nav nav-list tree"></li>
+                                    <ul class="nav nav-list tree">
                                         <li>
                                             <a class="nav-menu-link" href="#" onclick="showView('14')">
                                                 <fmt:message key="cgnt_contentReports.menu.contentReports.lockedContent"/>
@@ -138,11 +143,7 @@
                                             </a>
                                         </li>
                                     </ul>
-
-
-
-
-
+                                </li>
                             </ul>
                         </li>
                     </ul>
@@ -202,6 +203,10 @@
                 <!-- Report untranslated pages-->
                 <div id="report-21" class="div-report">
                     <template:include view="byUntranslated"/>
+                </div>
+                <!-- Report By WIP Content -->
+                <div id="report-22" class="div-report">
+                    <template:include view="wipContent"/>
                 </div>
             </div>
         </div>

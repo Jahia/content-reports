@@ -165,6 +165,8 @@ public class ContentReportAction extends Action {
             case "21":
                 return new ReportByUnstranslated(renderContext.getSite(),
                         req.getParameter("selectLanguageBU"), req.getParameter("pathTxt").replaceAll("'", ""), req.getParameter("selectTypeSearch"));
+            case "22":
+                return new ReportWipContent(renderContext.getSite(), req.getParameter("pathTxt").replaceAll("'", ""), sortCol, order);
             default:
                 throw new ContentReportException("Invalid reportId: " + reportId);
         }
