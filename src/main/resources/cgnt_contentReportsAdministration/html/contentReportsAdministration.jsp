@@ -45,7 +45,7 @@
 <c:set var="selectedLang" value="${fn:split(fn:split(currentLocale, '_')[0], '-')[0]}"/>
 <input type="hidden" name="selectedLang" id="selectedLang" value="${selectedLang}">
 <input type="hidden" name="selectedBaseUrl" id="selectedBaseUrl" value="${url.currentModule}">
-<input type="hidden" id="baseEdit" value="${url.baseEdit}">
+<input type="hidden" id="baseEdit" value="${url.context}${url.baseEdit}">
 
 
 <div class="panel panel-primary">

@@ -4,7 +4,8 @@
 
 /* function for url action creation */
 // pathCol = number of the column to transform the path into a link
-// severalLinesCol = number of the column to display result on sevreal lines
+/* severalLinesCol = numbers of the columns to display on several lines, cell format should be ["line1","line2","line3"]
+  */
 function initDataTable (id, url, pathCol = -1, multiLineCols = [], orderEnabled = true, disabledSortingCols = []) {
 
     // getting the table
@@ -34,7 +35,13 @@ function initDataTable (id, url, pathCol = -1, multiLineCols = [], orderEnabled 
             },
             {
                 "render": function ( data, type, row ) {
-                        return data.replace(/;/g, "<br/>");
+                    var array = JSON.parse(data);
+                    var arrayLength = array.length;
+                    var multiLine = array[0];
+                    for (var i = 1; i < arrayLength; i++) {
+                        multiLine = multiLine.concat("<br/>", array[i]);
+                    }
+                    return multiLine;
                 },
                 "targets": multiLineCols
             },
