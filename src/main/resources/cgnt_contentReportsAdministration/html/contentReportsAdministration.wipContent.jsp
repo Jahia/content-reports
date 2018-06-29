@@ -21,18 +21,7 @@
 <%--@elvariable id="vfsFactory" type="org.jahia.modules.external.vfs.factory.VFSMountPointFactory"--%>
 <template:addResources resources="reports.js" type="javascript" />
 <fmt:message key="cgnt_contentReports.report" var="labelReport"/>
-<fmt:message key="cgnt_contentReports.menu.contentReports.byDate" var="labelDate"/>
-<fmt:message key="cgnt_contentReports.report.label.total" var="labelTotal"/>
-<fmt:message key="cgnt_contentReports.report.label.yes" var="labelYes"/>
-<fmt:message key="cgnt_contentReports.report.label.no" var="labelNo"/>
-<fmt:message key="cgnt_contentReports.menu.contentReports.detailsBy" var="labelDetailsBy"/>
-<fmt:message key="cgnt_contentReports.report.label.contentCreated" var="labelCreatedBy"/>
 <fmt:message key="cgnt_contentReports.report.loading" var="labelLoading"/>
-<fmt:message key="cgnt_contentReports.report.label.unlock" var="labelUnlock"/>
-<fmt:message key="cgnt_contentReports.report.label.unlockAll" var="labelUnlockAll"/>
-<fmt:message key="cgnt_contentReports.report.label.unlock.question" var="labelUnlockQuestion"/>
-<fmt:message key="cgnt_contentReports.report.label.unlockAll.question" var="labelUnlockAllQuestion"/>
-<fmt:message key="cgnt_contentReports.report.label.unlock.yes" var="labelUnlockYes"/>
 <c:url value="${url.base}${docPath}${renderContext.mainResource.node.path}" var="currentNodePath"/>
 
 
