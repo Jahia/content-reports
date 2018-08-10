@@ -45,7 +45,7 @@
 <c:set var="selectedLang" value="${fn:split(fn:split(currentLocale, '_')[0], '-')[0]}"/>
 <input type="hidden" name="selectedLang" id="selectedLang" value="${selectedLang}">
 <input type="hidden" name="selectedBaseUrl" id="selectedBaseUrl" value="${url.currentModule}">
-<input type="hidden" id="baseEdit" value="${url.baseEdit}">
+<input type="hidden" id="baseEdit" value="${url.context}${url.baseEdit}">
 
 
 <div class="panel panel-primary">
@@ -65,6 +65,11 @@
                                 <li>
                                     <a class="nav-menu-link" href="#" onclick="showView('20')">
                                         <fmt:message key="cgnt_contentReports.menu.contentReports.byAuthorAndDate"/>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-menu-link" href="#" onclick="showView('22')">
+                                        <fmt:message key="cgnt_contentReports.menu.contentReports.wipContent"/>
                                     </a>
                                 </li>
                                 <li>
@@ -116,7 +121,7 @@
                                 <li>
                                     <label class="tree-toggler nav-header"><fmt:message key="cgnt_contentReports.menu.contentReports.system"/></label>
 
-                                    <ul class="nav nav-list tree"></li>
+                                    <ul class="nav nav-list tree">
                                         <li>
                                             <a class="nav-menu-link" href="#" onclick="showView('14')">
                                                 <fmt:message key="cgnt_contentReports.menu.contentReports.lockedContent"/>
@@ -138,11 +143,7 @@
                                             </a>
                                         </li>
                                     </ul>
-
-
-
-
-
+                                </li>
                             </ul>
                         </li>
                     </ul>
@@ -202,6 +203,10 @@
                 <!-- Report untranslated pages-->
                 <div id="report-21" class="div-report">
                     <template:include view="byUntranslated"/>
+                </div>
+                <!-- Report By WIP Content -->
+                <div id="report-22" class="div-report">
+                    <template:include view="wipContent"/>
                 </div>
             </div>
         </div>

@@ -44,7 +44,8 @@
 package org.jahia.modules.reports.bean;
 
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang.StringUtils;
+import org.jahia.api.Constants;
+import org.jahia.services.content.JCRContentUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
@@ -55,32 +56,41 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
 
 /**
- * ReportAclInheritanceStopped Class.
- * <p>
- * Created by Juan Carlos Rodas.
+ * Created by Francois Pral.
  */
-public class ReportAclInheritanceStopped extends QueryReport {
-    private static Logger logger = LoggerFactory.getLogger(ReportAclInheritanceStopped.class);
+public class ReportWipContent extends QueryReport {
+    private static Logger logger = LoggerFactory.getLogger(ReportWipContent.class);
     protected static final String BUNDLE = "resources.content-reports";
     private long totalContent;
+    private int sortCol;
+    private String searchPath;
+    private String order;
+    private String[] resultFields = {"j:nodename", "jcr:primaryType", "jcr:createdBy", "j:workInProgressStatus", "j:nodename"};
 
     /**
      * Instantiates a new Report pages without title.
      *
-     * @param siteNode the site node
+     * @param siteNode the site node {@link JCRSiteNode}
      */
-    public ReportAclInheritanceStopped(JCRSiteNode siteNode) {
+    public ReportWipContent(JCRSiteNode siteNode, String searchPath, int sortCol, String order) {
         super(siteNode);
+        this.sortCol = sortCol;
+        this.order = order;
+        this.searchPath = searchPath;
     }
 
     @Override
     public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
-        String queryStr = "SELECT * FROM [jnt:acl] AS item WHERE [j:inherit]=false and ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])";
-        fillReport(session, queryStr, offset, limit);
-        totalContent = getTotalCount(session, queryStr);
+
+        String orderStatement = " order by item.[" + resultFields[sortCol] + "] " + order;
+        String pageQueryStr = "SELECT * FROM [jmix:editorialContent] AS item WHERE [j:workInProgressStatus] is not null  and [j:workInProgressStatus]<> \""+ Constants.WORKINPROGRESS_STATUS_DISABLED +"\" and ISDESCENDANTNODE(item,['" + searchPath + "'])" + orderStatement;
+
+        fillReport(session, pageQueryStr, offset, limit);
+        totalContent = getTotalCount(session, pageQueryStr);
     }
 
     /**
@@ -90,27 +100,30 @@ public class ReportAclInheritanceStopped extends QueryReport {
      * @throws RepositoryException
      */
     public void addItem(JCRNodeWrapper node) throws RepositoryException {
-        //adding the node to list if Acl Inheritance is Break
-        node = node.getParent();
+
         Map<String, String> nodeMap = new HashedMap();
-        nodeMap.put("nodePath", node.getPath());
-        nodeMap.put("nodeUrl", node.getUrl());
-        nodeMap.put("nodeName", node.getName());
-        nodeMap.put("nodeType", node.getPrimaryNodeTypeName());
-        nodeMap.put("expiration", node.getPropertyAsString("j:expiration"));
-        nodeMap.put("nodeTypeTechName", node.getPrimaryNodeTypeName().split(":")[1]);
-        nodeMap.put("nodeTypeName", node.getPrimaryNodeType().getName());
-        nodeMap.put("nodeTypePrefix", node.getPrimaryNodeType().getPrefix());
-        nodeMap.put("nodeTypePrefix", node.getPrimaryNodeType().getPrefix());
-        nodeMap.put("nodeTypeAlias", node.getPrimaryNodeType().getAlias());
-        nodeMap.put("nodeAuthor", node.getCreationUser());
-        nodeMap.put("nodeLockedBy", node.getLockOwner());
+        JCRNodeWrapper itemParentPage = node;
+        if (!node.isNodeType("jnt:page")) {
+            itemParentPage = JCRContentUtils.getParentOfType(node, "jnt:page");
+        }
+        if (itemParentPage != null) {
+            nodeMap.put("nodeUsedInPagePath", itemParentPage.getPath());
+        }
+
         nodeMap.put("nodeDisplayableName", node.getDisplayableName());
-        nodeMap.put("nodeTitle", (node.hasI18N(this.locale) && node.getI18N(this.defaultLocale).hasProperty("jcr:title")) ? node.getI18N(this.defaultLocale).getProperty("jcr:title").getString() : "");
-        nodeMap.put("displayTitle", StringUtils.isNotEmpty(nodeMap.get("nodeTitle")) ? nodeMap.get("nodeTitle") : nodeMap.get("nodeName"));
+        nodeMap.put("nodePath", node.getPath());
+        nodeMap.put("nodeTypeName", node.getPrimaryNodeType().getLabel(this.defaultLocale));
+        String WIPStatus = node.getPropertyAsString(Constants.WORKINPROGRESS_STATUS);
+        if (WIPStatus.equals(Constants.WORKINPROGRESS_STATUS_LANG)){
+            nodeMap.put("nodeWip", Arrays.toString(Arrays.asList(node.getProperty(Constants.WORKINPROGRESS_LANGUAGES).getValues()).stream().map(s -> "\"" + s + "\"").toArray()));
+        } else {
+            nodeMap.put("nodeWip", "[\"" + WIPStatus + "\"]");
+        }
+
         this.dataList.add(nodeMap);
     }
 
+    @Override
     public JSONObject getJson() throws JSONException, RepositoryException {
 
         JSONObject jsonObject = new JSONObject();
@@ -118,10 +131,13 @@ public class ReportAclInheritanceStopped extends QueryReport {
 
         for (Map<String, String> nodeMap : this.dataList) {
             JSONArray item = new JSONArray();
-            item.put(nodeMap.get("nodeName"));
+            item.put(nodeMap.get("nodeDisplayableName"));
+            item.put(nodeMap.get("nodeTypeName"));
+            item.put(nodeMap.get("nodeWip"));
             item.put(nodeMap.get("nodePath"));
-            jArray.put(item);        }
-
+            item.put(nodeMap.get("nodeUsedInPagePath"));
+            jArray.put(item);
+        }
         jsonObject.put("recordsTotal", totalContent);
         jsonObject.put("recordsFiltered", totalContent);
         jsonObject.put("siteName", siteNode.getName());
@@ -129,7 +145,6 @@ public class ReportAclInheritanceStopped extends QueryReport {
         jsonObject.put("data", jArray);
         return jsonObject;
     }
-
 
 
 }
