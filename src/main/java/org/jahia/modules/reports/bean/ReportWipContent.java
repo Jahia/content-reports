@@ -70,27 +70,31 @@ public class ReportWipContent extends QueryReport {
     private String searchPath;
     private String order;
     private String[] resultFields = {"j:nodename", "jcr:primaryType", "jcr:createdBy", "j:workInProgressStatus", "j:nodename"};
+    private SearchContentType reportType;
 
     /**
      * Instantiates a new Report pages without title.
      *
      * @param siteNode the site node {@link JCRSiteNode}
      */
-    public ReportWipContent(JCRSiteNode siteNode, String searchPath, int sortCol, String order) {
+    public ReportWipContent(JCRSiteNode siteNode, String searchPath, SearchContentType reportType, int sortCol, String order) {
         super(siteNode);
         this.sortCol = sortCol;
         this.order = order;
         this.searchPath = searchPath;
+        this.reportType = reportType;
     }
 
     @Override
     public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
 
         String orderStatement = " order by item.[" + resultFields[sortCol] + "] " + order;
-        String pageQueryStr = "SELECT * FROM [jmix:editorialContent] AS item WHERE [j:workInProgressStatus] is not null  and [j:workInProgressStatus]<> \""+ Constants.WORKINPROGRESS_STATUS_DISABLED +"\" and ISDESCENDANTNODE(item,['" + searchPath + "'])" + orderStatement;
+        String strQuery = "SELECT * FROM ";
+        strQuery += (reportType.equals(BaseReport.SearchContentType.PAGE) ? "[jnt:page] " : "[jmix:editorialContent] ");
+        strQuery += "AS item WHERE [j:workInProgressStatus] is not null  and [j:workInProgressStatus]<> \""+ Constants.WORKINPROGRESS_STATUS_DISABLED +"\" and ISDESCENDANTNODE(item,['" + searchPath + "'])" + orderStatement;
 
-        fillReport(session, pageQueryStr, offset, limit);
-        totalContent = getTotalCount(session, pageQueryStr);
+        fillReport(session, strQuery, offset, limit);
+        totalContent = getTotalCount(session, strQuery);
     }
 
     /**

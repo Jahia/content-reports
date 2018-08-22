@@ -39,9 +39,33 @@
                 </div>
             </div>
         </div>
-        <br>
+        <!-- select type of search -->
         <div class="row">
-            <!-- div tabla y contenidos -->
+            <div class="col-md-6">
+                <label class="label-form"> <fmt:message key="cgnt_contentReports.report.typeSearch"/> </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="typeOfSearch" value="pages" checked="checked">
+                        <fmt:message key="cgnt_contentReports.report.typeSearch.pagesOnly"/>
+                    </label>
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="typeOfSearch"  value="ccntent">
+                        <fmt:message key="cgnt_contentReports.report.typeSearch.allContent"/>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!--  <div class="row"><div class="col-md-12"><hr/></div></div>-->
+         <br>
+         <div class="row">
+             <!-- div tabla y contenidos -->
             <div class="col-md-6" >
 
                 <!-- select path -->

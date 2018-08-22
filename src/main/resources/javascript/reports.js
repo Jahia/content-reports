@@ -1000,8 +1000,8 @@ function fillReportLockedContent(baseUrl, loadingLabel, labelUnlock, labelUnlock
 
 function fillReportWipContent(baseUrl, loadingLabel){
     var pathTxt = $('#pathTxt').val();
-
-    var parameters = "&pathTxt='" + pathTxt;
+    var typeSearch = $("input[name='typeOfSearch']:checked").val();
+    var parameters = "&pathTxt=" + pathTxt + "&typeSearch=" + typeSearch;
     var actionUrl = getReportActionUrl(baseUrl, 22, parameters);
 
     // the loading message
