@@ -390,6 +390,7 @@ function fillReportByUntranslated(baseUrl, gridLabel, totalLabel, loadingLabel){
                 data.items[index].title,
                 checkUndefined(data.items[index].path),
                 checkUndefined(data.items[index].type),
+                checkUndefined(data.items[index].date),
                 checkUndefined(data.items[index].created)
             ] ).draw();
         });

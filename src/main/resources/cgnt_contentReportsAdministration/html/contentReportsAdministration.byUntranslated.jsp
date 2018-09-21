@@ -166,10 +166,12 @@
                                 <th><fmt:message key="cgnt_contentReports.report.column.title"/></th>
                                 <th><fmt:message key="cgnt_contentReports.report.column.path"/></th>
                                 <th><fmt:message key="cgnt_contentReports.report.column.type"/></th>
+                                <th><fmt:message key="cgnt_contentReports.report.column.created"/></th>
                             </tr>
                         </thead>
                         <tfoot>
                             <tr>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>

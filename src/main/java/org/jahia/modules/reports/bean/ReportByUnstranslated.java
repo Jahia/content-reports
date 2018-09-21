@@ -129,9 +129,15 @@ public class ReportByUnstranslated extends QueryReport {
 
         pageMap.put(node.getIdentifier(), new HashMap<String, Object>());
         Map<String, Object> nodeEntry = pageMap.get(node.getIdentifier());
-        nodeEntry.put("name",  node.getDisplayableName());
+        if (node.getDisplayableName().length() >= 100) {
+            nodeEntry.put("name",  node.getDisplayableName().substring(0,100)+"...");
+        } else {
+            nodeEntry.put("name",  node.getDisplayableName());
+        }
+
         nodeEntry.put("path", node.getPath());
         nodeEntry.put("type", node.getPrimaryNodeType().getAlias());
+        nodeEntry.put("date", node.getPropertyAsString("jcr:created"));
 
     }
 
@@ -154,6 +160,7 @@ public class ReportByUnstranslated extends QueryReport {
                 jsonObjectItem.put("title", pageMap.get(content).get("name"));
                 jsonObjectItem.put("path", pageMap.get(content).get("path"));
                 jsonObjectItem.put("type", pageMap.get(content).get("type"));
+                jsonObjectItem.put("date", pageMap.get(content).get("date"));
                 /* setting each item to the json object */
                 jArray.put(jsonObjectItem);
 
