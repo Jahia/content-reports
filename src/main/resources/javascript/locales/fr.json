@@ -1,0 +1,13 @@
+{
+  "label": {
+    "contentManager": {
+      "leftMenu" : {
+        "manage" : {
+          "contentReports" : {
+            "title" : "Rapport de contenu"
+          }
+        }
+      }
+    }
+  }
+}
