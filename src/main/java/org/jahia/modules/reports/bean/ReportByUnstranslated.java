@@ -44,6 +44,7 @@
 package org.jahia.modules.reports.bean;
 
 
+import org.apache.commons.lang.WordUtils;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.jahia.exceptions.JahiaException;
 import org.jahia.services.content.JCRNodeWrapper;
@@ -129,12 +130,9 @@ public class ReportByUnstranslated extends QueryReport {
 
         pageMap.put(node.getIdentifier(), new HashMap<String, Object>());
         Map<String, Object> nodeEntry = pageMap.get(node.getIdentifier());
-        if (node.getDisplayableName().length() >= 100) {
-            nodeEntry.put("name",  node.getDisplayableName().substring(0,100)+"...");
-        } else {
-            nodeEntry.put("name",  node.getDisplayableName());
-        }
-
+        String nodeName = "";
+        nodeName = WordUtils.abbreviate(node.getDisplayableName(),90,130,"...");
+        nodeEntry.put("name",  nodeName);
         nodeEntry.put("path", node.getPath());
         nodeEntry.put("type", node.getPrimaryNodeType().getAlias());
         nodeEntry.put("date", node.getPropertyAsString("jcr:created"));
