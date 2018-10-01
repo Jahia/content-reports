@@ -45,6 +45,7 @@ package org.jahia.modules.reports.bean;
 
 import org.jahia.api.Constants;
 import org.jahia.exceptions.JahiaException;
+import org.jahia.modules.reports.util.Utils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
@@ -99,7 +100,7 @@ public class ReportByLanguageDetailed extends QueryReport {
         /* adding the item information */
         this.itemMap = new HashMap<>();
         this.itemMap.put("title", node.hasProperty("jcr:title") ? node.getPropertyAsString("jcr:title") : "");
-        this.itemMap.put("displayableName", node.getDisplayableName());
+        this.itemMap.put("displayableName", Utils.abbreviateDisplayableNames(node.getDisplayableName()));
         this.itemMap.put("name", node.getName());
         this.itemMap.put("displayTitle", node.hasProperty("jcr:title") ? node.getPropertyAsString("jcr:title") : node.getDisplayableName());
         this.itemMap.put("primaryNodeTypeAlias", node.getPrimaryNodeType().getAlias());

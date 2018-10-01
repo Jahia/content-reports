@@ -43,16 +43,21 @@
  */
 package org.jahia.modules.reports.util;
 
+import org.apache.commons.lang.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Created by Juan Carlos Rodas on 11/08/2016.
  */
-public class SortUtil {
+public class Utils {
 
-    private static Logger logger = LoggerFactory.getLogger(SortUtil.class);
+    private static Logger logger = LoggerFactory.getLogger(Utils.class);
 
-
+    public static String abbreviateDisplayableNames(String strToAbbreviate) {
+        String finalString = "";
+        finalString = WordUtils.abbreviate(strToAbbreviate,90,130,"...");
+        return finalString;
+    }
 
 }
