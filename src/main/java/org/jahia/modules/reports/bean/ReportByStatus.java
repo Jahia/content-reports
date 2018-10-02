@@ -45,9 +45,9 @@ package org.jahia.modules.reports.bean;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.jahia.api.Constants;
 import org.jahia.exceptions.JahiaException;
-import org.jahia.modules.reports.util.Utils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
@@ -135,7 +135,7 @@ public class ReportByStatus extends BaseReport {
                 jsonObjectSubItemDetail.put("canonicalPath", nodeItem.getCanonicalPath());
                 jsonObjectSubItemDetail.put("identifier", nodeItem.getIdentifier());
                 jsonObjectSubItemDetail.put("title", nodeItem.hasProperty("jcr:title") ? nodeItem.getPropertyAsString("jcr:title") : "");
-                jsonObjectSubItemDetail.put("displayableName", Utils.abbreviateDisplayableNames(nodeItem.getDisplayableName()));
+                jsonObjectSubItemDetail.put("displayableName", WordUtils.abbreviate(nodeItem.getDisplayableName(),90,130,"..."));
                 jsonObjectSubItemDetail.put("name", nodeItem.getName());
                 jsonObjectSubItemDetail.put("displayTitle", nodeItem.hasProperty("jcr:title") ? nodeItem.getPropertyAsString("jcr:title") : nodeItem.getDisplayableName());
                 jsonObjectSubItemDetail.put("primaryNodeType", nodeItem.getPrimaryNodeType());

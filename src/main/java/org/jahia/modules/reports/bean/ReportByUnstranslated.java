@@ -61,7 +61,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import org.jahia.modules.reports.util.Utils;
 
 /**
  * ReportByAllDate Class.
@@ -131,9 +130,7 @@ public class ReportByUnstranslated extends QueryReport {
 
         pageMap.put(node.getIdentifier(), new HashMap<String, Object>());
         Map<String, Object> nodeEntry = pageMap.get(node.getIdentifier());
-        String nodeName = "";
-        nodeName = WordUtils.abbreviate(node.getDisplayableName(),90,130,"...");
-        nodeEntry.put("name",  Utils.abbreviateDisplayableNames(node.getDisplayableName()));
+        nodeEntry.put("name",  WordUtils.abbreviate(node.getDisplayableName(),90,130,"..."));
         nodeEntry.put("path", node.getPath());
         nodeEntry.put("type", node.getPrimaryNodeType().getAlias());
         nodeEntry.put("date", node.getPropertyAsString("jcr:created"));

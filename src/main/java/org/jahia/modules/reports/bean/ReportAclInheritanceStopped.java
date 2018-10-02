@@ -45,7 +45,7 @@ package org.jahia.modules.reports.bean;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
-import org.jahia.modules.reports.util.Utils;
+import org.apache.commons.lang.WordUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
@@ -106,7 +106,7 @@ public class ReportAclInheritanceStopped extends QueryReport {
         nodeMap.put("nodeTypeAlias", node.getPrimaryNodeType().getAlias());
         nodeMap.put("nodeAuthor", node.getCreationUser());
         nodeMap.put("nodeLockedBy", node.getLockOwner());
-        nodeMap.put("nodeDisplayableName", Utils.abbreviateDisplayableNames(node.getDisplayableName()));
+        nodeMap.put("nodeDisplayableName", WordUtils.abbreviate(node.getDisplayableName(),90,130,"..."));
         nodeMap.put("nodeTitle", (node.hasI18N(this.locale) && node.getI18N(this.defaultLocale).hasProperty("jcr:title")) ? node.getI18N(this.defaultLocale).getProperty("jcr:title").getString() : "");
         nodeMap.put("displayTitle", StringUtils.isNotEmpty(nodeMap.get("nodeTitle")) ? nodeMap.get("nodeTitle") : nodeMap.get("nodeName"));
         this.dataList.add(nodeMap);
