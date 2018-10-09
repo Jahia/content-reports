@@ -44,6 +44,7 @@
 package org.jahia.modules.reports.bean;
 
 
+import org.apache.commons.lang.WordUtils;
 import org.jahia.exceptions.JahiaException;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
@@ -150,7 +151,7 @@ public class ReportByDateAndAuthor extends QueryReport {
         Date itemDate = null;
         pageMap.put(node.getIdentifier(), new HashMap<String, Object>());
         Map<String, Object> nodeEntry = pageMap.get(node.getIdentifier());
-        nodeEntry.put("name",  node.getDisplayableName());
+        nodeEntry.put("name",  WordUtils.abbreviate(node.getDisplayableName(),90,130,"..."));
         nodeEntry.put("path", node.getPath());
         nodeEntry.put("type", node.getPrimaryNodeType().getAlias());
         nodeEntry.put("created", node.getPropertyAsString("jcr:created"));

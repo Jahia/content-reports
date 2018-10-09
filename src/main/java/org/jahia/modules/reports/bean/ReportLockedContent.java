@@ -45,6 +45,7 @@ package org.jahia.modules.reports.bean;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.jahia.services.content.JCRContentUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
@@ -121,7 +122,7 @@ public class ReportLockedContent extends QueryReport {
             nodeMap.put("nodeUsedInPageUrl", itemParentPage.getUrl());
             nodeMap.put("nodeUsedInPageTitle", (itemParentPage.hasI18N(this.locale) && itemParentPage.getI18N(this.defaultLocale).hasProperty("jcr:title")) ? itemParentPage.getI18N(this.defaultLocale).getProperty("jcr:title").getString() : "");
         }
-        nodeMap.put("nodeDisplayableName", node.getDisplayableName());
+        nodeMap.put("nodeDisplayableName", WordUtils.abbreviate(node.getDisplayableName(),90,130,"..."));
         nodeMap.put("nodeTitle", (node.hasI18N(this.locale) && node.getI18N(this.defaultLocale).hasProperty("jcr:title")) ? node.getI18N(this.defaultLocale).getProperty("jcr:title").getString() : "");
         nodeMap.put("displayTitle", StringUtils.isNotEmpty(nodeMap.get("nodeTitle")) ? nodeMap.get("nodeTitle") : nodeMap.get("nodeName"));
         this.dataList.add(nodeMap);

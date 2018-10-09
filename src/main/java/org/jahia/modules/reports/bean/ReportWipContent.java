@@ -44,6 +44,7 @@
 package org.jahia.modules.reports.bean;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang.WordUtils;
 import org.jahia.api.Constants;
 import org.jahia.services.content.JCRContentUtils;
 import org.jahia.services.content.JCRNodeWrapper;
@@ -114,7 +115,7 @@ public class ReportWipContent extends QueryReport {
             nodeMap.put("nodeUsedInPagePath", itemParentPage.getPath());
         }
 
-        nodeMap.put("nodeDisplayableName", node.getDisplayableName());
+        nodeMap.put("nodeDisplayableName", WordUtils.abbreviate(node.getDisplayableName(),90,130,"..."));
         nodeMap.put("nodePath", node.getPath());
         nodeMap.put("nodeTypeName", node.getPrimaryNodeType().getLabel(this.defaultLocale));
         String WIPStatus = node.getPropertyAsString(Constants.WORKINPROGRESS_STATUS);
