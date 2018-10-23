@@ -116,6 +116,11 @@
                                                 <fmt:message key="cgnt_contentReports.menu.contentReports.pagesWithoutDescription"/>
                                             </a>
                                         </li>
+                                        <li>
+                                            <a class="nav-menu-link" href="#" onclick="showView('12')">
+                                                <fmt:message key="cgnt_contentReports.report.displayLinks"/>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </li>
                                 <li>
@@ -173,6 +178,10 @@
                 <!-- Without Description -->
                 <div id="report-11" class="div-report">
                     <template:include view="withoutDescription"/>
+                </div>
+                <!-- Display Links -->
+                <div id="report-12" class="div-report">
+                    <template:include view="displayLinks"/>
                 </div>
 
                 <!-- Report By Locked Content -->
