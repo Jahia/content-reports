@@ -66,12 +66,21 @@ public class PathPickerAction extends Action {
 
     /* the logger for the class. */
     private static Logger logger = LoggerFactory.getLogger(PathPickerAction.class);
+    private static final String SITE_TYPE = "jnt:virtualsite";
+    private static final String PAGE_TYPE = "jnt:page";
+
 
     @Override
     public ActionResult doExecute(HttpServletRequest req, RenderContext renderContext, Resource resource, JCRSessionWrapper session, Map<String, List<String>> parameters, URLResolver urlResolver) throws Exception {
         logger.info("doExecute: begins the PathPickerAction action.");
         try {
-            return new ActionResult(HttpServletResponse.SC_OK, null, new JSONObject(getSitePathJson(renderContext.getSite())));
+            if (req.getParameter("path") == null) {
+                return new ActionResult(HttpServletResponse.SC_OK, null, new JSONObject(getSitePathJson(renderContext.getSite(),PAGE_TYPE)));
+            } else {
+                JCRNodeWrapper rootNode = session.getNode(req.getParameter("path"));
+                return new ActionResult(HttpServletResponse.SC_OK, null, new JSONObject(getSitePathJson(rootNode,SITE_TYPE)));
+            }
+
         }catch (Exception ex) {
             logger.error("doExecute(), Error,", ex);
             return new ActionResult(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -87,18 +96,32 @@ public class PathPickerAction extends Action {
      * @return jsonString @String
      * @throws RepositoryException
      */
-    protected String getSitePathJson(JCRNodeWrapper node) throws RepositoryException {
+    protected String getSitePathJson(JCRNodeWrapper node, String type) throws RepositoryException {
         StringBuilder jsonBuilder = new StringBuilder("{");
-        jsonBuilder.append("text:'").append(node.getDisplayableName().replaceAll("'", "")).append("',");
-        jsonBuilder.append("href:'").append(node.getPath()).append("',");
+
+        if(node.getDisplayableName().equals("sites")) {
+            jsonBuilder.append("text:'").append("Websites").append("',");
+        } else {
+            jsonBuilder.append("text:'").append(node.getDisplayableName().replaceAll("'", "")).append("',");
+            jsonBuilder.append("href:'").append(node.getPath()).append("',");
+        }
+
+
         /* getting the folder child nodes */
-        List<JCRNodeWrapper> childNodeList = JCRContentUtils.getChildrenOfType(node, "jnt:page");
+        List<JCRNodeWrapper> childNodeList = JCRContentUtils.getChildrenOfType(node, type);
+
+        for (int i = 0; i<childNodeList.size(); i++) {
+            if (childNodeList.get(i).getDisplayableName().equals("System Site")) {
+                childNodeList.remove(i);
+            }
+        }
+
         jsonBuilder.append("tags: ['").append(childNodeList.size()).append("'],");
         if(childNodeList.size() > 0){
             jsonBuilder.append("nodes:[");
             for(int index = 0; index < childNodeList.size(); index++){
                 if(index > 0) jsonBuilder.append(",");
-                jsonBuilder.append(getSitePathJson(childNodeList.get(index)));
+                jsonBuilder.append(getSitePathJson(childNodeList.get(index),PAGE_TYPE));
             }
             jsonBuilder.append("]");
         }

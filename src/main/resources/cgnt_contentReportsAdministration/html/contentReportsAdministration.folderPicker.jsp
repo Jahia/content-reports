@@ -23,12 +23,15 @@
 
 <template:addResources>
     <script type="text/javascript">
-        function callTreeView(targetId) {
+        function callTreeView(targetId,path) {
             $('#windowPathPicker').modal({
                 show: 'true'
             });
 
             var actionUrl = "${currentNodePath}" + ".PathPicker.do";
+            if (path != null) {
+                actionUrl += "?path="+path;
+            }
             $.getJSON( actionUrl, function( data ) {
                 $('#treeviewpath').treeview({
                     color: "#428bca",
