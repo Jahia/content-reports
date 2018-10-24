@@ -117,7 +117,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="nav-menu-link" href="#" onclick="showView('12')">
+                                            <a class="nav-menu-link" href="#" onclick="showView('23')">
                                                 <fmt:message key="cgnt_contentReports.report.displayLinks"/>
                                             </a>
                                         </li>
@@ -180,7 +180,7 @@
                     <template:include view="withoutDescription"/>
                 </div>
                 <!-- Display Links -->
-                <div id="report-12" class="div-report">
+                <div id="report-23" class="div-report">
                     <template:include view="displayLinks"/>
                 </div>
 

@@ -42,7 +42,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2">
-                        <button type="button" class="btn btn-default" onclick="callTreeView('pathTxtOrigin')">
+                        <button type="button" class="btn btn-default" onclick="callTreeView('pathTxtOrigin','path')">
                             <span class="glyphicon glyphicon-folder-open"></span>
                             &nbsp;<fmt:message key="cgnt_contentReports.report.browse"/>
                         </button>
@@ -61,7 +61,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2">
-                        <button type="button" class="btn btn-default" onclick="callTreeView('pathTxtDestination')">
+                        <button type="button" class="btn btn-default" onclick="callTreeView('pathTxtDestination','/sites/')">
                             <span class="glyphicon glyphicon-folder-open"></span>
                             &nbsp;<fmt:message key="cgnt_contentReports.report.browse"/>
                         </button>
@@ -76,7 +76,7 @@
                 <!-- search button -->
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="button" class="btn btn-default" onclick="TODO">
+                        <button type="button" class="btn btn-default" onclick="fillReportDisplayLinks('${currentNodePath}', '${labelLoading}')">
                             <span class="glyphicon glyphicon-search"></span> <fmt:message key="cgnt_contentReports.report.search"/>
                         </button>
                     </div>
