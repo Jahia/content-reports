@@ -29,9 +29,9 @@
             });
 
             var actionUrl = "${currentNodePath}" + ".PathPicker.do";
-            if (path != null) actionUrl = addParameter(actionUrl,"path",path);
-            if (nodeTypes != null ) actionUrl = addParameter(actionUrl,"nodeTypes",nodeTypes);
-            if (nodeTypes != null ) actionUrl = addParameter(actionUrl,"excludedNodes",excludedNodes);
+            actionUrl = addParameter(actionUrl,"path",path);
+            actionUrl = addParameter(actionUrl,"nodeTypes",nodeTypes);
+            actionUrl = addParameter(actionUrl,"excludedNodes",excludedNodes);
             $.getJSON( actionUrl, function( data ) {
                 $('#treeviewpath').treeview({
                     color: "#428bca",
@@ -49,10 +49,12 @@
         }
 
         function addParameter(url, paramName, value) {
-            if (!url.includes("?")) {
-                url += "?"+paramName+"="+value;
-            } else {
-                url += "&"+paramName+"="+value;
+            if (value != null) {
+                if (!url.includes("?")) {
+                    url += "?"+paramName+"="+value;
+                } else {
+                    url += "&"+paramName+"="+value;
+                }
             }
 
             return url;

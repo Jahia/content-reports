@@ -59,10 +59,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * PathPickerAction Class.
@@ -72,8 +70,6 @@ public class PathPickerAction extends Action {
 
     /* the logger for the class. */
     private static Logger logger = LoggerFactory.getLogger(PathPickerAction.class);
-    private static final String SITE_TYPE = "jnt:virtualsite";
-    private static final String PAGE_TYPE = "jnt:page";
     private static final String BUNDLE = "resources.content-reports";
     private Locale locale = LocaleContextHolder.getLocale();
 
@@ -83,24 +79,15 @@ public class PathPickerAction extends Action {
         logger.info("doExecute: begins the PathPickerAction action.");
 
         JCRNodeWrapper rootNode = renderContext.getSite();
-        String nodeTypes = "jnt:page";
-        String[] excludedNodes = null;
-
+        String nodeTypes = Optional.ofNullable(req.getParameter("nodeTypes")).orElse("jnt:page");
+        String[] excludedNodes = Optional.of(req.getParameter("excludedNodes")).map(Patterns.COMMA::split).orElse(null);
         if (req.getParameter("path") != null) {
             rootNode = session.getNode(req.getParameter("path"));
         }
-        if (req.getParameter("nodeTypes") != null) {
-            nodeTypes = req.getParameter("nodeTypes");
-        }
-
-        if (req.getParameter("excludedNodes") != null) {
-            excludedNodes = Patterns.COMMA.split(req.getParameter("excludedNodes"));
-        }
-
-
+        boolean selectable = JCRContentUtils.isNodeType(rootNode,nodeTypes);
 
         try {
-            return new ActionResult(HttpServletResponse.SC_OK, null, new JSONObject(getSitePathJson(rootNode,nodeTypes,excludedNodes)));
+            return new ActionResult(HttpServletResponse.SC_OK, null, new JSONObject(getSitePathJson(rootNode,nodeTypes,excludedNodes,selectable)));
 
         }catch (Exception ex) {
             logger.error("doExecute(), Error,", ex);
@@ -117,30 +104,28 @@ public class PathPickerAction extends Action {
      * @return jsonString @String
      * @throws RepositoryException
      */
-    protected String getSitePathJson(JCRNodeWrapper node, String type, String[] excludedNodes) throws RepositoryException {
+    protected String getSitePathJson(JCRNodeWrapper node, String type, String[] excludedNodes, boolean selectable) throws RepositoryException {
         StringBuilder jsonBuilder = new StringBuilder("{");
 
         if(node.getPath().equals("/sites")) {
             jsonBuilder.append("text:'").append(Messages.get(BUNDLE, "cgnt_contentReports.report.label.websites",locale)).append("',");
-            jsonBuilder.append("selectable:false").append(",");
         } else {
             jsonBuilder.append("text:'").append(node.getDisplayableName().replaceAll("'", "")).append("',");
-            jsonBuilder.append("href:'").append(node.getPath()).append("',");
+        }
+        jsonBuilder.append("href:'").append(node.getPath()).append("',");
+        if (!selectable) {
+            jsonBuilder.append("selectable:false").append(",");
         }
 
 
         /* getting the folder child nodes */
         List<JCRNodeWrapper> childNodeList = JCRContentUtils.getChildrenOfType(node, type);
 
-        for (int i = 0; i<childNodeList.size(); i++) {
-            if (excludedNodes != null) {
-                for (String nodeToExclude : excludedNodes) {
-                    if (childNodeList.get(i).getPath().equals(nodeToExclude)) {
-                        childNodeList.remove(i);
-                    }
-                }
-            }
-
+        if (excludedNodes != null) {
+            childNodeList = childNodeList
+                    .stream()
+                    .filter(nodeToFilter -> !Arrays.asList(excludedNodes).contains(nodeToFilter.getPath()))
+                    .collect(Collectors.toList());
         }
 
         jsonBuilder.append("tags: ['").append(childNodeList.size()).append("'],");
@@ -148,7 +133,7 @@ public class PathPickerAction extends Action {
             jsonBuilder.append("nodes:[");
             for(int index = 0; index < childNodeList.size(); index++){
                 if(index > 0) jsonBuilder.append(",");
-                jsonBuilder.append(getSitePathJson(childNodeList.get(index),type,excludedNodes));
+                jsonBuilder.append(getSitePathJson(childNodeList.get(index),type,excludedNodes,true));
             }
             jsonBuilder.append("]");
         }
