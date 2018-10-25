@@ -42,7 +42,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2">
-                        <button type="button" class="btn btn-default" onclick="callTreeView('pathTxtOrigin','path')">
+                        <button type="button" class="btn btn-default" onclick="callTreeView('pathTxtOrigin')">
                             <span class="glyphicon glyphicon-folder-open"></span>
                             &nbsp;<fmt:message key="cgnt_contentReports.report.browse"/>
                         </button>
@@ -61,7 +61,8 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2">
-                        <button type="button" class="btn btn-default" onclick="callTreeView('pathTxtDestination','/sites/')">
+                        <button type="button" class="btn btn-default"
+                                onclick="callTreeView('pathTxtDestination','/sites/','jnt:virtualsite,jnt:page','/sites/systemsite')">
                             <span class="glyphicon glyphicon-folder-open"></span>
                             &nbsp;<fmt:message key="cgnt_contentReports.report.browse"/>
                         </button>

@@ -23,15 +23,15 @@
 
 <template:addResources>
     <script type="text/javascript">
-        function callTreeView(targetId,path) {
+        function callTreeView(targetId,path,nodeTypes,excludedNodes) {
             $('#windowPathPicker').modal({
                 show: 'true'
             });
 
             var actionUrl = "${currentNodePath}" + ".PathPicker.do";
-            if (path != null) {
-                actionUrl += "?path="+path;
-            }
+            if (path != null) actionUrl = addParameter(actionUrl,"path",path);
+            if (nodeTypes != null ) actionUrl = addParameter(actionUrl,"nodeTypes",nodeTypes);
+            if (nodeTypes != null ) actionUrl = addParameter(actionUrl,"excludedNodes",excludedNodes);
             $.getJSON( actionUrl, function( data ) {
                 $('#treeviewpath').treeview({
                     color: "#428bca",
@@ -46,6 +46,16 @@
                     },
                 });
             });
+        }
+
+        function addParameter(url, paramName, value) {
+            if (!url.includes("?")) {
+                url += "?"+paramName+"="+value;
+            } else {
+                url += "&"+paramName+"="+value;
+            }
+
+            return url;
         }
     </script>
 </template:addResources>
