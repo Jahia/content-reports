@@ -80,14 +80,14 @@ public class PathPickerAction extends Action {
 
         JCRNodeWrapper rootNode = renderContext.getSite();
         String nodeTypes = Optional.ofNullable(req.getParameter("nodeTypes")).orElse("jnt:page");
-        String[] excludedNodes = Optional.of(req.getParameter("excludedNodes")).map(Patterns.COMMA::split).orElse(null);
+        List<String> excludedNodes = Optional.of(req.getParameter("excludedNodes")).map(excludeNodes -> Arrays.asList(Patterns.COMMA.split(excludeNodes))).orElse(null);
         if (req.getParameter("path") != null) {
             rootNode = session.getNode(req.getParameter("path"));
         }
         boolean selectable = JCRContentUtils.isNodeType(rootNode,nodeTypes);
 
         try {
-            return new ActionResult(HttpServletResponse.SC_OK, null, new JSONObject(getSitePathJson(rootNode,nodeTypes,excludedNodes,selectable)));
+            return new ActionResult(HttpServletResponse.SC_OK, null, new JSONObject(getSitePathJson(rootNode, nodeTypes, excludedNodes, selectable)));
 
         }catch (Exception ex) {
             logger.error("doExecute(), Error,", ex);
@@ -104,7 +104,7 @@ public class PathPickerAction extends Action {
      * @return jsonString @String
      * @throws RepositoryException
      */
-    protected String getSitePathJson(JCRNodeWrapper node, String type, String[] excludedNodes, boolean selectable) throws RepositoryException {
+    protected String getSitePathJson(JCRNodeWrapper node, String type, List<String> excludedNodes, boolean selectable) throws RepositoryException {
         StringBuilder jsonBuilder = new StringBuilder("{");
 
         if(node.getPath().equals("/sites")) {
@@ -124,7 +124,7 @@ public class PathPickerAction extends Action {
         if (excludedNodes != null) {
             childNodeList = childNodeList
                     .stream()
-                    .filter(nodeToFilter -> !Arrays.asList(excludedNodes).contains(nodeToFilter.getPath()))
+                    .filter(nodeToFilter -> !excludedNodes.contains(nodeToFilter.getPath()))
                     .collect(Collectors.toList());
         }
 
@@ -133,7 +133,7 @@ public class PathPickerAction extends Action {
             jsonBuilder.append("nodes:[");
             for(int index = 0; index < childNodeList.size(); index++){
                 if(index > 0) jsonBuilder.append(",");
-                jsonBuilder.append(getSitePathJson(childNodeList.get(index),type,excludedNodes,true));
+                jsonBuilder.append(getSitePathJson(childNodeList.get(index), type, excludedNodes,true));
             }
             jsonBuilder.append("]");
         }

@@ -50,11 +50,8 @@
 
         function addParameter(url, paramName, value) {
             if (value != null) {
-                if (!url.includes("?")) {
-                    url += "?"+paramName+"="+value;
-                } else {
-                    url += "&"+paramName+"="+value;
-                }
+                url += (url.includes("?") ? "?" : "&");
+                url += (paramName+"="+value);
             }
 
             return url;
