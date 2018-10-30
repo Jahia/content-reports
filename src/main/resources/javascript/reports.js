@@ -1015,6 +1015,26 @@ function fillReportWipContent(baseUrl, loadingLabel){
 
 }
 
+/**********************************************
+ *       REPORTS DISPLAYED LINKS CONTENT      *
+ **********************************************/
+
+function fillReportDisplayLinks(baseUrl, loadingLabel){
+    var pathTxtOrigin = $('#pathTxtOrigin').val();
+    var pathTxtDestination = $('#pathTxtDestination').val();
+    var parameters = "&pathTxtOrigin=" + pathTxtOrigin + "&pathTxtDestination=" + pathTxtDestination;
+    var actionUrl = getReportActionUrl(baseUrl, 23, parameters);
+
+    // the loading message
+    ajaxindicatorstart(loadingLabel);
+
+
+    initDataTable ("displayLinksTable", actionUrl, 3, [], true, [0]);
+
+    ajaxindicatorstop();
+
+}
+
 /***************************************
  * REPORTS WAITING PUBLICATION CONTENT *
  ***************************************/

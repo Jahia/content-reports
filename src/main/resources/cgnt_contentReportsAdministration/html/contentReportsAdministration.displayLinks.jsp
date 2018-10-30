@@ -42,7 +42,8 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2">
-                        <button type="button" class="btn btn-default" onclick="callTreeView('pathTxtOrigin')">
+                        <button type="button" class="btn btn-default"
+                                onclick="callTreeView('pathTxtOrigin',null,'jnt:virtualsite,jnt:page')">
                             <span class="glyphicon glyphicon-folder-open"></span>
                             &nbsp;<fmt:message key="cgnt_contentReports.report.browse"/>
                         </button>
@@ -99,9 +100,10 @@
                     <table width="100%" class="display reports-data-table" id="displayLinksTable" cellspacing="0">
                         <thead>
                             <tr>
-                                <th><fmt:message key="cgnt_contentReports.report.column.title"/></th>
                                 <th><fmt:message key="cgnt_contentReports.report.column.type"/></th>
                                 <th><fmt:message key="cgnt_contentReports.report.column.path"/></th>
+                                <th><fmt:message key="cgnt_contentReports.report.column.lastModified"/></th>
+                                <th><fmt:message key="cgnt_contentReports.report.column.link"/></th>
                             </tr>
                         </thead>
                         <tbody></tbody>
