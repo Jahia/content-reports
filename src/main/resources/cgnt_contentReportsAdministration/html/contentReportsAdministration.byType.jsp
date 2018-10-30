@@ -46,7 +46,7 @@
 
                 <div class="row">
                     <div class="col-md-2">
-                        <button type="button" class="btn btn-default" onclick="callTreeView('pathTxtRBT')">
+                        <button type="button" class="btn btn-default" onclick="callTreeView('pathTxtRBT',null,'jnt:virtualsite,jnt:page')">
                             <span class="glyphicon glyphicon-folder-open"></span>
                             &nbsp;<fmt:message key="cgnt_contentReports.report.browse"/>
                         </button>

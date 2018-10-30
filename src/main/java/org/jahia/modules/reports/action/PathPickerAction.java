@@ -80,7 +80,8 @@ public class PathPickerAction extends Action {
 
         JCRNodeWrapper rootNode = renderContext.getSite();
         String nodeTypes = Optional.ofNullable(req.getParameter("nodeTypes")).orElse("jnt:page");
-        List<String> excludedNodes = Optional.of(req.getParameter("excludedNodes")).map(excludeNodes -> Arrays.asList(Patterns.COMMA.split(excludeNodes))).orElse(null);
+        List<String> excludedNodes =
+                Optional.ofNullable(req.getParameter("excludedNodes")).map(excludeNodes -> Arrays.asList(Patterns.COMMA.split(excludeNodes))).orElse(null);
         if (req.getParameter("path") != null) {
             rootNode = session.getNode(req.getParameter("path"));
         }
