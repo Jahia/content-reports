@@ -37,7 +37,7 @@
                 <!-- select path where to search links -->
                 <div class="row">
                     <div class="col-md-12">
-                        <label class="label-form"><fmt:message key="cgnt_contentReports.report.displayLinks"/></label>
+                        <label class="label-form"><fmt:message key="cgnt_contentReports.report.displayReference"/></label>
                     </div>
                 </div>
                 <div class="row">
@@ -57,7 +57,7 @@
                 <!-- select the destination of the searched links -->
                 <div class="row">
                     <div class="col-md-12">
-                        <label class="label-form"><fmt:message key="cgnt_contentReports.report.pointingLinks"/></label>
+                        <label class="label-form"><fmt:message key="cgnt_contentReports.report.pointingReference"/></label>
                     </div>
                 </div>
                 <div class="row">
@@ -101,9 +101,9 @@
                         <thead>
                             <tr>
                                 <th><fmt:message key="cgnt_contentReports.report.column.type"/></th>
-                                <th><fmt:message key="cgnt_contentReports.report.column.path"/></th>
-                                <th><fmt:message key="cgnt_contentReports.report.column.lastModified"/></th>
-                                <th><fmt:message key="cgnt_contentReports.report.column.link"/></th>
+                                <th><fmt:message key="cgnt_contentReports.report.column.referencedPath"/></th>
+                                <th><fmt:message key="cgnt_contentReports.report.column.lastModifiedReferenced"/></th>
+                                <th><fmt:message key="cgnt_contentReports.report.column.referenceLink"/></th>
                             </tr>
                         </thead>
                         <tbody></tbody>

@@ -118,7 +118,7 @@
                                         </li>
                                         <li>
                                             <a class="nav-menu-link" href="#" onclick="showView('23')">
-                                                <fmt:message key="cgnt_contentReports.report.displayLinks"/>
+                                                <fmt:message key="cgnt_contentReports.menu.contentReports.references"/>
                                             </a>
                                         </li>
                                     </ul>

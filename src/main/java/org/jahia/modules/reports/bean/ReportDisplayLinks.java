@@ -27,6 +27,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.jahia.services.content.JCRContentUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
+import org.jahia.services.content.JCRValueWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.*;
 import javax.jcr.nodetype.PropertyDefinition;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Short description of the class
@@ -47,45 +47,40 @@ import java.util.stream.Collectors;
 public class ReportDisplayLinks  extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportDisplayLinks.class);
     protected static final String BUNDLE = "resources.content-reports";
-    private long totalContent;
+    private long totalContent = 0;
     private String originPath;
     private String destinationPath;
+    private HashMap<JCRNodeWrapper,List<JCRNodeWrapper>> referencesNodes;
 
     public ReportDisplayLinks(JCRSiteNode siteNode, String originPath, String destinationPath) {
         super(siteNode);
         this.originPath = originPath;
         this.destinationPath = destinationPath;
+        this.referencesNodes = new HashMap<>();
     }
 
     @Override
     public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
 
-        List<JCRNodeWrapper> referencesNodes = new ArrayList<>();
         JCRNodeWrapper originNode;
         originNode = session.getNode(originPath);
         checkChildNodes(originNode, referencesNodes);
-        referencesNodes = referencesNodes.stream().distinct().collect(Collectors.toList());
-        totalContent = referencesNodes.size();
 
-        for (JCRNodeWrapper nodeToAdd : referencesNodes) {
-            addItem(nodeToAdd);
+        for (Map.Entry<JCRNodeWrapper, List<JCRNodeWrapper>> actualEntry : referencesNodes.entrySet()) {
+            JCRNodeWrapper actualNode = actualEntry.getKey();
+            addItem(actualNode);
         }
 
     }
 
-    private void checkChildNodes(JCRNodeWrapper originNode, List<JCRNodeWrapper> referencesNodes)
+    private void checkChildNodes(JCRNodeWrapper originNode, HashMap<JCRNodeWrapper,List<JCRNodeWrapper>> referencesNodes)
             throws RepositoryException {
-        if (getReference(originNode, destinationPath) != null) {
-            referencesNodes.add(originNode);
-        }
+
+        linkReferencesToNode(originNode,referencesNodes);
+
         for (JCRNodeWrapper childNode : originNode.getNodes()) {
-            if (getReference(childNode, destinationPath) != null) {
-                referencesNodes.add(childNode);
-            }
             checkChildNodes(childNode, referencesNodes);
         }
-
-
     }
 
     private boolean isReferenceType (PropertyDefinition definitionToCheck) {
@@ -93,27 +88,30 @@ public class ReportDisplayLinks  extends QueryReport {
                 || definitionToCheck.getRequiredType() == PropertyType.WEAKREFERENCE;
     }
 
-    private JCRNodeWrapper getReference (JCRNodeWrapper node, String path) throws RepositoryException {
+    private void linkReferencesToNode (JCRNodeWrapper node, HashMap<JCRNodeWrapper,List<JCRNodeWrapper>> referencesNodes) throws RepositoryException {
+        List<JCRNodeWrapper> references = new ArrayList<>();
         PropertyIterator propIt = node.getProperties() ;
         while (propIt.hasNext()) {
-            try {
-                Property actualProperty = propIt.nextProperty();
-                if (isReferenceType(actualProperty.getDefinition())) {
-                    if (actualProperty.getDefinition().isMultiple()) {
-                        //TODO BACKLOG-8925
-                    } else {
-                        if (isReferenceType(actualProperty.getDefinition())) {
-                            if (actualProperty.getNode().getPath().startsWith(path + "/")) {
-                                return (JCRNodeWrapper) actualProperty.getNode();
-                            }
+            Property actualProperty = propIt.nextProperty();
+            if (isReferenceType(actualProperty.getDefinition())) {
+                if (actualProperty.getDefinition().isMultiple()) {
+                    Value[] values = actualProperty.getValues();
+                    for (Value value : values) {
+                        JCRValueWrapper propertyValue = (JCRValueWrapper) value;
+                        if (propertyValue.getNode().getPath().startsWith(destinationPath + "/")) {
+                            references.add(propertyValue.getNode());
                         }
+
                     }
+                } else if (isReferenceType(actualProperty.getDefinition()) &&
+                        actualProperty.getNode().getPath().startsWith(destinationPath + "/")) {
+                    references.add((JCRNodeWrapper) actualProperty.getNode());
                 }
-            } catch (NoSuchElementException e) {
-                return null;
             }
         }
-        return null;
+        if (!references.isEmpty()) {
+            referencesNodes.put(node,references);
+        }
     }
 
 
@@ -127,14 +125,20 @@ public class ReportDisplayLinks  extends QueryReport {
     public void addItem(JCRNodeWrapper node) throws RepositoryException {
 
         Map<String, String> nodeMap = new HashedMap();
-        JCRNodeWrapper referencedNode = getReference(node, destinationPath);
 
-        nodeMap.put("nodeTypeName", referencedNode.getPrimaryNodeTypeName());
-        nodeMap.put("nodePath", referencedNode.getPath());
-        nodeMap.put("lastModified", referencedNode.getLastModifiedAsDate().toString());
-        nodeMap.put("referencePath", JCRContentUtils.getParentOfType(node,"jnt:page").getPath());
-
-        this.dataList.add(nodeMap);
+        for (Map.Entry<JCRNodeWrapper, List<JCRNodeWrapper>> actualEntry : referencesNodes.entrySet()) {
+            if (actualEntry.getKey() == node) {
+                List<JCRNodeWrapper> referencedNodes = actualEntry.getValue();
+                for (JCRNodeWrapper referencedNode : referencedNodes) {
+                    nodeMap.put("nodeTypeName", referencedNode.getPrimaryNodeTypeName());
+                    nodeMap.put("nodePath", referencedNode.getPath());
+                    nodeMap.put("lastModified", referencedNode.getLastModifiedAsDate().toString());
+                    nodeMap.put("referencePath", JCRContentUtils.getParentOfType(node, "jnt:page").getPath());
+                    this.dataList.add(nodeMap);
+                    totalContent = totalContent + 1;
+                }
+            }
+        }
     }
 
     @Override
