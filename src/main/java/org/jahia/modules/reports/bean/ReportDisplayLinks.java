@@ -23,7 +23,6 @@
  */
 package org.jahia.modules.reports.bean;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.jahia.services.content.JCRContentUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
@@ -32,134 +31,76 @@ import org.jahia.services.content.decorator.JCRSiteNode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.*;
 import javax.jcr.nodetype.PropertyDefinition;
-import java.util.*;
 
 /**
  * Short description of the class
  *
  * @author tdubreucq
  */
-public class ReportDisplayLinks  extends QueryReport {
-    private static Logger logger = LoggerFactory.getLogger(ReportDisplayLinks.class);
+public class ReportDisplayLinks extends BaseReport {
     protected static final String BUNDLE = "resources.content-reports";
-    private long totalContent = 0;
     private String originPath;
     private String destinationPath;
-    private HashMap<JCRNodeWrapper,List<JCRNodeWrapper>> referencesNodes;
+    private JSONArray dataList = new JSONArray();
 
     public ReportDisplayLinks(JCRSiteNode siteNode, String originPath, String destinationPath) {
         super(siteNode);
         this.originPath = originPath;
         this.destinationPath = destinationPath;
-        this.referencesNodes = new HashMap<>();
     }
 
     @Override
     public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
-
         JCRNodeWrapper originNode;
         originNode = session.getNode(originPath);
-        checkChildNodes(originNode, referencesNodes);
-
-        for (Map.Entry<JCRNodeWrapper, List<JCRNodeWrapper>> actualEntry : referencesNodes.entrySet()) {
-            JCRNodeWrapper actualNode = actualEntry.getKey();
-            addItem(actualNode);
-        }
-
+        linkReferencesToNode(originNode);
     }
 
-    private void checkChildNodes(JCRNodeWrapper originNode, HashMap<JCRNodeWrapper,List<JCRNodeWrapper>> referencesNodes)
-            throws RepositoryException {
-
-        linkReferencesToNode(originNode,referencesNodes);
-
-        for (JCRNodeWrapper childNode : originNode.getNodes()) {
-            checkChildNodes(childNode, referencesNodes);
-        }
-    }
-
-    private boolean isReferenceType (PropertyDefinition definitionToCheck) {
-        return definitionToCheck.getRequiredType() == PropertyType.REFERENCE
-                || definitionToCheck.getRequiredType() == PropertyType.WEAKREFERENCE;
-    }
-
-    private void linkReferencesToNode (JCRNodeWrapper node, HashMap<JCRNodeWrapper,List<JCRNodeWrapper>> referencesNodes) throws RepositoryException {
-        List<JCRNodeWrapper> references = new ArrayList<>();
+    private void linkReferencesToNode (JCRNodeWrapper node) throws RepositoryException {
         PropertyIterator propIt = node.getProperties() ;
         while (propIt.hasNext()) {
             Property actualProperty = propIt.nextProperty();
-            if (isReferenceType(actualProperty.getDefinition())) {
-                if (actualProperty.getDefinition().isMultiple()) {
+            PropertyDefinition actualPropertyDefinition = actualProperty.getDefinition();
+            if (actualPropertyDefinition.getRequiredType() == PropertyType.REFERENCE || actualPropertyDefinition.getRequiredType() == PropertyType.WEAKREFERENCE) {
+                if (actualProperty.isMultiple()) {
                     Value[] values = actualProperty.getValues();
                     for (Value value : values) {
                         JCRValueWrapper propertyValue = (JCRValueWrapper) value;
-                        if (propertyValue.getNode().getPath().startsWith(destinationPath + "/")) {
-                            references.add(propertyValue.getNode());
-                        }
-
+                        addItem(node, propertyValue.getNode());
                     }
-                } else if (isReferenceType(actualProperty.getDefinition()) &&
-                        actualProperty.getNode().getPath().startsWith(destinationPath + "/")) {
-                    references.add((JCRNodeWrapper) actualProperty.getNode());
+                } else {
+                    addItem(node, (JCRNodeWrapper) actualProperty.getNode());
                 }
             }
         }
-        if (!references.isEmpty()) {
-            referencesNodes.put(node,references);
+
+        for (JCRNodeWrapper childNode : node.getNodes()) {
+            linkReferencesToNode(childNode);
         }
     }
 
-
-
-    /**
-     * addItem
-     *
-     * @param node {@link JCRNodeWrapper}
-     * @throws RepositoryException
-     */
-    public void addItem(JCRNodeWrapper node) throws RepositoryException {
-
-        Map<String, String> nodeMap = new HashedMap();
-
-        for (Map.Entry<JCRNodeWrapper, List<JCRNodeWrapper>> actualEntry : referencesNodes.entrySet()) {
-            if (actualEntry.getKey() == node) {
-                List<JCRNodeWrapper> referencedNodes = actualEntry.getValue();
-                for (JCRNodeWrapper referencedNode : referencedNodes) {
-                    nodeMap.put("nodeTypeName", referencedNode.getPrimaryNodeTypeName());
-                    nodeMap.put("nodePath", referencedNode.getPath());
-                    nodeMap.put("lastModified", referencedNode.getLastModifiedAsDate().toString());
-                    nodeMap.put("referencePath", JCRContentUtils.getParentOfType(node, "jnt:page").getPath());
-                    this.dataList.add(nodeMap);
-                    totalContent = totalContent + 1;
-                }
-            }
+    private void addItem(JCRNodeWrapper referenceNode, JCRNodeWrapper referencedNode) throws RepositoryException {
+        if (referencedNode != null && referencedNode.getPath().startsWith(destinationPath + "/")) {
+            JSONArray dataItem = new JSONArray();
+            dataItem.put(referencedNode.getPrimaryNodeTypeName());
+            dataItem.put(referencedNode.getPath());
+            dataItem.put(referencedNode.getLastModifiedAsDate().toString());
+            dataItem.put(JCRContentUtils.getParentOfType(referenceNode, "jnt:page").getPath());
+            dataList.put(dataItem);
         }
     }
 
     @Override
-    public JSONObject getJson() throws JSONException, RepositoryException {
-
+    public JSONObject getJson() throws JSONException {
         JSONObject jsonObject = new JSONObject();
-        JSONArray jArray = new JSONArray();
-
-        for (Map<String, String> nodeMap : this.dataList) {
-            JSONArray item = new JSONArray();
-            item.put(nodeMap.get("nodeTypeName"));
-            item.put(nodeMap.get("nodePath"));
-            item.put(nodeMap.get("lastModified"));
-            item.put(nodeMap.get("referencePath"));
-            jArray.put(item);
-        }
-        jsonObject.put("recordsTotal", totalContent);
-        jsonObject.put("recordsFiltered", totalContent);
+        jsonObject.put("recordsTotal", dataList.length());
+        jsonObject.put("recordsFiltered", dataList.length());
         jsonObject.put("siteName", siteNode.getName());
         jsonObject.put("siteDisplayableName", siteNode.getDisplayableName());
-        jsonObject.put("data", jArray);
+        jsonObject.put("data", dataList);
         return jsonObject;
     }
 }
