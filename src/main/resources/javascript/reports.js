@@ -403,7 +403,6 @@ function fillReportByUntranslated(baseUrl, gridLabel, totalLabel, loadingLabel){
         //stop loading message
         ajaxindicatorstop();
     });
-
 }
 
 function drawReportByAllDateChart(labelArray, dataArray, dataArray2) {
@@ -1019,7 +1018,7 @@ function fillReportWipContent(baseUrl, loadingLabel){
  *       REPORTS DISPLAYED LINKS CONTENT      *
  **********************************************/
 
-function fillReportDisplayLinks(baseUrl, loadingLabel){
+function fillReportDisplayLinks(baseUrl, loadingLabel, totalLabel){
     var pathTxtOrigin = $('#pathTxtOrigin').val();
     var pathTxtDestination = $('#pathTxtDestination').val();
     var parameters = "&pathTxtOrigin=" + pathTxtOrigin + "&pathTxtDestination=" + pathTxtDestination;
@@ -1028,11 +1027,28 @@ function fillReportDisplayLinks(baseUrl, loadingLabel){
     // the loading message
     ajaxindicatorstart(loadingLabel);
 
+    $.getJSON( actionUrl, function( data ) {
+        var table =  initDataTableWithoutAjax('displayLinksTable', -1 , true);
 
-    initDataTable ("displayLinksTable", actionUrl, 3, [], true, [0]);
+        // clear all content from table
+        table.clear().draw();
+
+        // adding new content to table
+        $.each(data.data, function( index, val ) {
+            table.row.add( [
+                checkUndefined(val[0]),
+                checkUndefined(val[1]),
+                checkUndefined(val[2]),
+                checkUndefined(val[3])
+            ] ).draw();
+        });
+
+        // Update footer
+        $(table.column(0).footer()).html(totalLabel);
+        $(table.column(1).footer()).html(checkUndefined(data.recordsTotal));
+    });
 
     ajaxindicatorstop();
-
 }
 
 /***************************************

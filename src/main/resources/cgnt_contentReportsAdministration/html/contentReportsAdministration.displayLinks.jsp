@@ -22,6 +22,7 @@
 <template:addResources resources="reports.js" type="javascript" />
 <fmt:message key="cgnt_contentReports.report" var="labelReport"/>
 <fmt:message key="cgnt_contentReports.report.loading" var="labelLoading"/>
+<fmt:message key="cgnt_contentReports.report.label.total" var="labelTotal"/>
 <c:url value="${url.base}${docPath}${renderContext.mainResource.node.path}" var="currentNodePath"/>
 
 
@@ -78,7 +79,7 @@
                 <!-- search button -->
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="button" class="btn btn-default" onclick="fillReportDisplayLinks('${currentNodePath}', '${labelLoading}')">
+                        <button type="button" class="btn btn-default" onclick="fillReportDisplayLinks('${currentNodePath}', '${labelLoading}', '${labelTotal}')">
                             <span class="glyphicon glyphicon-search"></span> <fmt:message key="cgnt_contentReports.report.search"/>
                         </button>
                     </div>
