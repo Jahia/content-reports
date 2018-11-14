@@ -77,6 +77,11 @@
                                         <fmt:message key="cgnt_contentReports.menu.contentReports.contentWaitingPublication"/>
                                     </a>
                                 </li>
+                                <li>
+                                    <a class="nav-menu-link" href="#" onclick="showView('23')">
+                                        <fmt:message key="cgnt_contentReports.menu.contentReports.references"/>
+                                    </a>
+                                </li>
                                 <!--li>
                                     <a class="nav-menu-link" href="#" onclick="showView('5')">
                                         <fmt:message key="cgnt_contentReports.menu.contentReports.byTypeDetailed"/>
@@ -114,11 +119,6 @@
                                         <li>
                                             <a class="nav-menu-link" href="#" onclick="showView('11')">
                                                 <fmt:message key="cgnt_contentReports.menu.contentReports.pagesWithoutDescription"/>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="nav-menu-link" href="#" onclick="showView('23')">
-                                                <fmt:message key="cgnt_contentReports.menu.contentReports.references"/>
                                             </a>
                                         </li>
                                     </ul>
