@@ -80,9 +80,15 @@ function initDataTableWithoutAjax (id, pathCol = -1, orderEnabled = true, disabl
         "columnDefs": [
             {
                 "render": function ( data, type, row ) {
-                    return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>";
+                    if (pathCol == -1) {
+                        return data;
+                    } else if (data == null) {
+                        return "";
+                    } else {
+                        return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>";
+                    }
                 },
-                "targets": 1
+                "targets": pathCol
             }
         ],
         "pagingType": "full_numbers",
@@ -1028,7 +1034,7 @@ function fillReportDisplayLinks(baseUrl, loadingLabel, totalLabel){
     ajaxindicatorstart(loadingLabel);
 
     $.getJSON( actionUrl, function( data ) {
-        var table =  initDataTableWithoutAjax('displayLinksTable', -1 , true);
+        var table =  initDataTableWithoutAjax('displayLinksTable', 3 , true);
 
         // clear all content from table
         table.clear().draw();
