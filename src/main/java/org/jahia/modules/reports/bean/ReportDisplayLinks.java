@@ -82,8 +82,10 @@ public class ReportDisplayLinks extends BaseReport {
         }
     }
 
-    private void addItem(JCRNodeWrapper referenceNode, JCRNodeWrapper referencedNode) throws RepositoryException {
-        if (referencedNode != null && referencedNode.getPath().startsWith(destinationPath + "/")) {
+    private void addItem(JCRNodeWrapper referenceNode, JCRNodeWrapper referencedNode) throws RepositoryException, NullPointerException {
+
+        if (referencedNode != null && referencedNode.getPath().startsWith(destinationPath + "/") &&
+                JCRContentUtils.getParentOfType(referenceNode, "jnt:page") != null) {
             JSONArray dataItem = new JSONArray();
             dataItem.put(referencedNode.getPrimaryNodeTypeName());
             dataItem.put(referencedNode.getPath());
