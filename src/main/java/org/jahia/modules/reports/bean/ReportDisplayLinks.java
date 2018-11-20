@@ -82,15 +82,19 @@ public class ReportDisplayLinks extends BaseReport {
         }
     }
 
-    private void addItem(JCRNodeWrapper referenceNode, JCRNodeWrapper referencedNode) throws RepositoryException, NullPointerException {
+    private void addItem(JCRNodeWrapper referenceNode, JCRNodeWrapper referencedNode) throws RepositoryException {
 
-        if (referencedNode != null && referencedNode.getPath().startsWith(destinationPath + "/") &&
-                JCRContentUtils.getParentOfType(referenceNode, "jnt:page") != null) {
+        if (referencedNode != null && referencedNode.getPath().startsWith(destinationPath + "/")) {
+            JCRNodeWrapper scopeNode = JCRContentUtils.getParentOfType(referenceNode, "jnt:page");
+            // Avoid adding nodes that can't be rendered such as users nodes for example
+            if (scopeNode == null) {
+                return;
+            }
             JSONArray dataItem = new JSONArray();
             dataItem.put(referencedNode.getPrimaryNodeTypeName());
             dataItem.put(referencedNode.getPath());
             dataItem.put(referencedNode.getLastModifiedAsDate());
-            dataItem.put(JCRContentUtils.getParentOfType(referenceNode, "jnt:page").getPath());
+            dataItem.put(scopeNode.getPath());
             dataList.put(dataItem);
         }
     }
