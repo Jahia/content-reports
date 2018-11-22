@@ -1034,7 +1034,7 @@ function fillReportDisplayLinks(baseUrl, loadingLabel, totalLabel){
     ajaxindicatorstart(loadingLabel);
 
     $.getJSON( actionUrl, function( data ) {
-        var table =  initDataTableWithoutAjax('displayLinksTable', 3 , true);
+        var table =  initDataTableWithoutAjax('displayLinksTable', 4 , true);
 
         // clear all content from table
         table.clear().draw();
@@ -1045,7 +1045,8 @@ function fillReportDisplayLinks(baseUrl, loadingLabel, totalLabel){
                 checkUndefined(val[0]),
                 checkUndefined(val[1]),
                 checkUndefined(val[2]),
-                checkUndefined(val[3])
+                checkUndefined(val[3]),
+                checkUndefined(val[4])
             ] ).draw();
         });
 

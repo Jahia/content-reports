@@ -107,6 +107,7 @@
                             <tr>
                                 <th><fmt:message key="cgnt_contentReports.report.column.type"/></th>
                                 <th><fmt:message key="cgnt_contentReports.report.column.referencedPath"/></th>
+                                <th><fmt:message key="cgnt_contentReports.report.column.referencePath"/></th>
                                 <th><fmt:message key="cgnt_contentReports.report.column.lastModifiedReferenced"/></th>
                                 <th><fmt:message key="cgnt_contentReports.report.column.referenceLink"/></th>
                             </tr>
