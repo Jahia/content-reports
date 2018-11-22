@@ -84,7 +84,11 @@
                         </button>
                     </div>
                 </div>
-
+                <div class="row">
+                    <div class="col-md-12">
+                        <span><fmt:message key="cgnt_contentReports.report.referencesHint"/></span>
+                    </div>
+                </div>
                 <div class="row"><div class="col-md-12"><hr/></div></div>
             </div>
         </div>
