@@ -68,6 +68,11 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a class="nav-menu-link" href="#" onclick="showView('23')">
+                                        <fmt:message key="cgnt_contentReports.menu.contentReports.references"/>
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="nav-menu-link" href="#" onclick="showView('22')">
                                         <fmt:message key="cgnt_contentReports.menu.contentReports.wipContent"/>
                                     </a>
@@ -75,11 +80,6 @@
                                 <li>
                                     <a class="nav-menu-link" href="#" onclick="showView('15')">
                                         <fmt:message key="cgnt_contentReports.menu.contentReports.contentWaitingPublication"/>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="nav-menu-link" href="#" onclick="showView('23')">
-                                        <fmt:message key="cgnt_contentReports.menu.contentReports.references"/>
                                     </a>
                                 </li>
                                 <!--li>
