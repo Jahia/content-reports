@@ -94,7 +94,7 @@ public class ReportDisplayLinks extends BaseReport {
             dataItem.put(referencedNode.getPrimaryNodeTypeName());
             dataItem.put(referenceNode.getPath());
             dataItem.put(referencedNode.getPath());
-            dataItem.put(referencedNode.getLastModifiedAsDate());
+            dataItem.put(referencedNode.getPropertyAsString("jcr:lastModified"));
             dataItem.put(scopeNode.getPath());
             dataList.put(dataItem);
         }
