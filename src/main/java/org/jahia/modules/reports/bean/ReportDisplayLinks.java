@@ -92,8 +92,8 @@ public class ReportDisplayLinks extends BaseReport {
             }
             JSONArray dataItem = new JSONArray();
             dataItem.put(referencedNode.getPrimaryNodeTypeName());
-            dataItem.put(referenceNode.getPath());
             dataItem.put(referencedNode.getPath());
+            dataItem.put(referenceNode.getPath());
             dataItem.put(referencedNode.getPropertyAsString("jcr:lastModified"));
             dataItem.put(scopeNode.getPath());
             dataList.put(dataItem);
