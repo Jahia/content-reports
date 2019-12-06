@@ -46,7 +46,8 @@
 <input type="hidden" name="selectedLang" id="selectedLang" value="${selectedLang}">
 <input type="hidden" name="selectedBaseUrl" id="selectedBaseUrl" value="${url.currentModule}">
 <input type="hidden" id="baseEdit" value="${url.context}${url.baseEdit}">
-
+<input type="hidden" id="siteKey" value="${renderContext.site.siteKey}">
+<input type="hidden" id="contentManagerUrl" value="${url.context}/cms/contentmanager/${renderContext.site.siteKey}/${selectedLang}/browse">
 
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -80,6 +81,11 @@
                                 <li>
                                     <a class="nav-menu-link" href="#" onclick="showView('15')">
                                         <fmt:message key="cgnt_contentReports.menu.contentReports.contentWaitingPublication"/>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-menu-link" href="#" onclick="showView('24')">
+                                        <fmt:message key="cgnt_contentReports.menu.contentReports.markedForDeletion"/>
                                     </a>
                                 </li>
                                 <!--li>
@@ -216,6 +222,10 @@
                 <!-- Report By WIP Content -->
                 <div id="report-22" class="div-report">
                     <template:include view="wipContent"/>
+                </div>
+                <!-- Report for marked for deletion content -->
+                <div id="report-24" class="div-report">
+                    <template:include view="markedForDeletion"/>
                 </div>
             </div>
         </div>
