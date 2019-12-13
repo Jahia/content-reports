@@ -1030,7 +1030,10 @@ function fillReportWipContent(baseUrl, loadingLabel){
  ********************************/
 
 function fillReportContentMarkedForDeletion(baseUrl, gridLabel, totalLabel, loadingLabel){
-    var actionUrl = getReportActionUrl(baseUrl, 24, null);
+    let pathTxt = $('#pathTxtMFD').val();
+    let typeSearch = $("input[name='typeOfSearch']:checked").val();
+    let parameters = "pathTxt=" + pathTxt + "&typeSearch=" + typeSearch;
+    let actionUrl = getReportActionUrl(baseUrl, 24, parameters);
 
     // the loading message
     ajaxindicatorstart(loadingLabel);

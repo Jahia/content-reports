@@ -70,26 +70,34 @@ public class ReportContentMarkedForDeletion extends QueryReport {
     protected static final String BUNDLE = "resources.content-reports";
     private long totalContent;
     private int sortCol;
+    private String searchPath;
     private String order;
     private String[] resultFields = { "j:nodename", "jcr:primaryType", "j:nodename" };
-
     private JCRSessionWrapper sessionWrapper;
+    private SearchContentType reportType;
 
     /**
      * Instantiates a new Report content marked for deletion.
      *
      * @param siteNode the site node {@link JCRSiteNode}
      */
-    public ReportContentMarkedForDeletion(JCRSiteNode siteNode, int sortCol, String order) {
+    public ReportContentMarkedForDeletion(JCRSiteNode siteNode, String searchPath, SearchContentType reportType, int sortCol,
+            String order) {
         super(siteNode);
         this.sortCol = sortCol;
         this.order = order;
+        this.searchPath = searchPath;
+        this.reportType = reportType;
     }
 
     @Override public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT * FROM [jmix:markedForDeletionRoot] AS item where ISDESCENDANTNODE(item,['").append(siteNode.getPath())
-                .append("'])").append(" order by item.[").append(resultFields[sortCol]).append("] ").append(order);
+        queryBuilder.append("SELECT * FROM")
+                .append(reportType.equals(BaseReport.SearchContentType.PAGE) ? "[jnt:page] " : "[jnt:content] ")
+                .append("AS item ").append("WHERE item.[jcr:mixinTypes] = 'jmix:markedForDeletionRoot' ").append("and ISDESCENDANTNODE"
+                + "(item,['")
+                .append(searchPath).append("']) ").append(" order by item.[").append(resultFields[sortCol]).append("] ").append(order);
+
         String query = queryBuilder.toString();
         sessionWrapper = session;
         fillReport(session, query, offset, limit);
