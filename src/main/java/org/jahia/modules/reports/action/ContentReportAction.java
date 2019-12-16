@@ -175,6 +175,8 @@ public class ContentReportAction extends Action {
                 return new ReportDisplayLinks(renderContext.getSite(),
                         req.getParameter("pathTxtOrigin").replaceAll("'",""),
                         req.getParameter("pathTxtDestination").replaceAll("'",""));
+            case "24":
+                return new ReportContentMarkedForDeletion(renderContext.getSite(), sortCol, order);
             default:
                 throw new ContentReportException("Invalid reportId: " + reportId);
         }

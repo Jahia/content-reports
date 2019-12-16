@@ -28,7 +28,12 @@ function initDataTable (id, url, pathCol = -1, multiLineCols = [], orderEnabled 
                     } else if (data == null) {
                         return "";
                     } else {
-                        return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>";
+                        if(row.indexOf("nodePresentOnPage")!== -1){
+                            return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>";
+                        }else{
+                            let value = data.substring(("/sites/"+$('#siteKey').val()).length, data.length);
+                            return "<a target=\"_blank\" href=\""+$('#contentManagerUrl').val()+value+"\">"+data+"</a>";
+                        }
                     }
                 },
                 "targets": pathCol
@@ -1016,6 +1021,21 @@ function fillReportWipContent(baseUrl, loadingLabel){
 
     initDataTable ("wipContentTable", actionUrl, 4, [2], true, [2,4]);
 
+    ajaxindicatorstop();
+
+}
+
+/********************************
+ *  REPORTS CONTENT MARKED FOR DELETION *
+ ********************************/
+
+function fillReportContentMarkedForDeletion(baseUrl, gridLabel, totalLabel, loadingLabel){
+    var actionUrl = getReportActionUrl(baseUrl, 24, null);
+
+    // the loading message
+    ajaxindicatorstart(loadingLabel);
+
+    table = initDataTable("contentMarkedForDeletion", actionUrl, 3, [], true, [3,4])
     ajaxindicatorstop();
 
 }
