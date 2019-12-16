@@ -50,6 +50,7 @@ import org.jahia.services.content.JCRContentUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
+import org.jahia.utils.i18n.Messages;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,11 +93,10 @@ public class ReportContentMarkedForDeletion extends QueryReport {
 
     @Override public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT * FROM")
-                .append(reportType.equals(BaseReport.SearchContentType.PAGE) ? "[jnt:page] " : "[jnt:content] ")
-                .append("AS item ").append("WHERE item.[jcr:mixinTypes] = 'jmix:markedForDeletionRoot' ").append("and ISDESCENDANTNODE"
-                + "(item,['")
-                .append(searchPath).append("']) ").append(" order by item.[").append(resultFields[sortCol]).append("] ").append(order);
+        queryBuilder.append("SELECT * FROM").append(reportType.equals(BaseReport.SearchContentType.PAGE) ? "[jnt:page] " : "[jnt:content] ")
+                .append("AS item ").append("WHERE item.[jcr:mixinTypes] = 'jmix:markedForDeletionRoot' ")
+                .append("and ISDESCENDANTNODE(item,['").append(searchPath).append("']) ").append(" order by item.[")
+                .append(resultFields[sortCol]).append("] ").append(order);
 
         String query = queryBuilder.toString();
         sessionWrapper = session;
@@ -134,6 +134,7 @@ public class ReportContentMarkedForDeletion extends QueryReport {
                 node.getI18N(this.defaultLocale).getProperty("jcr:title").getString() :
                 "");
         nodeMap.put("displayTitle", StringUtils.isNotEmpty(nodeMap.get("nodeTitle")) ? nodeMap.get("nodeTitle") : nodeMap.get("nodeName"));
+        nodeMap.put("publishStatus", getPublicationStatusOfANode(node));
         this.dataList.add(nodeMap);
     }
 
@@ -149,6 +150,7 @@ public class ReportContentMarkedForDeletion extends QueryReport {
             item.put(nodeMap.get("nodePath"));
             item.put(nodeMap.get("nodeUsedInPagePath"));
             item.put(nodeMap.get("subNodesMarkedForDeletion"));
+            item.put(nodeMap.get("publishStatus"));
             item.put(Boolean.valueOf(nodeMap.get("nodePresentOnPage")) ? "nodePresentOnPage" : "nodeNotPresentOnPage");
             jArray.put(item);
         }
@@ -173,5 +175,20 @@ public class ReportContentMarkedForDeletion extends QueryReport {
             logger.error("countSubNodes: problem executing the jcr:query[" + queryBuilder.toString() + "]", rex);
         }
         return 0L;
+    }
+
+    private String getPublicationStatusOfANode(JCRNodeWrapper node) {
+        String publishStatus;
+        try {
+            if (node.hasProperty("j:published") && node.getProperty("j:published").getValue().getBoolean()) {
+                publishStatus = Messages.get(BUNDLE, "cgnt_contentReports.status.published", locale);
+            } else {
+                publishStatus = Messages.get(BUNDLE, "cgnt_contentReports.status.notPublished", locale);
+            }
+        } catch (RepositoryException e) {
+            logger.error("getPublicationStatusOfANode: problem while getting the publish status for the node " + node.getName(), e);
+            publishStatus = "";
+        }
+        return publishStatus;
     }
 }

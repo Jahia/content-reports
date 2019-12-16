@@ -120,10 +120,12 @@
                             <th><fmt:message key="cgnt_contentReports.report.column.path"/></th>
                             <th><fmt:message key="cgnt_contentReports.report.column.page"/></th>
                             <th><fmt:message key="cgnt_contentReports.report.label.numberOfNodesDeleted"/></th>
+                            <th><fmt:message key="cgnt_contentReports.report.column.published"/></th>
                         </tr>
                         </thead>
                         <tfoot>
                         <tr>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
