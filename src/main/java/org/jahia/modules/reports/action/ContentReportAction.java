@@ -176,7 +176,10 @@ public class ContentReportAction extends Action {
                         req.getParameter("pathTxtOrigin").replaceAll("'",""),
                         req.getParameter("pathTxtDestination").replaceAll("'",""));
             case "24":
-                return new ReportContentMarkedForDeletion(renderContext.getSite(), sortCol, order);
+                return new ReportContentMarkedForDeletion(renderContext.getSite(), req.getParameter("pathTxt").replaceAll("'", ""),
+                        (req.getParameter("typeSearch").equalsIgnoreCase("pages")) ?
+                                BaseReport.SearchContentType.PAGE :
+                                BaseReport.SearchContentType.CONTENT, sortCol, order);
             default:
                 throw new ContentReportException("Invalid reportId: " + reportId);
         }
