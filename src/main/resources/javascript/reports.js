@@ -1146,13 +1146,66 @@ function fillReportCustomCacheContent(baseUrl, loadingLabel){
  *****************************************/
 
 function fillReportPageAclInheritanceBreak(baseUrl, loadingLabel){
-    var actionUrl = getReportActionUrl(baseUrl, 19, null);
+    ajaxindicatorstart();
+    $.ajax($('#contextPath').val() +'/modules/graphql',{
+        type:"POST",
+        data: JSON.stringify(getAceAndAclInheritanceBreakRequest()),
+        contentType:"application/json",
+        dataType:"json",
+        success: function(response){
+            var table = $('#pageAclInheritanceBreakTable').DataTable();
 
-    // the loading message
-    ajaxindicatorstart(loadingLabel);
+            table.clear().draw();
 
-    initDataTable ("pageAclInheritanceBreakTable", actionUrl, 1, [], false);
+            let result = response.data.jcr.acl.nodes.map(node => node.parent);
+            result = result.concat(response.data.jcr.ace.nodes.map(node => node.parent.parent));
 
-    ajaxindicatorstop();
 
+            // Distinct all entries
+            result.filter((node, index, list) => {
+                return node.isDisplayableNode && list.map(nodeToMap => nodeToMap.path).indexOf(node.path) === index;
+            }).forEach(value =>  table.row.add([value.displayName, "<a target=\"_blank\" href=\""+$('#baseEdit').val()+value.path+".html\">"+value.path+"</a>"]).draw());
+
+            ajaxindicatorstop();
+        }
+    });
+}
+
+function getAceAndAclInheritanceBreakRequest() {
+    let query = {
+        query:
+            'query aclAndAceQueries($aceQuery:String!, $aclQuery:String!){ jcr {' +
+            '   ace:nodesByQuery(query: $aceQuery) { ' +
+            '       nodes {' +
+            '           parent {' +
+            '               parent {' +
+            '                   displayName' +
+            '                   path' +
+            '                   isDisplayableNode' +
+            '               }' +
+            '           }' +
+            '       }' +
+            '   }' +
+            '   acl:nodesByQuery(query: $aclQuery) { ' +
+            '       nodes {' +
+            '           parent {' +
+            '               displayName' +
+            '               path' +
+            '               isDisplayableNode' +
+            '           }' +
+            '       }' +
+            '   }' +
+            '}}',
+        variables: {
+            'aclQuery': 'SELECT * FROM [jnt:acl] AS item ' +
+                '   WHERE item.[\'j:inherit\'] =\'false\' ' +
+                '   AND item.[\'jcr:primaryType\'] <> \'jnt:virtualsite\' ' +
+                '   AND ISDESCENDANTNODE(item,[\'/sites/' + $('#siteKey').val() + '\'])',
+            'aceQuery': 'SELECT * FROM [jnt:ace] AS item ' +
+                '   WHERE item.[\'j:aceType\'] = \'DENY\' ' +
+                '   AND item.[\'jcr:primaryType\'] <> \'jnt:virtualsite\' ' +
+                '   AND ISDESCENDANTNODE(item,[\'/sites/' + $('#siteKey').val() + '\'])'
+        }
+    };
+    return query;
 }
