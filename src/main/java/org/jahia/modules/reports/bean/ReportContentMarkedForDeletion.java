@@ -60,6 +60,7 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * The ReportContentMarkedForDeletion Class.
@@ -128,7 +129,7 @@ public class ReportContentMarkedForDeletion extends QueryReport {
             nodeMap.put("nodeUsedInPagePath", node.getParent().getPath());
             nodeMap.put("nodePresentOnPage", "false");
         }
-        nodeMap.put("subNodesMarkedForDeletion", this.countSubNodes(node.getPath()).toString());
+        nodeMap.put("subNodesMarkedForDeletion", this.countSubNodes(node).toString());
         nodeMap.put("nodeDisplayableName", WordUtils.abbreviate(node.getDisplayableName(), 90, 130, "..."));
         nodeMap.put("nodeTitle", (node.hasI18N(this.locale) && node.getI18N(this.defaultLocale).hasProperty("jcr:title")) ?
                 node.getI18N(this.defaultLocale).getProperty("jcr:title").getString() :
@@ -162,21 +163,32 @@ public class ReportContentMarkedForDeletion extends QueryReport {
         return jsonObject;
     }
 
-    private Long countSubNodes(String nodePath) {
+    private Long countSubNodes(JCRNodeWrapper node) {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder
                 .append("SELECT count AS [rep:count(skipChecks=1)] FROM [jmix:markedForDeletion] AS item where ISDESCENDANTNODE(item,['")
-                .append(nodePath).append("'])");
-
+                .append(node.getPath()).append("'])");
         try {
-            return sessionWrapper.getWorkspace().getQueryManager().createQuery(queryBuilder.toString(), Query.JCR_SQL2).execute().getRows()
-                    .nextRow().getValue("count").getLong();
+            if (hasToCountSubNodes(node)) {
+                return sessionWrapper.getWorkspace().getQueryManager().createQuery(queryBuilder.toString(), Query.JCR_SQL2).execute()
+                        .getRows().nextRow().getValue("count").getLong();
+            }
         } catch (RepositoryException rex) {
             logger.error("countSubNodes: problem executing the jcr:query[" + queryBuilder.toString() + "]", rex);
         }
         return 0L;
     }
 
+    private Boolean hasToCountSubNodes(JCRNodeWrapper node){
+        return Stream.of("jnt:page", "jnt:navMenuText", "jnt:folder", "jnt:contentFolder").anyMatch(nodeType -> {
+            try {
+                return node.isNodeType(nodeType);
+            } catch (RepositoryException e) {
+                logger.error("countSubNodes: Error while checking node type of" + node.getName(), e);
+            }
+            return false;
+        });
+    }
     private String getPublicationStatusOfANode(JCRNodeWrapper node) {
         String publishStatus;
         try {
