@@ -48,6 +48,7 @@
 <input type="hidden" id="baseEdit" value="${url.context}${url.baseEdit}">
 <input type="hidden" id="siteKey" value="${renderContext.site.siteKey}">
 <input type="hidden" id="contentManagerUrl" value="${url.context}/cms/contentmanager/${renderContext.site.siteKey}/${selectedLang}/browse">
+<input type="hidden" id="contextPath" value="${pageContext.request.contextPath}">
 
 <div class="panel panel-primary">
     <div class="panel-heading">
