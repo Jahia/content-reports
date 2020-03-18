@@ -1,13 +1,21 @@
 {
   "label": {
-    "contentManager": {
-      "leftMenu" : {
-        "manage" : {
-          "contentReports" : {
-            "title" : "Rapport de contenu"
-          }
-        }
-      }
-    }
+    "contentreports": "Content Reports",
+    "byAuthorAndDate": "Par Auteur/Date",
+    "references": "Références",
+    "wipContent": "Travail en cours",
+    "contentWaitingPublication": "Workflows",
+    "markedForDeletion": "Contenu marqué comme supprimé",
+    "byLanguage": "Langues",
+    "pagesWithoutTitle": "Pages sans titre",
+    "pagesUntranslated": "Voir les contenus non traduits",
+    "byMetadata": "Metadata",
+    "pagesWithoutKeywords": "Pages sans mots-clés",
+    "pagesWithoutDescription": "Pages sans description",
+    "system": "Système",
+    "lockedContent": "Par contenu verrouillé",
+    "customCacheContent": "Surcharge de configuration de cache",
+    "aclInheritanceBreak": "Héritage de permissions cassé",
+    "overview": "Apercu de site"
   }
 }

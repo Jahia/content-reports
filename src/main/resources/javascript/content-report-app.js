@@ -79,7 +79,12 @@ $(document).ready(function () {
         $(".modal-backdrop").addClass("modal-backdrop-fullscreen");
     });
 
-
+    if (window.location.search) {
+        var v = new URLSearchParams(window.location.search);
+        if (v.get('view')) {
+            showView(v.get('view'));
+        }
+    }
 
 });
 

@@ -57,6 +57,7 @@
 
     <div class="panel-body">
         <div class="">
+            <c:if test="${param.hideMenu ne 'true'}">
             <!-- Column for menu -->
             <div class="col-md-2" STYLE="margin-top: 15px;" >
                 <div style="overflow-x: hidden; min-height: 100px;">
@@ -162,8 +163,10 @@
                 </div>
             </div>
 
+            </c:if>
+
             <!-- Column for report content -->
-            <div class="col-md-10" style="border-left: 1px solid rgba(0,0,0,.14);padding-left: 0 !important;min-height: 100%;position: absolute;right: 0;background: #fafafa;">
+            <div class="${param.hideMenu ne 'true' ? 'col-md-10' : 'col-md-12'}" style="border-left: 1px solid rgba(0,0,0,.14);padding-left: 0 !important;min-height: 100%;position: absolute;right: 0;background: #fafafa;">
 
                 <!-- By Type: detailed -->
                 <div id="report-5" class="div-report">
