@@ -1,7 +1,7 @@
 window.jahia.i18n.loadNamespaces('content-reports');
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports', {
-    targets: ['jcontent'],
+    targets: ['jcontent:5'],
     isSelectable: false,
     label: 'content-reports:label.contentreports',
     requireModuleInstalledOnSite: 'content-reports',
