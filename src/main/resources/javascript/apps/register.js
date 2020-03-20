@@ -5,7 +5,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports', {
     isSelectable: false,
     label: 'content-reports:label.contentreports',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-byAuthorAndDate', {
@@ -13,7 +14,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-byAuthorAndD
     isSelectable: true,
     label: 'content-reports:label.byAuthorAndDate',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true&view=20'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=20'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-references', {
@@ -21,7 +23,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-references',
     isSelectable: true,
     label: 'content-reports:label.references',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true&view=23'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=23'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-wipContent', {
@@ -29,7 +32,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-wipContent',
     isSelectable: true,
     label: 'content-reports:label.wipContent',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true&view=22'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=22'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-contentWaitingPublication', {
@@ -37,7 +41,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-contentWaiti
     isSelectable: true,
     label: 'content-reports:label.contentWaitingPublication',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true&view=15'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=15'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-markedForDeletion', {
@@ -45,7 +50,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-markedForDel
     isSelectable: true,
     label: 'content-reports:label.markedForDeletion',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true&view=24'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=24'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-language', {
@@ -53,7 +59,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-language', {
     targets: ['jcontent-content-reports'],
     label: 'content-reports:label.byLanguage',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-language-pagesWithoutTitle', {
@@ -61,7 +68,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-language-pag
     isSelectable: true,
     label: 'content-reports:label.pagesWithoutTitle',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true&view=9'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=9'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-language-pagesUntranslated', {
@@ -69,7 +77,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-language-pag
     isSelectable: true,
     label: 'content-reports:label.pagesUntranslated',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true&view=21'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=21'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-metadata', {
@@ -77,7 +86,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-metadata', {
     isSelectable: false,
     label: 'content-reports:label.byMetadata',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-metadata-pagesWithoutKeywords', {
@@ -85,7 +95,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-metadata-pag
     isSelectable: true,
     label: 'content-reports:label.pagesWithoutKeywords',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true&view=10'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=10'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-metadata-pagesWithoutDescription', {
@@ -93,7 +104,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-metadata-pag
     isSelectable: true,
     label: 'content-reports:label.pagesWithoutDescription',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true&view=11'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=11'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-system', {
@@ -101,7 +113,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-system', {
     isSelectable: false,
     label: 'content-reports:label.system',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-system-lockedContent', {
@@ -109,7 +122,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-system-locke
     isSelectable: true,
     label: 'content-reports:label.lockedContent',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true&view=14'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=14'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-system-customCacheContent', {
@@ -117,7 +131,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-system-custo
     isSelectable: true,
     label: 'content-reports:label.customCacheContent',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true&view=17'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=17'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-system-aclInheritanceBreak', {
@@ -125,7 +140,8 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-system-aclIn
     isSelectable: true,
     label: 'content-reports:label.aclInheritanceBreak',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true&view=18'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=18'
 });
 
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-system-overview', {
@@ -133,5 +149,6 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-system-overv
     isSelectable: true,
     label: 'content-reports:label.overview',
     requireModuleInstalledOnSite: 'content-reports',
-    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/en/sites/$site-key.content-reports.html?hideMenu=true&view=16'
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=16'
 });
