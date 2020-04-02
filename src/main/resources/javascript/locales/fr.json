@@ -1,19 +1,19 @@
 {
   "label": {
     "contentreports": "Content Reports",
-    "byAuthorAndDate": "Par Auteur/Date",
+    "byAuthorAndDate": "Par auteur/date",
     "references": "Références",
     "wipContent": "Travail en cours",
     "contentWaitingPublication": "Workflows",
-    "markedForDeletion": "Contenu marqué comme supprimé",
+    "markedForDeletion": "Contenus marqués comme supprimés",
     "byLanguage": "Langues",
     "pagesWithoutTitle": "Pages sans titre",
-    "pagesUntranslated": "Voir les contenus non traduits",
+    "pagesUntranslated": "Contenus non traduits",
     "byMetadata": "Metadata",
     "pagesWithoutKeywords": "Pages sans mots-clés",
     "pagesWithoutDescription": "Pages sans description",
     "system": "Système",
-    "lockedContent": "Par contenu verrouillé",
+    "lockedContent": "Contenu verrouillé",
     "customCacheContent": "Surcharge de configuration de cache",
     "aclInheritanceBreak": "Héritage de permissions cassé",
     "overview": "Apercu de site"
