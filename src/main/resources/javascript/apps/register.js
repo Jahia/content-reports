@@ -3,6 +3,7 @@ window.jahia.i18n.loadNamespaces('content-reports');
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports', {
     targets: ['jcontent:10'],
     isSelectable: false,
+    icon: window.jahia.moonstone.toIconComponent('Pie'),
     label: 'content-reports:label.contentreports',
     requireModuleInstalledOnSite: 'content-reports',
     requiredPermission: 'contentReports',
