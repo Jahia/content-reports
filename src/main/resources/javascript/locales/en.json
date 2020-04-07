@@ -1,21 +1,21 @@
 {
   "label": {
     "contentreports": "Content Reports",
-    "byAuthorAndDate": "By Author/Date",
+    "byAuthorAndDate": "By author/date",
     "references": "References",
     "wipContent": "Work in progress",
     "contentWaitingPublication": "Workflows",
     "markedForDeletion": "Marked for deletion",
-    "byLanguage": "Language",
-    "pagesWithoutTitle": "Pages Without Title",
-    "pagesUntranslated": "Show all untranslated content",
+    "byLanguage": "Languages",
+    "pagesWithoutTitle": "Pages without title",
+    "pagesUntranslated": "Untranslated content",
     "byMetadata": "Metadata",
-    "pagesWithoutKeywords": "Pages Without Keywords",
-    "pagesWithoutDescription": "Pages Without Description",
+    "pagesWithoutKeywords": "Pages without keywords",
+    "pagesWithoutDescription": "Pages without description",
     "system": "System",
-    "lockedContent": "Locked Content",
-    "customCacheContent": "Custom Cache Content",
+    "lockedContent": "Locked content",
+    "customCacheContent": "Custom cache content",
     "aclInheritanceBreak": "ACL inheritance break",
-    "overview": "Site Overview"
+    "overview": "Site overview"
   }
 }
