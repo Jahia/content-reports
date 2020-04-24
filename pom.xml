@@ -7,7 +7,7 @@
 
                                     http://www.jahia.com
 
-        Copyright (C) 2002-2019 Jahia Solutions Group SA. All rights reserved.
+        Copyright (C) 2002-2020 Jahia Solutions Group SA. All rights reserved.
 
         THIS FILE IS AVAILABLE UNDER TWO DIFFERENT LICENSES:
         1/GPL OR 2/JSEL
@@ -49,11 +49,11 @@
   <parent>
     <groupId>org.jahia.modules</groupId>
     <artifactId>jahia-modules</artifactId>
-    <version>7.2.3.1</version>
+    <version>8.0.0.0-SNAPSHOT</version>
   </parent>
   <groupId>org.jahia.modules</groupId>
   <artifactId>content-reports</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>2.0.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <name>Content Reports</name>
   <description>This is the custom module (Content Reports) for running on a Digital Experience Manager server.</description>
@@ -65,6 +65,8 @@
   </scm>
   <properties>
     <jahia-depends>default,external-provider,siteSettings</jahia-depends>
+    <require-capability>osgi.extender;filter:="(osgi.extender=org.jahia.bundles.blueprint.extender.config)"</require-capability>
+    <jahia-module-signature>MCwCFG41G4wGmdSfE7ptjA2zXMtZVCGZAhR9hh6Ihq0hp+1xrxvKRiI1dmm46A==</jahia-module-signature>
   </properties>
   <repositories>
     <repository>
