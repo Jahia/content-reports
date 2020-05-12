@@ -53,7 +53,7 @@
   </parent>
   <groupId>org.jahia.modules</groupId>
   <artifactId>content-reports</artifactId>
-  <version>2.0.0</version>
+  <version>2.1.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <name>Content Reports</name>
   <description>This is the custom module (Content Reports) for running on a Digital Experience Manager server.</description>
@@ -61,7 +61,7 @@
     <connection>scm:git:git@github.com:Jahia/content-reports.git</connection>
     <developerConnection>scm:git:git@github.com:Jahia/content-reports.git</developerConnection>
     <url>https://github.com/Jahia/content-reports</url>
-    <tag>2_0_0</tag>
+    <tag>HEAD</tag>
   </scm>
   <properties>
     <jahia-depends>default,external-provider,siteSettings</jahia-depends>
