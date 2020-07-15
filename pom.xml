@@ -49,7 +49,7 @@
   <parent>
     <groupId>org.jahia.modules</groupId>
     <artifactId>jahia-modules</artifactId>
-    <version>8.0.0.0</version>
+    <version>8.0.1.0-SNAPSHOT</version>
   </parent>
   <groupId>org.jahia.modules</groupId>
   <artifactId>content-reports</artifactId>
@@ -66,8 +66,7 @@
   <properties>
     <jahia-depends>default,external-provider,siteSettings</jahia-depends>
     <require-capability>osgi.extender;filter:="(osgi.extender=org.jahia.bundles.blueprint.extender.config)"</require-capability>
-    <jahia-module-signature>MCwCFG41G4wGmdSfE7ptjA2zXMtZVCGZAhR9hh6Ihq0hp+1xrxvKRiI1dmm46A==</jahia-module-signature>
-  </properties>
+    <jahia-module-signature>MCwCFGUJ9caNggqATevbefCEcWStF1jgAhRe8vgk2RGV31dGntzjG9HjcxopAw==</jahia-module-signature>  </properties>
   <repositories>
     <repository>
       <releases>

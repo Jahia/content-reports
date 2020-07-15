@@ -5,9 +5,11 @@
 
     <bean class="org.jahia.modules.reports.action.ContentReportAction">
         <property name="name" value="contentReport" />
+        <property name="requiredMethods" value="GET,POST" />
     </bean>
     <bean class="org.jahia.modules.reports.action.PathPickerAction">
         <property name="name" value="pathPicker" />
+        <property name="requiredMethods" value="GET,POST" />
     </bean>
 
 </beans>
