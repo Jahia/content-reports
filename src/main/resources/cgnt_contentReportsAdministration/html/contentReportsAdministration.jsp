@@ -231,6 +231,18 @@
                 <div id="report-24" class="div-report">
                     <template:include view="markedForDeletion"/>
                 </div>
+                <!-- Report for live contents with visibility conditions -->
+                <div id="report-25" class="div-report">
+                    <template:include view="liveContents"/>
+                </div>
+                <!-- Report for expired contents -->
+                <div id="report-26" class="div-report">
+                    <template:include view="expiredContents"/>
+                </div>
+                <!-- Report for future contents -->
+                <div id="report-27" class="div-report">
+                    <template:include view="futureContents"/>
+                </div>
             </div>
         </div>
     </div>
