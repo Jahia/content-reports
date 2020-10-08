@@ -57,13 +57,14 @@
                 <div class="row">
                     <div class="col-md-2">
                         <button type="button" class="btn btn-default"
-                                onclick="callTreeView('pathLiveContents',null,'jnt:virtualsite,jnt:page')">
+                                onclick="callTreeView('searchPath',null,'jnt:virtualsite,jnt:page')">
                             <span class="glyphicon glyphicon-folder-open"></span>
                             &nbsp;<fmt:message key="cgnt_contentReports.report.browse"/>
                         </button>
                     </div>
                     <div class="col-md-10">
-                        <input type="text" id="pathLiveContents" name="pathLiveContents" class="form-control" readonly="true"  value="${renderContext.site.path}" >
+                        <input type="text" id="searchPath" name="pathLiveContents" class="form-control"
+                               readonly="true"  value="${renderContext.site.path}" >
                     </div>
                 </div>
 
@@ -72,7 +73,7 @@
                 <!-- search button -->
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="button" class="btn btn-default" onclick="fillReportByUntranslated('${currentNodePath}', '${principalGridLabel}', '${labelTotal}', '${labelLoading}')">
+                        <button type="button" class="btn btn-default" onclick="fillReportPageByLiveContentsWithVisibilityConditions('${currentNodePath}')">
                             <span class="glyphicon glyphicon-search"></span> <fmt:message key="cgnt_contentReports.report.search"/>
                         </button>
                     </div>
@@ -90,7 +91,8 @@
                         <h5 class="panel-title" id="rba-principal-grid-rdau"><fmt:message key="cgnt_contentReports.report"/>&nbsp;<fmt:message key="cgnt_contentReports.menu.contentReports.byDate"/></h5>
                     </div>
                     <div>&nbsp;</div>
-                    <table width="100%" class="display reports-data-table" id="byAllUntranslated" cellspacing="0">
+                    <table width="100%" class="display reports-data-table" id="liveContentWithVisibilityConditionsContentTable"
+                           cellspacing="0">
                         <thead>
                         <tr>
                             <th><fmt:message key="cgnt_contentReports.report.column.name"/></th>

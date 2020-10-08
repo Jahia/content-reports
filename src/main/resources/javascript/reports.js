@@ -1171,6 +1171,43 @@ function fillReportPageAclInheritanceBreak(baseUrl, loadingLabel){
     });
 }
 
+/************************************************************
+ *  REPORTS PAGES Live contents with visibility conditions  *
+ ************************************************************/
+function fillReportPageByLiveContentsWithVisibilityConditions(baseUrl) {
+    const searchPath = $('#searchPath').val();
+    const parameters = "&searchPath=" + searchPath
+    const actionUrl = getReportActionUrl(baseUrl, 25, parameters);
+
+    // the loading message
+    ajaxindicatorstart("Loading reports");
+    $.getJSON( actionUrl, function( data ) {
+        // getting the table
+        let table = $('#liveContentWithVisibilityConditionsContentTable').DataTable();
+
+        // clear all content from table
+        table.clear().draw();
+
+        // adding new content to table
+        let nodes = data.items;
+
+        // adding new content to table
+        $.each(nodes, function( index, node ) {
+            table.row.add( [
+                checkUndefined(node.nodeName),
+                checkUndefined(node.nodePath),
+                checkUndefined(node.nodeType),
+                checkUndefined(""),
+                checkUndefined(""),
+                checkUndefined(node.nodeCurrentStatus),
+            ] ).draw();
+        });
+
+        //stop loading message
+        ajaxindicatorstop();
+    });
+}
+
 function getAceAndAclInheritanceBreakRequest() {
     let query = {
         query:
