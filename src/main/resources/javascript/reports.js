@@ -1194,12 +1194,12 @@ function fillReportPageByLiveContentsWithVisibilityConditions(baseUrl) {
         // adding new content to table
         $.each(nodes, function( index, node ) {
             table.row.add( [
-                checkUndefined(node.nodeName),
-                checkUndefined(node.nodePath),
-                checkUndefined(node.nodeType),
-                checkUndefined(""),
-                checkUndefined(""),
-                checkUndefined(node.nodeCurrentStatus),
+                checkUndefined(node.name),
+                checkUndefined(node.path),
+                checkUndefined(node.type),
+                checkUndefined(node.listOfConditions),
+                checkUndefined(node.isConditionMatched),
+                checkUndefined(node.currentStatus),
             ] ).draw();
         });
 

@@ -43,55 +43,71 @@
  */
 package org.jahia.modules.reports.bean;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.jahia.exceptions.JahiaException;
-import org.jahia.services.content.JCRNodeIteratorWrapper;
+import org.jahia.modules.reports.service.ConditionService;
+import org.jahia.modules.reports.service.LiveConditionService;
 import org.jahia.services.content.JCRNodeWrapper;
-import org.jahia.services.content.JCRPropertyWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
-import org.jahia.services.content.nodetypes.ExtendedNodeDefinition;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.jahia.modules.reports.service.LiveConditionService.*;
 
 /**
- * The ReportPagesWithoutDescription Class.
- * <p>
- * Created by Juan Carlos Rodas.
+ * The ReportLiveContentsWithVisibilityCondition Class.
+ *
+ * @author nonico
  */
 public class ReportLiveContentsWithVisibilityCondition extends QueryReport {
     private static Logger logger = LoggerFactory.getLogger(ReportLiveContentsWithVisibilityCondition.class);
     protected static final String BUNDLE = "resources.content-reports";
     private String searchPath;
+    private ConditionService conditionService;
 
     public ReportLiveContentsWithVisibilityCondition(JCRSiteNode siteNode, String searchPath) {
         super(siteNode);
         this.searchPath = searchPath;
+        this.conditionService = new LiveConditionService();
     }
 
     @Override public void addItem(JCRNodeWrapper node) throws RepositoryException {
         Map<String,String> map = new HashMap<>();
-        map.put("nodePath", node.getPath());
-        map.put("nodeName", node.getName());
-        map.put("nodeType", String.join(", ",node.getNodeTypes()));
-        map.put("nodeCurrentStatus", node.hasProperty("j:published") &&
+        map.put("name", node.getName());
+        map.put("path", node.getPath());
+        map.put("type", String.join("<br/>",node.getNodeTypes()));
+        map.put("currentStatus", node.hasProperty("j:published") &&
                 node.getPropertyAsString("j:published")
                     .equalsIgnoreCase("true") ? "live" : "not live");
 
+
+        JCRNodeWrapper conditionalVisibilityNode = node.getNode(CONDITIONALVISIBILITY);
+        Map<String, String> conditionMap = conditionService.getConditions(conditionalVisibilityNode);
+        List<String> conditions = conditionMap.entrySet().stream()
+                .filter(entry -> !entry.getKey().equalsIgnoreCase(ISCONDITIONMATCHED))
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+
+        map.put("listOfConditions", conditions.isEmpty() ? null : String.join("<br/>", conditions));
+        map.put("isConditionMatched", conditionMap.getOrDefault("isConditionMatched", "false"));
         this.dataList.add(map);
     }
 
     @Override public void execute(JCRSessionWrapper session, int offset, int limit)
             throws RepositoryException, JSONException, JahiaException {
+        logger.debug("Building jcr sql query");
         String query = "SELECT * FROM [jnt:content] AS parent \n"
                 + "INNER JOIN [jnt:conditionalVisibility] as child ON ISCHILDNODE(child,parent) \n"
                 + "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "'])";
+        logger.debug(query);
         fillReport(session, query, offset, limit);
     }
+
 }
