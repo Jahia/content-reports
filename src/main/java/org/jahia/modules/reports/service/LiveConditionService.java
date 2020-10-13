@@ -43,8 +43,9 @@ public class LiveConditionService implements ConditionService {
     private final String DAYOFWEEKCONDITION_NT = "jnt:dayOfWeekCondition";
     private final String STARTENDDATECONDITION_NT = "jnt:startEndDateCondition";
     private final String TIMEOFDAYCONDITION_NT = "jnt:timeOfDayCondition";
-    private final String FORCED_MATCH_ALL = "j:forceMatchAllConditions";
-    public static final String CONDITIONALVISIBILITY = "j:conditionalVisibility";
+    private final String FORCED_MATCH_ALL_PROP = "j:forceMatchAllConditions";
+    public static final String FORCE_MATCH_ALL="shouldMatchAllCondition";
+    public static final String CONDITIONALVISIBILITY_PROP = "j:conditionalVisibility";
     public static final String ISCONDITIONMATCHED = "isConditionMatched";
 
     @Override public Map<String, String> getConditions(JCRNodeWrapper node) throws RepositoryException {
@@ -87,7 +88,8 @@ public class LiveConditionService implements ConditionService {
             }
         }
 
-        boolean forceMatchAll = Boolean.parseBoolean(node.getPropertyAsString(FORCED_MATCH_ALL));
+        boolean forceMatchAll = Boolean.parseBoolean(node.getPropertyAsString(FORCED_MATCH_ALL_PROP));
+        conditionsMap.put(FORCE_MATCH_ALL, String.valueOf(forceMatchAll));
         boolean isConditionMatched = areConditionsMatched(matchConditions, forceMatchAll);
         conditionsMap.put(ISCONDITIONMATCHED, String.valueOf(isConditionMatched));
         return conditionsMap;

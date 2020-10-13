@@ -1198,6 +1198,7 @@ function fillReportPageByLiveContentsWithVisibilityConditions(baseUrl) {
                 checkUndefined(node.path),
                 checkUndefined(node.type),
                 checkUndefined(node.listOfConditions),
+                checkUndefined(node.shouldMatchAllConditions),
                 checkUndefined(node.isConditionMatched),
                 checkUndefined(node.currentStatus),
             ] ).draw();
@@ -1206,6 +1207,65 @@ function fillReportPageByLiveContentsWithVisibilityConditions(baseUrl) {
         //stop loading message
         ajaxindicatorstop();
     });
+}
+
+function fillReportByExpiredContents(baseUrl) {
+    const searchPath = $('input#searchPathExpiredContents').val();
+    const parameters = "&searchPath=" + searchPath
+    const actionUrl = getReportActionUrl(baseUrl, 26, parameters);
+    ajaxindicatorstart("Loading reports");
+    $.getJSON(actionUrl, (data) => {
+        let table = $('#expiredContentTable').DataTable();
+
+        //clear all content from table
+        table.clear().draw();
+
+        // adding new content to table
+        let nodes = data.items;
+
+        // adding new content to table
+        $.each(nodes, function( index, node ) {
+            table.row.add( [
+                checkUndefined(node.name),
+                checkUndefined(node.path),
+                checkUndefined(node.type),
+                checkUndefined(node.expiresOn)
+            ] ).draw();
+        });
+
+        //stop loading message
+        ajaxindicatorstop();
+    })
+}
+
+
+function fillReportByFutureContents(baseUrl) {
+    const searchPath = $('input#searchPathFutureContents').val();
+    const parameters = "&searchPath=" + searchPath
+    const actionUrl = getReportActionUrl(baseUrl, 27, parameters);
+    ajaxindicatorstart("Loading reports");
+    $.getJSON(actionUrl, (data) => {
+        let table = $('#futureContentTable').DataTable();
+
+        //clear all content from table
+        table.clear().draw();
+
+        // adding new content to table
+        let nodes = data.items;
+
+        // adding new content to table
+        $.each(nodes, function( index, node ) {
+            table.row.add( [
+                checkUndefined(node.name),
+                checkUndefined(node.path),
+                checkUndefined(node.type),
+                checkUndefined(node.liveDate)
+            ] ).draw();
+        });
+
+        //stop loading message
+        ajaxindicatorstop();
+    })
 }
 
 function getAceAndAclInheritanceBreakRequest() {

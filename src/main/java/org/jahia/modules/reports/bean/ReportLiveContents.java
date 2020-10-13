@@ -43,15 +43,10 @@
  */
 package org.jahia.modules.reports.bean;
 
-import org.jahia.exceptions.JahiaException;
 import org.jahia.modules.reports.service.ConditionService;
 import org.jahia.modules.reports.service.LiveConditionService;
 import org.jahia.services.content.JCRNodeWrapper;
-import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
-import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import java.util.HashMap;
@@ -66,15 +61,11 @@ import static org.jahia.modules.reports.service.LiveConditionService.*;
  *
  * @author nonico
  */
-public class ReportLiveContentsWithVisibilityCondition extends QueryReport {
-    private static Logger logger = LoggerFactory.getLogger(ReportLiveContentsWithVisibilityCondition.class);
-    protected static final String BUNDLE = "resources.content-reports";
-    private String searchPath;
-    private ConditionService conditionService;
+public class ReportLiveContents extends ReportByContentVisibility {
+    private final ConditionService conditionService;
 
-    public ReportLiveContentsWithVisibilityCondition(JCRSiteNode siteNode, String searchPath) {
-        super(siteNode);
-        this.searchPath = searchPath;
+    public ReportLiveContents(JCRSiteNode siteNode, String searchPath) {
+        super(siteNode, searchPath);
         this.conditionService = new LiveConditionService();
     }
 
@@ -88,26 +79,17 @@ public class ReportLiveContentsWithVisibilityCondition extends QueryReport {
                     .equalsIgnoreCase("true") ? "live" : "not live");
 
 
-        JCRNodeWrapper conditionalVisibilityNode = node.getNode(CONDITIONALVISIBILITY);
+        JCRNodeWrapper conditionalVisibilityNode = node.getNode(CONDITIONALVISIBILITY_PROP);
         Map<String, String> conditionMap = conditionService.getConditions(conditionalVisibilityNode);
         List<String> conditions = conditionMap.entrySet().stream()
-                .filter(entry -> !entry.getKey().equalsIgnoreCase(ISCONDITIONMATCHED))
+                .filter(entry -> !entry.getKey().equalsIgnoreCase(ISCONDITIONMATCHED) &&
+                        !entry.getKey().equalsIgnoreCase(FORCE_MATCH_ALL))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
 
         map.put("listOfConditions", conditions.isEmpty() ? null : String.join("<br/>", conditions));
+        map.put("shouldMatchAllConditions", conditionMap.get(FORCE_MATCH_ALL).equalsIgnoreCase("true") ? "yes" : "no");
         map.put("isConditionMatched", conditionMap.getOrDefault("isConditionMatched", "false"));
         this.dataList.add(map);
     }
-
-    @Override public void execute(JCRSessionWrapper session, int offset, int limit)
-            throws RepositoryException, JSONException, JahiaException {
-        logger.debug("Building jcr sql query");
-        String query = "SELECT * FROM [jnt:content] AS parent \n"
-                + "INNER JOIN [jnt:conditionalVisibility] as child ON ISCHILDNODE(child,parent) \n"
-                + "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "'])";
-        logger.debug(query);
-        fillReport(session, query, offset, limit);
-    }
-
 }

@@ -181,7 +181,11 @@ public class ContentReportAction extends Action {
                                 BaseReport.SearchContentType.PAGE :
                                 BaseReport.SearchContentType.CONTENT, sortCol, order);
             case "25":
-                return new ReportLiveContentsWithVisibilityCondition(renderContext.getSite(), req.getParameter("searchPath"));
+                return new ReportLiveContents(renderContext.getSite(), req.getParameter("searchPath"));
+            case "26":
+                return new ReportByExpiredContent(renderContext.getSite(), req.getParameter("searchPath"));
+            case "27":
+                return new ReportByFutureContent(renderContext.getSite(), req.getParameter("searchPath"));
             default:
                 throw new ContentReportException("Invalid reportId: " + reportId);
         }

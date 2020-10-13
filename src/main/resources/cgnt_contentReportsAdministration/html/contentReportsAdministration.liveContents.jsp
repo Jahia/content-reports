@@ -99,12 +99,14 @@
                             <th><fmt:message key="cgnt_contentReports.report.column.path"/></th>
                             <th><fmt:message key="cgnt_contentReports.report.column.type"/></th>
                             <th><fmt:message key="cgnt_contentReports.report.column.conditionList"/></th>
+                            <th><fmt:message key="cgnt_contentReports.report.column.shouldMatchAllCondition"/></th>
                             <th><fmt:message key="cgnt_contentReports.report.column.isConditionMatch"/></th>
                             <th><fmt:message key="cgnt_contentReports.report.column.currentStatus"/></th>
                         </tr>
                         </thead>
                         <tfoot>
                         <tr>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
