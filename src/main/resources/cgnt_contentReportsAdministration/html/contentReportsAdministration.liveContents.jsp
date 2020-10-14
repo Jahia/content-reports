@@ -73,7 +73,7 @@
                 <!-- search button -->
                 <div class="row">
                     <div class="col-md-12">
-                        <button type="button" class="btn btn-default" onclick="fillReportPageByLiveContentsWithVisibilityConditions('${currentNodePath}')">
+                        <button type="button" class="btn btn-default" onclick="fillReportPageByLiveContents('${currentNodePath}')">
                             <span class="glyphicon glyphicon-search"></span> <fmt:message key="cgnt_contentReports.report.search"/>
                         </button>
                     </div>
@@ -99,14 +99,12 @@
                             <th><fmt:message key="cgnt_contentReports.report.column.path"/></th>
                             <th><fmt:message key="cgnt_contentReports.report.column.type"/></th>
                             <th><fmt:message key="cgnt_contentReports.report.column.conditionList"/></th>
-                            <th><fmt:message key="cgnt_contentReports.report.column.shouldMatchAllCondition"/></th>
                             <th><fmt:message key="cgnt_contentReports.report.column.isConditionMatch"/></th>
                             <th><fmt:message key="cgnt_contentReports.report.column.currentStatus"/></th>
                         </tr>
                         </thead>
                         <tfoot>
                         <tr>
-                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>

@@ -23,29 +23,53 @@
  */
 package org.jahia.modules.reports.bean;
 
+import org.jahia.modules.reports.service.ConditionService;
+import org.jahia.modules.reports.service.FutureConditionService;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
 
 import javax.jcr.RepositoryException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- * Short description of the class
+ * The ReportByFutureContent class
  *
  * @author nonico
  */
 public class ReportByFutureContent extends ReportByContentVisibility {
+
+    private ConditionService conditionService;
+
     public ReportByFutureContent(JCRSiteNode siteNode, String searchPath) {
         super(siteNode, searchPath);
+        conditionService = new FutureConditionService();
     }
 
     @Override public void addItem(JCRNodeWrapper node) throws RepositoryException {
-        Map<String,String> map = new HashMap<>();
-        map.put("name", node.getName());
-        map.put("path", node.getPath());
-        map.put("type", String.join("<br/>",node.getNodeTypes()));
-        this.dataList.add(map);
+        Map<String, String> futureConditions = conditionService.getConditions(node);
+        if (!futureConditions.isEmpty()) {
+            LocalDateTime earliestDate = getEarliestDate(futureConditions.values());
+            if (earliestDate.isAfter(LocalDateTime.now())) {
+                Map<String, String> map = new HashMap<>();
+                map.put("name", node.getName());
+                map.put("path", node.getPath());
+                map.put("type", String.join("<br/>", node.getNodeTypes()));
+                map.put("liveDate", earliestDate.format(DateTimeFormatter.ofPattern("HH:mm MM/dd/yyyy")));
+                this.dataList.add(map);
+            }
+        }
+    }
 
+    private LocalDateTime getEarliestDate(Collection<String> startDates) {
+        return startDates.stream()
+                .map(startDatesStr -> LocalDateTime.parse(startDatesStr, DateTimeFormatter.ISO_DATE_TIME))
+                .sorted()
+                .iterator().next();
     }
 }

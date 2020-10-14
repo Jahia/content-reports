@@ -25,7 +25,6 @@ package org.jahia.modules.reports.service;/*
 import org.jahia.services.content.JCRNodeWrapper;
 
 import javax.jcr.RepositoryException;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 /**

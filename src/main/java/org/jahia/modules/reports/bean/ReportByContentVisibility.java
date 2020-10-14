@@ -38,9 +38,9 @@ import javax.jcr.RepositoryException;
  * @author nonico
  */
 public abstract class ReportByContentVisibility extends QueryReport {
-    private static Logger logger  = LoggerFactory.getLogger(ReportByContentVisibility.class);
+    protected static Logger logger  = LoggerFactory.getLogger(ReportByContentVisibility.class);
     protected static final String BUNDLE = "resources.content-reports";
-    private String searchPath;
+    protected String searchPath;
 
     public ReportByContentVisibility(JCRSiteNode siteNode, String searchPath) {
         super(siteNode);

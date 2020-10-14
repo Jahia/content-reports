@@ -43,10 +43,13 @@
  */
 package org.jahia.modules.reports.bean;
 
+import org.jahia.exceptions.JahiaException;
 import org.jahia.modules.reports.service.ConditionService;
 import org.jahia.modules.reports.service.LiveConditionService;
 import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
+import org.json.JSONException;
 
 import javax.jcr.RepositoryException;
 import java.util.HashMap;
@@ -57,7 +60,7 @@ import java.util.stream.Collectors;
 import static org.jahia.modules.reports.service.LiveConditionService.*;
 
 /**
- * The ReportLiveContentsWithVisibilityCondition Class.
+ * The ReportLiveContents Class.
  *
  * @author nonico
  */
@@ -78,18 +81,15 @@ public class ReportLiveContents extends ReportByContentVisibility {
                 node.getPropertyAsString("j:published")
                     .equalsIgnoreCase("true") ? "live" : "not live");
 
-
-        JCRNodeWrapper conditionalVisibilityNode = node.getNode(CONDITIONALVISIBILITY_PROP);
-        Map<String, String> conditionMap = conditionService.getConditions(conditionalVisibilityNode);
-        List<String> conditions = conditionMap.entrySet().stream()
+        Map<String, String> liveConditions = conditionService.getConditions(node);
+        List<String> conditions = liveConditions.entrySet().stream()
                 .filter(entry -> !entry.getKey().equalsIgnoreCase(ISCONDITIONMATCHED) &&
                         !entry.getKey().equalsIgnoreCase(FORCE_MATCH_ALL))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
 
         map.put("listOfConditions", conditions.isEmpty() ? null : String.join("<br/>", conditions));
-        map.put("shouldMatchAllConditions", conditionMap.get(FORCE_MATCH_ALL).equalsIgnoreCase("true") ? "yes" : "no");
-        map.put("isConditionMatched", conditionMap.getOrDefault("isConditionMatched", "false"));
+        map.put("isConditionMatched", liveConditions.getOrDefault("isConditionMatched", "false"));
         this.dataList.add(map);
     }
 }

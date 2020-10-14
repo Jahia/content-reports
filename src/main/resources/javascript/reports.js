@@ -1174,7 +1174,7 @@ function fillReportPageAclInheritanceBreak(baseUrl, loadingLabel){
 /************************************************************
  *  REPORTS PAGES Live contents with visibility conditions  *
  ************************************************************/
-function fillReportPageByLiveContentsWithVisibilityConditions(baseUrl) {
+function fillReportPageByLiveContents(baseUrl) {
     const searchPath = $('#searchPath').val();
     const parameters = "&searchPath=" + searchPath
     const actionUrl = getReportActionUrl(baseUrl, 25, parameters);
@@ -1198,7 +1198,6 @@ function fillReportPageByLiveContentsWithVisibilityConditions(baseUrl) {
                 checkUndefined(node.path),
                 checkUndefined(node.type),
                 checkUndefined(node.listOfConditions),
-                checkUndefined(node.shouldMatchAllConditions),
                 checkUndefined(node.isConditionMatched),
                 checkUndefined(node.currentStatus),
             ] ).draw();
@@ -1229,7 +1228,7 @@ function fillReportByExpiredContents(baseUrl) {
                 checkUndefined(node.name),
                 checkUndefined(node.path),
                 checkUndefined(node.type),
-                checkUndefined(node.expiresOn)
+                checkUndefined("It expired on " + node.expiresOn)
             ] ).draw();
         });
 
@@ -1259,7 +1258,7 @@ function fillReportByFutureContents(baseUrl) {
                 checkUndefined(node.name),
                 checkUndefined(node.path),
                 checkUndefined(node.type),
-                checkUndefined(node.liveDate)
+                checkUndefined("It will be live on " + node.liveDate)
             ] ).draw();
         });
 

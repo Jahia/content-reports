@@ -26,11 +26,13 @@ package org.jahia.modules.reports.service;
 import org.jahia.services.content.JCRNodeWrapper;
 
 import javax.jcr.RepositoryException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Short description of the class
@@ -49,17 +51,28 @@ public class LiveConditionService implements ConditionService {
     public static final String ISCONDITIONMATCHED = "isConditionMatched";
 
     @Override public Map<String, String> getConditions(JCRNodeWrapper node) throws RepositoryException {
-        if (!node.getNodeTypes().contains(CONDITIONALVISIBILITY_NT)) {
+        JCRNodeWrapper conditionalVisibilityNode = node.getNode(CONDITIONALVISIBILITY_PROP);
+        if (conditionalVisibilityNode == null) {
+            return Collections.emptyMap();
+        }
+
+        if (!conditionalVisibilityNode.getNodeTypes().contains(CONDITIONALVISIBILITY_NT)) {
             return Collections.emptyMap();
         }
 
         Map<String, String> conditionsMap = new HashMap<>();
         List<Boolean> matchConditions = new ArrayList<>();
-        for (JCRNodeWrapper childNode : node.getNodes()) {
+        for (JCRNodeWrapper childNode : conditionalVisibilityNode.getNodes()) {
             for (String nodeType : childNode.getNodeTypes()) {
                 switch (nodeType) {
                     case DAYOFWEEKCONDITION_NT:
-                        String dayOfWeek = String.join(", ", childNode.getPropertyAsString("dayOfWeek"));
+                        String dayOfWeek = Arrays.stream(childNode.getPropertyAsString("dayOfWeek").split(" ").clone())
+                                .map(String::toUpperCase)
+                                .map(DayOfWeek::valueOf)
+                                .sorted()
+                                .map(Enum::toString)
+                                .map(String::toLowerCase)
+                                .collect(Collectors.joining(", "));
                         conditionsMap.put(childNode.getName(), String.format("Visible on [ %s ]", dayOfWeek));
                         matchConditions.add(checkDayOfWeek(childNode));
                         break;
@@ -88,7 +101,7 @@ public class LiveConditionService implements ConditionService {
             }
         }
 
-        boolean forceMatchAll = Boolean.parseBoolean(node.getPropertyAsString(FORCED_MATCH_ALL_PROP));
+        boolean forceMatchAll = Boolean.parseBoolean(conditionalVisibilityNode.getPropertyAsString(FORCED_MATCH_ALL_PROP));
         conditionsMap.put(FORCE_MATCH_ALL, String.valueOf(forceMatchAll));
         boolean isConditionMatched = areConditionsMatched(matchConditions, forceMatchAll);
         conditionsMap.put(ISCONDITIONMATCHED, String.valueOf(isConditionMatched));
