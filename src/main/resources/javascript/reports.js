@@ -1191,6 +1191,11 @@ function fillReportPageByLiveContents(baseUrl) {
         // adding new content to table
         let nodes = data.items;
 
+        const checkBox = "<img src='/modules/content-reports/images/checkbox.svg' height='24px' width='24px'/>";
+        const xMark = "<img src='/modules/content-reports/images/cross.png' height='24px' width='24px'/>";
+        const hide = "<img src='/modules/content-reports/images/hide.svg' height='24px' width='24px' title='Not published'/>";
+        const show = "<img src='/modules/content-reports/images/show.svg' height='24px' width='24px' title='Live' />";
+
         // adding new content to table
         $.each(nodes, function( index, node ) {
             table.row.add( [
@@ -1198,8 +1203,8 @@ function fillReportPageByLiveContents(baseUrl) {
                 checkUndefined(node.path),
                 checkUndefined(node.type),
                 checkUndefined(node.listOfConditions),
-                checkUndefined(node.isConditionMatched),
-                checkUndefined(node.currentStatus),
+                node.isConditionMatched === 'true' ? checkBox : xMark,
+                node.currentStatus === 'live' ? show : hide,
             ] ).draw();
         });
 
@@ -1228,7 +1233,7 @@ function fillReportByExpiredContents(baseUrl) {
                 checkUndefined(node.name),
                 checkUndefined(node.path),
                 checkUndefined(node.type),
-                checkUndefined("It expired on " + node.expiresOn)
+                checkUndefined(node.expiresOn)
             ] ).draw();
         });
 
@@ -1258,7 +1263,7 @@ function fillReportByFutureContents(baseUrl) {
                 checkUndefined(node.name),
                 checkUndefined(node.path),
                 checkUndefined(node.type),
-                checkUndefined("It will be live on " + node.liveDate)
+                checkUndefined(node.liveDate)
             ] ).draw();
         });
 

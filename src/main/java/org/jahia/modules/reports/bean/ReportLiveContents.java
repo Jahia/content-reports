@@ -83,8 +83,7 @@ public class ReportLiveContents extends ReportByContentVisibility {
 
         Map<String, String> liveConditions = conditionService.getConditions(node);
         List<String> conditions = liveConditions.entrySet().stream()
-                .filter(entry -> !entry.getKey().equalsIgnoreCase(ISCONDITIONMATCHED) &&
-                        !entry.getKey().equalsIgnoreCase(FORCE_MATCH_ALL))
+                .filter(entry -> !entry.getKey().equalsIgnoreCase(ISCONDITIONMATCHED))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
 

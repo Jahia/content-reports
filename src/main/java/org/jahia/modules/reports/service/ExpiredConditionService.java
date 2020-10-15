@@ -26,13 +26,9 @@ package org.jahia.modules.reports.service;
 import org.jahia.services.content.JCRNodeWrapper;
 
 import javax.jcr.RepositoryException;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Short description of the class
@@ -53,15 +49,34 @@ public class ExpiredConditionService implements ConditionService {
             return Collections.emptyMap();
         }
 
-        Map<String, String> conditionsMap = new HashMap<>();
+        Map<String, LocalDateTime> conditionsMap = new HashMap<>(Collections.emptyMap());
         for (JCRNodeWrapper childNode : conditionVisibilityNode.getNodes()) {
             for (String nodeType : childNode.getNodeTypes()) {
                 if (STARTENDDATECONDITION_NT.equals(nodeType)) {
-                    conditionsMap.put(childNode.getName(), childNode.getPropertyAsString("end"));
+                    LocalDateTime endDateTime = LocalDateTime.parse(childNode.getPropertyAsString("end"), DateTimeFormatter.ISO_DATE_TIME);
+                    if (endDateTime.isBefore(LocalDateTime.now())) {
+                        conditionsMap.put(childNode.getName(), endDateTime);
+                    }
+                } else {
+                    return Collections.emptyMap();
                 }
             }
         }
-        return conditionsMap;
+        return getLatestDateTime(conditionsMap);
+    }
+
+    public Map<String, String> getLatestDateTime(Map<String, LocalDateTime> conditions) {
+        if (!conditions.isEmpty()) {
+            Map.Entry<String, LocalDateTime> firstEntrySet = conditions.entrySet().stream()
+                    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                    .iterator()
+                    .next();
+            if (firstEntrySet.getKey() != null || firstEntrySet.getValue() != null) {
+                return Collections.singletonMap(firstEntrySet.getKey(),
+                        firstEntrySet.getValue().format(DateTimeFormatter.ofPattern("MM/dd/yyy HH:mm")));
+            }
+        }
+        return Collections.emptyMap();
     }
 
 

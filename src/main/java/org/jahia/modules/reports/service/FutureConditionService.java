@@ -28,7 +28,6 @@ import org.jahia.services.content.JCRNodeWrapper;
 import javax.jcr.RepositoryException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,11 +38,7 @@ import java.util.Map;
  * @author nonico
  */
 public class FutureConditionService implements ConditionService {
-    private final DateTimeFormatter DATETIME_FORMAT = new DateTimeFormatterBuilder()
-            .append(DateTimeFormatter.ofPattern("HH:mm"))
-            .appendLiteral(" on ")
-            .append(DateTimeFormatter.ofPattern("MM/dd/yyyy"))
-            .toFormatter();
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyy HH:mm");
     private final String CONDITIONALVISIBILITY_NT = "jnt:conditionalVisibility";
     private final String STARTENDDATECONDITION_NT = "jnt:startEndDateCondition";
     private final String CONDITIONALVISIBILITY_PROP = "j:conditionalVisibility";
@@ -59,14 +54,38 @@ public class FutureConditionService implements ConditionService {
             return Collections.emptyMap();
         }
 
-        Map<String, String> conditionsMap = new HashMap<>();
+        Map<String, LocalDateTime> conditionsMap = new HashMap<>(Collections.emptyMap());
         for (JCRNodeWrapper childNode : conditionalVisibilityNode.getNodes()) {
             for (String nodeType : childNode.getNodeTypes()) {
                 if (STARTENDDATECONDITION_NT.equals(nodeType)) {
-                    conditionsMap.put(childNode.getName(), childNode.getPropertyAsString("start"));
+                    LocalDateTime startDateTime = LocalDateTime.parse(childNode.getPropertyAsString("start"),
+                            DateTimeFormatter.ISO_DATE_TIME);
+                    if (startDateTime.isAfter(LocalDateTime.now())) {
+                        conditionsMap.put(childNode.getName(), startDateTime);
+                    }
+                } else {
+                    return Collections.emptyMap();
                 }
             }
         }
-        return conditionsMap;
+        return getEarliestStartDate(conditionsMap);
+    }
+
+    /**
+     * Determine the earliest start date
+     * @param startDates
+     * @return
+     */
+    public Map<String, String> getEarliestStartDate(Map<String, LocalDateTime> startDates) {
+        if (!startDates.isEmpty()) {
+            Map.Entry<String, LocalDateTime> firstEntrySet = startDates.entrySet().stream()
+                    .sorted(Map.Entry.comparingByValue())
+                    .iterator()
+                    .next();
+            if (firstEntrySet.getKey() != null || firstEntrySet.getValue() != null) {
+                return Collections.singletonMap(firstEntrySet.getKey(), firstEntrySet.getValue().format(dateTimeFormatter));
+            }
+        }
+        return Collections.emptyMap();
     }
 }

@@ -45,8 +45,6 @@ public class LiveConditionService implements ConditionService {
     private final String DAYOFWEEKCONDITION_NT = "jnt:dayOfWeekCondition";
     private final String STARTENDDATECONDITION_NT = "jnt:startEndDateCondition";
     private final String TIMEOFDAYCONDITION_NT = "jnt:timeOfDayCondition";
-    private final String FORCED_MATCH_ALL_PROP = "j:forceMatchAllConditions";
-    public static final String FORCE_MATCH_ALL="shouldMatchAllCondition";
     public static final String CONDITIONALVISIBILITY_PROP = "j:conditionalVisibility";
     public static final String ISCONDITIONMATCHED = "isConditionMatched";
 
@@ -61,7 +59,7 @@ public class LiveConditionService implements ConditionService {
         }
 
         Map<String, String> conditionsMap = new HashMap<>();
-        List<Boolean> matchConditions = new ArrayList<>();
+        boolean isConditionMatched = true;
         for (JCRNodeWrapper childNode : conditionalVisibilityNode.getNodes()) {
             for (String nodeType : childNode.getNodeTypes()) {
                 switch (nodeType) {
@@ -74,7 +72,7 @@ public class LiveConditionService implements ConditionService {
                                 .map(String::toLowerCase)
                                 .collect(Collectors.joining(", "));
                         conditionsMap.put(childNode.getName(), String.format("Visible on [ %s ]", dayOfWeek));
-                        matchConditions.add(checkDayOfWeek(childNode));
+                        isConditionMatched = checkDayOfWeek(childNode) && isConditionMatched;
                         break;
                     case STARTENDDATECONDITION_NT:
                         LocalDateTime startDate = LocalDateTime
@@ -82,7 +80,7 @@ public class LiveConditionService implements ConditionService {
                         LocalDateTime endDate = LocalDateTime.parse(childNode.getPropertyAsString("end"), DateTimeFormatter.ISO_DATE_TIME);
                         conditionsMap.put(childNode.getName(),
                                 String.format("Visible from %s to %s", startDate.format(DATETIME_FORMAT), endDate.format(DATETIME_FORMAT)));
-                        matchConditions.add(checkStartEndDate(childNode));
+                        isConditionMatched = checkStartEndDate(childNode) && isConditionMatched;
                         break;
                     case TIMEOFDAYCONDITION_NT:
                         String endHour = childNode.getPropertyAsString("endHour");
@@ -93,7 +91,7 @@ public class LiveConditionService implements ConditionService {
                         LocalTime endTime = LocalTime.of(Integer.parseInt(endHour), Integer.parseInt(endMinute));
                         conditionsMap
                                 .put(childNode.getName(), String.format("Visible from %s to %s", startTime.toString(), endTime.toString()));
-                        matchConditions.add(checkTimeOfDay(childNode));
+                        isConditionMatched = checkTimeOfDay(childNode) && isConditionMatched;
                         break;
                     default:
                         break;
@@ -101,30 +99,8 @@ public class LiveConditionService implements ConditionService {
             }
         }
 
-        boolean forceMatchAll = Boolean.parseBoolean(conditionalVisibilityNode.getPropertyAsString(FORCED_MATCH_ALL_PROP));
-        conditionsMap.put(FORCE_MATCH_ALL, String.valueOf(forceMatchAll));
-        boolean isConditionMatched = areConditionsMatched(matchConditions, forceMatchAll);
         conditionsMap.put(ISCONDITIONMATCHED, String.valueOf(isConditionMatched));
         return conditionsMap;
-    }
-
-    /**
-     * Determine if all conditions needs to be matched or just satisfying one condition
-     * @param matchedConditions
-     * @param forceMatchAll
-     * @return
-     */
-    private boolean areConditionsMatched(List<Boolean> matchedConditions, boolean forceMatchAll) {
-        boolean isMatched = false;
-        for (boolean condition : matchedConditions) {
-            isMatched = forceMatchAll || condition;
-            if (forceMatchAll && !condition) {
-                return false;
-            } else if (!forceMatchAll && condition) {
-                return true;
-            }
-        }
-        return isMatched;
     }
 
     private boolean checkDayOfWeek(JCRNodeWrapper node) throws RepositoryException {
