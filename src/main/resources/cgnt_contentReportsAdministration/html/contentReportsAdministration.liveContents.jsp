@@ -120,7 +120,14 @@
         </div>
 
         <div class="row"><div class="col-md-12"><hr/></div></div>
-
+        <div class="row" id="icon-legend">
+            <div class="col-md-12">
+                <p><img src='/modules/content-reports/images/hide.svg' height='36px' width='36px' title='Not published'
+/>&nbsp;&nbsp;<fmt:message key="cgnt_contentReports.report.label.hide-icon-label" /></p>
+                <p><img src='/modules/content-reports/images/show.svg' height='36x' width='36px' title='Live' />&nbsp;&nbsp;<fmt:message
+                        key="cgnt_contentReports.report.label.show-icon-label" /></p>
+            </div>
+        </div>
 
     </div>
 </div>

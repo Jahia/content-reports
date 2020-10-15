@@ -1204,7 +1204,7 @@ function fillReportPageByLiveContents(baseUrl) {
                 checkUndefined(node.type),
                 checkUndefined(node.listOfConditions),
                 node.isConditionMatched === 'true' ? checkBox : xMark,
-                node.currentStatus === 'live' ? show : hide,
+                node.currentStatus === 'true' ? show : hide,
             ] ).draw();
         });
 

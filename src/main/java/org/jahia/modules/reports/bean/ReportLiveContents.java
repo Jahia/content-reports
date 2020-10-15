@@ -77,16 +77,15 @@ public class ReportLiveContents extends ReportByContentVisibility {
         map.put("name", node.getName());
         map.put("path", node.getPath());
         map.put("type", String.join("<br/>",node.getNodeTypes()));
-        map.put("currentStatus", node.hasProperty("j:published") &&
-                node.getPropertyAsString("j:published")
-                    .equalsIgnoreCase("true") ? "live" : "not live");
 
         Map<String, String> liveConditions = conditionService.getConditions(node);
         List<String> conditions = liveConditions.entrySet().stream()
-                .filter(entry -> !entry.getKey().equalsIgnoreCase(ISCONDITIONMATCHED))
+                .filter(entry -> !entry.getKey().equalsIgnoreCase(ISCONDITIONMATCHED) &&
+                        !entry.getKey().equalsIgnoreCase(CURRENTSTATUS))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
 
+        map.put("currentStatus", liveConditions.getOrDefault("currentStatus", "false"));
         map.put("listOfConditions", conditions.isEmpty() ? null : String.join("<br/>", conditions));
         map.put("isConditionMatched", liveConditions.getOrDefault("isConditionMatched", "false"));
         this.dataList.add(map);
