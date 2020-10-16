@@ -1,25 +1,17 @@
 package org.jahia.modules.reports.service;
 
-import junit.framework.TestCase;
 import org.jahia.services.content.JCRNodeIteratorWrapper;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -48,7 +40,7 @@ import static org.mockito.Mockito.when;
  *
  * ==========================================================================================
  */
-@RunWith(PowerMockRunner.class)
+
 public class LiveConditionServiceTest {
     Logger logger = LoggerFactory.getLogger(LiveConditionServiceTest.class);
     JCRNodeWrapper node = mock(JCRNodeWrapper.class);
