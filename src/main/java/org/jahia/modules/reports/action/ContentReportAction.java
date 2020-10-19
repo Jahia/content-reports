@@ -180,6 +180,12 @@ public class ContentReportAction extends Action {
                         (req.getParameter("typeSearch").equalsIgnoreCase("pages")) ?
                                 BaseReport.SearchContentType.PAGE :
                                 BaseReport.SearchContentType.CONTENT, sortCol, order);
+            case "25":
+                return new ReportLiveContents(renderContext.getSite(), req.getParameter("searchPath"));
+            case "26":
+                return new ReportByExpiredContent(renderContext.getSite(), req.getParameter("searchPath"));
+            case "27":
+                return new ReportByFutureContent(renderContext.getSite(), req.getParameter("searchPath"));
             default:
                 throw new ContentReportException("Invalid reportId: " + reportId);
         }

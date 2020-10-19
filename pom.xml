@@ -81,6 +81,15 @@
       <url>https://devtools.jahia.com/nexus/content/groups/public</url>
     </repository>
   </repositories>
+  <dependencies>
+    <!-- https://mvnrepository.com/artifact/org.jahia.test/module-test-framework -->
+    <dependency>
+      <groupId>org.jahia.test</groupId>
+      <artifactId>module-test-framework</artifactId>
+      <version>8.0.1.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
   <build>
     <plugins>
       <plugin>

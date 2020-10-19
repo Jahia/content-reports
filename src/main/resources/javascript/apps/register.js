@@ -82,6 +82,42 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-language-pag
     iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=21'
 });
 
+window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-visibility-conditions', {
+    targets: ['jcontent-content-reports'],
+    isSelectable: false,
+    label: 'content-reports:label.byVisibilityConditions',
+    requireModuleInstalledOnSite: 'content-reports',
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true'
+});
+
+window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-visibility-conditions-liveContents', {
+    targets: ['jcontent-content-reports-visibility-conditions'],
+    isSelectable: true,
+    label: 'content-reports:label.liveContents',
+    requireModuleInstalledOnSite: 'content-reports',
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=25'
+});
+
+window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-visibility-conditions-expiredContents', {
+    targets: ['jcontent-content-reports-visibility-conditions'],
+    isSelectable: true,
+    label: 'content-reports:label.expiredContents',
+    requireModuleInstalledOnSite: 'content-reports',
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=26'
+});
+
+window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-visibility-conditions-futureContents', {
+    targets: ['jcontent-content-reports-visibility-conditions'],
+    isSelectable: true,
+    label: 'content-reports:label.futureContents',
+    requireModuleInstalledOnSite: 'content-reports',
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=27'
+});
+
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-metadata', {
     targets: ['jcontent-content-reports'],
     isSelectable: false,

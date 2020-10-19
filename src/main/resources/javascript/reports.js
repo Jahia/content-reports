@@ -1171,6 +1171,107 @@ function fillReportPageAclInheritanceBreak(baseUrl, loadingLabel){
     });
 }
 
+/************************************************************
+ *  REPORTS PAGES Live contents with visibility conditions  *
+ ************************************************************/
+function fillReportPageByLiveContents(baseUrl) {
+    const searchPath = $('#searchPath').val();
+    const parameters = "&searchPath=" + searchPath
+    const actionUrl = getReportActionUrl(baseUrl, 25, parameters);
+
+    // the loading message
+    ajaxindicatorstart("Loading reports");
+    $.getJSON( actionUrl, function( data ) {
+        // getting the table
+        let table = $('#liveContentWithVisibilityConditionsContentTable').DataTable();
+
+        // clear all content from table
+        table.clear().draw();
+
+        // adding new content to table
+        let nodes = data.items;
+
+        const checkBox = "<img src='/modules/content-reports/images/checkbox.svg' height='24px' width='24px'/>";
+        const xMark = "<img src='/modules/content-reports/images/cross.png' height='24px' width='24px'/>";
+        const hide = "<img src='/modules/content-reports/images/hide.svg' height='24px' width='24px' title='Not published'/>";
+        const show = "<img src='/modules/content-reports/images/show.svg' height='24px' width='24px' title='Live' />";
+
+        // adding new content to table
+        $.each(nodes, function( index, node ) {
+            table.row.add( [
+                checkUndefined(node.name),
+                checkUndefined(node.path),
+                checkUndefined(node.type),
+                checkUndefined(node.listOfConditions),
+                node.isConditionMatched === 'true' ? checkBox : xMark,
+                node.currentStatus === 'true' ? show : hide,
+            ] ).draw();
+        });
+
+        //stop loading message
+        ajaxindicatorstop();
+    });
+}
+
+function fillReportByExpiredContents(baseUrl) {
+    const searchPath = $('input#searchPathExpiredContents').val();
+    const parameters = "&searchPath=" + searchPath
+    const actionUrl = getReportActionUrl(baseUrl, 26, parameters);
+    ajaxindicatorstart("Loading reports");
+    $.getJSON(actionUrl, (data) => {
+        let table = $('#expiredContentTable').DataTable();
+
+        //clear all content from table
+        table.clear().draw();
+
+        // adding new content to table
+        let nodes = data.items;
+
+        // adding new content to table
+        $.each(nodes, function( index, node ) {
+            table.row.add( [
+                checkUndefined(node.name),
+                checkUndefined(node.path),
+                checkUndefined(node.type),
+                checkUndefined(node.expiresOn)
+            ] ).draw();
+        });
+
+        //stop loading message
+        ajaxindicatorstop();
+    })
+}
+
+
+function fillReportByFutureContents(baseUrl) {
+    const searchPath = $('input#searchPathFutureContents').val();
+    const parameters = "&searchPath=" + searchPath
+    const actionUrl = getReportActionUrl(baseUrl, 27, parameters);
+    ajaxindicatorstart("Loading reports");
+    $.getJSON(actionUrl, (data) => {
+        let table = $('#futureContentTable').DataTable();
+
+        //clear all content from table
+        table.clear().draw();
+
+        // adding new content to table
+        let nodes = data.items;
+
+        // adding new content to table
+        $.each(nodes, function( index, node ) {
+            table.row.add( [
+                checkUndefined(node.name),
+                checkUndefined(node.path),
+                checkUndefined(node.type),
+                checkUndefined(node.liveDate)
+            ] ).draw();
+        });
+
+        //stop loading message
+        ajaxindicatorstop();
+    })
+}
+
 function getAceAndAclInheritanceBreakRequest() {
     let query = {
         query:
