@@ -68,8 +68,4 @@ public class LiveConditionServiceTest {
         Map<String, String> conditions = service.getConditions(node);
         Assert.assertEquals("It should be empty", Collections.emptyMap(), conditions);
     }
-
-
-
-
 }

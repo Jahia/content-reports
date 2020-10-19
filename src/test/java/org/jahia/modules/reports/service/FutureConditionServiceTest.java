@@ -41,7 +41,9 @@ import static org.mockito.Mockito.when;
  *     please contact our team at sales@jahia.com or go to http://www.jahia.com/license.
  *
  * ==========================================================================================
- */public class FutureConditionServiceTest {
+ */
+
+public class FutureConditionServiceTest {
 
     JCRNodeWrapper node = mock(JCRNodeWrapper.class);
     JCRNodeWrapper conditionalVisibilityNode = mock(JCRNodeWrapper.class);
