@@ -56,6 +56,7 @@ public class ReportByFutureContent extends ReportByContentVisibility {
         if (futureConditions.size() == 1) {
             Map<String, String> map = new HashMap<>();
             map.put("name", node.getName());
+            map.put("parentPath", node.getParent().getPath());
             map.put("path", node.getPath());
             map.put("type", String.join("<br/>", node.getNodeTypes()));
             map.put("liveDate", futureConditions.values().stream().iterator().next());

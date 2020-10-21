@@ -55,6 +55,7 @@ public class ReportByExpiredContent extends ReportByContentVisibility {
         if (expiredConditions.size() == 1) {
             Map<String, String> map = new HashMap<>();
             map.put("name", node.getName());
+            map.put("parentPath", node.getParent().getPath());
             map.put("path", node.getPath());
             map.put("type", String.join("<br/>", node.getNodeTypes()));
             map.put("expiresOn", expiredConditions.values().iterator().next());
