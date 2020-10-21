@@ -46,6 +46,7 @@ package org.jahia.modules.reports.bean;
 import org.jahia.exceptions.JahiaException;
 import org.jahia.modules.reports.service.ConditionService;
 import org.jahia.modules.reports.service.LiveConditionService;
+import org.jahia.services.content.JCRContentUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
@@ -75,6 +76,7 @@ public class ReportLiveContents extends ReportByContentVisibility {
     @Override public void addItem(JCRNodeWrapper node) throws RepositoryException {
         Map<String,String> map = new HashMap<>();
         map.put("name", node.getName());
+        map.put("parentPath", node.getParent().getPath());
         map.put("path", node.getPath());
         map.put("type", String.join("<br/>",node.getNodeTypes()));
 

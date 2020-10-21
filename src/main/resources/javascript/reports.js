@@ -1198,9 +1198,11 @@ function fillReportPageByLiveContents(baseUrl) {
 
         // adding new content to table
         $.each(nodes, function( index, node ) {
+            let parentPath = node.parentPath.substring(("/sites/"+$('#siteKey').val()).length, data.length);
+            const pathLink = "<a target=\"_blank\" href=\""+$('#contentManagerUrl').val()+parentPath+"\">"+node.path+"</a>";
             table.row.add( [
                 checkUndefined(node.name),
-                checkUndefined(node.path),
+                checkUndefined(pathLink),
                 checkUndefined(node.type),
                 checkUndefined(node.listOfConditions),
                 node.isConditionMatched === 'true' ? checkBox : xMark,
@@ -1229,9 +1231,11 @@ function fillReportByExpiredContents(baseUrl) {
 
         // adding new content to table
         $.each(nodes, function( index, node ) {
+            let parentPath = node.parentPath.substring(("/sites/"+$('#siteKey').val()).length, data.length);
+            const pathLink = "<a target=\"_blank\" href=\""+$('#contentManagerUrl').val()+parentPath+"\">"+node.path+"</a>";
             table.row.add( [
                 checkUndefined(node.name),
-                checkUndefined(node.path),
+                checkUndefined(pathLink),
                 checkUndefined(node.type),
                 checkUndefined(node.expiresOn)
             ] ).draw();
@@ -1259,9 +1263,11 @@ function fillReportByFutureContents(baseUrl) {
 
         // adding new content to table
         $.each(nodes, function( index, node ) {
+            let parentPath = node.parentPath.substring(("/sites/"+$('#siteKey').val()).length, data.length);
+            const pathLink = "<a target=\"_blank\" href=\""+$('#contentManagerUrl').val()+parentPath+"\">"+node.path+"</a>";
             table.row.add( [
                 checkUndefined(node.name),
-                checkUndefined(node.path),
+                checkUndefined(pathLink),
                 checkUndefined(node.type),
                 checkUndefined(node.liveDate)
             ] ).draw();
