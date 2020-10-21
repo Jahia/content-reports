@@ -43,14 +43,10 @@
  */
 package org.jahia.modules.reports.bean;
 
-import org.jahia.exceptions.JahiaException;
 import org.jahia.modules.reports.service.ConditionService;
 import org.jahia.modules.reports.service.LiveConditionService;
-import org.jahia.services.content.JCRContentUtils;
 import org.jahia.services.content.JCRNodeWrapper;
-import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
-import org.json.JSONException;
 
 import javax.jcr.RepositoryException;
 import java.util.HashMap;
@@ -58,7 +54,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.jahia.modules.reports.service.LiveConditionService.*;
+import static org.jahia.modules.reports.service.LiveConditionService.CURRENTSTATUS;
+import static org.jahia.modules.reports.service.LiveConditionService.ISCONDITIONMATCHED;
 
 /**
  * The ReportLiveContents Class.
