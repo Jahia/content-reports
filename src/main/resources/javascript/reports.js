@@ -53,6 +53,26 @@ function initDataTable (id, url, pathCol = -1, multiLineCols = [], orderEnabled 
             {
                 "orderable": false,
                 "targets": disabledSortingCols
+            },
+            {
+                "render": (data, type, row) => {
+                    const checkMark = "<img src='/modules/content-reports/images/checkbox.svg' height='24px' width='24px'/>";
+                    const xMark = "<img src='/modules/content-reports/images/cross.png' height='24px' width='24px'/>";
+                    const hide = "<img src='/modules/content-reports/images/hide.svg' height='24px' width='24px' title='Not published'/>";
+                    const show = "<img src='/modules/content-reports/images/show.svg' height='24px' width='24px' title='Live' />";
+                    if (data === "true") {
+                        return checkMark;
+                    } else if (data === "false") {
+                        return xMark;
+                    } else if (data === "visible") {
+                        return show;
+                    } else if (data === "not visible" ) {
+                        return hide;
+                    } else {
+                        return data;
+                    }
+                },
+                "targets": '_all'
             }
         ],
         "buttons": [
@@ -1181,65 +1201,17 @@ function fillReportPageByLiveContents(baseUrl) {
 
     // the loading message
     ajaxindicatorstart("Loading reports");
-    $.getJSON( actionUrl, function( data ) {
-        // getting the table
-        let table = $('#liveContentWithVisibilityConditionsContentTable').DataTable();
-
-        // clear all content from table
-        table.clear().draw();
-
-        // adding new content to table
-        let nodes = data.items;
-
-        const checkBox = "<img src='/modules/content-reports/images/checkbox.svg' height='24px' width='24px'/>";
-        const xMark = "<img src='/modules/content-reports/images/cross.png' height='24px' width='24px'/>";
-        const hide = "<img src='/modules/content-reports/images/hide.svg' height='24px' width='24px' title='Not published'/>";
-        const show = "<img src='/modules/content-reports/images/show.svg' height='24px' width='24px' title='Live' />";
-
-        // adding new content to table
-        $.each(nodes, function( index, node ) {
-            table.row.add( [
-                checkUndefined(node.name),
-                checkUndefined(node.path),
-                checkUndefined(node.type),
-                checkUndefined(node.listOfConditions),
-                node.isConditionMatched === 'true' ? checkBox : xMark,
-                node.currentStatus === 'true' ? show : hide,
-            ] ).draw();
-        });
-
-        //stop loading message
-        ajaxindicatorstop();
-    });
+    initDataTable ("liveContentWithVisibilityConditionsContentTable", actionUrl, 1);
+    ajaxindicatorstop();
 }
 
 function fillReportByExpiredContents(baseUrl) {
     const searchPath = $('input#searchPathExpiredContents').val();
     const parameters = "&searchPath=" + searchPath
     const actionUrl = getReportActionUrl(baseUrl, 26, parameters);
-    ajaxindicatorstart("Loading reports");
-    $.getJSON(actionUrl, (data) => {
-        let table = $('#expiredContentTable').DataTable();
-
-        //clear all content from table
-        table.clear().draw();
-
-        // adding new content to table
-        let nodes = data.items;
-
-        // adding new content to table
-        $.each(nodes, function( index, node ) {
-            table.row.add( [
-                checkUndefined(node.name),
-                checkUndefined(node.path),
-                checkUndefined(node.type),
-                checkUndefined(node.expiresOn)
-            ] ).draw();
-        });
-
-        //stop loading message
-        ajaxindicatorstop();
-    })
+    ajaxindicatorstart("Loading reports")
+    initDataTable('expiredContentTable', actionUrl, 1);
+    ajaxindicatorstop();
 }
 
 
@@ -1248,28 +1220,8 @@ function fillReportByFutureContents(baseUrl) {
     const parameters = "&searchPath=" + searchPath
     const actionUrl = getReportActionUrl(baseUrl, 27, parameters);
     ajaxindicatorstart("Loading reports");
-    $.getJSON(actionUrl, (data) => {
-        let table = $('#futureContentTable').DataTable();
-
-        //clear all content from table
-        table.clear().draw();
-
-        // adding new content to table
-        let nodes = data.items;
-
-        // adding new content to table
-        $.each(nodes, function( index, node ) {
-            table.row.add( [
-                checkUndefined(node.name),
-                checkUndefined(node.path),
-                checkUndefined(node.type),
-                checkUndefined(node.liveDate)
-            ] ).draw();
-        });
-
-        //stop loading message
-        ajaxindicatorstop();
-    })
+    initDataTable('futureContentTable', actionUrl, 1);
+    ajaxindicatorstop();
 }
 
 function getAceAndAclInheritanceBreakRequest() {

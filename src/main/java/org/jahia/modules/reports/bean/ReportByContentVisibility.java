@@ -26,11 +26,14 @@ package org.jahia.modules.reports.bean;
 import org.jahia.exceptions.JahiaException;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
+import java.util.Map;
 
 /**
  * Short description of the class
@@ -41,6 +44,7 @@ public abstract class ReportByContentVisibility extends QueryReport {
     protected static Logger logger  = LoggerFactory.getLogger(ReportByContentVisibility.class);
     protected static final String BUNDLE = "resources.content-reports";
     protected String searchPath;
+    protected long totalContent;
 
     public ReportByContentVisibility(JCRSiteNode siteNode, String searchPath) {
         super(siteNode);
@@ -55,5 +59,6 @@ public abstract class ReportByContentVisibility extends QueryReport {
                 + "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "'])";
         logger.debug(query);
         fillReport(session, query, offset, limit);
+        totalContent = getTotalCount(session, query);
     }
 }

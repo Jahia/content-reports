@@ -110,7 +110,7 @@ public class LiveConditionService implements ConditionService {
 
         boolean forceMatchAll = Boolean.parseBoolean(node.getPropertyAsString(FORCED_MATCH_ALL_PROP));
         boolean currentStatus = getCurrentStatus(matchConditions, forceMatchAll);
-        conditionsMap.put(CURRENTSTATUS, String.valueOf(currentStatus));
+        conditionsMap.put(CURRENTSTATUS, currentStatus ? "visible" : "not visible");
         conditionsMap.put(ISCONDITIONMATCHED, String.valueOf(isConditionMatched));
         return conditionsMap;
     }

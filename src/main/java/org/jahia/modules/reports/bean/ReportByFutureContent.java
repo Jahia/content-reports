@@ -27,6 +27,9 @@ import org.jahia.modules.reports.service.ConditionService;
 import org.jahia.modules.reports.service.FutureConditionService;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.jcr.RepositoryException;
 import java.time.LocalDateTime;
@@ -61,5 +64,27 @@ public class ReportByFutureContent extends ReportByContentVisibility {
             map.put("liveDate", futureConditions.values().stream().iterator().next());
             this.dataList.add(map);
         }
+    }
+
+    @Override public JSONObject getJson() throws JSONException, RepositoryException {
+
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jArray = new JSONArray();
+
+        for (Map<String, String> nodeMap : this.dataList) {
+            JSONArray item = new JSONArray();
+            item.put(nodeMap.get("name"));
+            item.put(nodeMap.get("path"));
+            item.put(nodeMap.get("type"));
+            item.put(nodeMap.get("liveDate"));
+            jArray.put(item);
+        }
+
+        jsonObject.put("recordsTotal", totalContent);
+        jsonObject.put("recordsFiltered", totalContent);
+        jsonObject.put("siteName", siteNode.getName());
+        jsonObject.put("siteDisplayableName", siteNode.getDisplayableName());
+        jsonObject.put("data", jArray);
+        return jsonObject;
     }
 }
