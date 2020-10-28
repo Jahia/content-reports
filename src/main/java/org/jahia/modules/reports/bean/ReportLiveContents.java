@@ -43,13 +43,17 @@
  */
 package org.jahia.modules.reports.bean;
 
+import org.jahia.exceptions.JahiaException;
 import org.jahia.modules.reports.service.ConditionService;
 import org.jahia.modules.reports.service.LiveConditionService;
 import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import java.util.HashMap;
@@ -65,12 +69,27 @@ import static org.jahia.modules.reports.service.LiveConditionService.ISCONDITION
  *
  * @author nonico
  */
-public class ReportLiveContents extends ReportByContentVisibility {
+public class ReportLiveContents extends QueryReport {
+    private static final Logger logger = LoggerFactory.getLogger(ReportLiveContents.class);
     private final ConditionService conditionService;
+    private String searchPath;
+    private long totalContent;
 
     public ReportLiveContents(JCRSiteNode siteNode, String searchPath) {
-        super(siteNode, searchPath);
+        super(siteNode);
+        this.searchPath = searchPath;
         this.conditionService = new LiveConditionService();
+    }
+
+    @Override public void execute(JCRSessionWrapper session, int offset, int limit)
+            throws RepositoryException, JSONException, JahiaException {
+        logger.debug("Building jcr sql query");
+        String query = "SELECT * FROM [jnt:content] AS parent \n"
+                + "INNER JOIN [jnt:conditionalVisibility] as child ON ISCHILDNODE(child,parent) \n"
+                + "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "'])";
+        logger.debug(query);
+        fillReport(session, query, offset, limit);
+        totalContent = getTotalCount(session, query);
     }
 
     @Override public void addItem(JCRNodeWrapper node) throws RepositoryException {

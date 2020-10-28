@@ -23,46 +23,68 @@
  */
 package org.jahia.modules.reports.bean;
 
+import org.jahia.exceptions.JahiaException;
 import org.jahia.modules.reports.service.ConditionService;
 import org.jahia.modules.reports.service.FutureConditionService;
 import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 /**
  * The ReportByFutureContent class
  *
  * @author nonico
  */
-public class ReportByFutureContent extends ReportByContentVisibility {
-
+public class ReportByFutureContent extends QueryReport {
+    private static final Logger logger = LoggerFactory.getLogger(ReportByFutureContent.class);
     private ConditionService conditionService;
+    private String searchPath;
+    private long totalContent;
+    private Set<String> seenNodes;
 
     public ReportByFutureContent(JCRSiteNode siteNode, String searchPath) {
-        super(siteNode, searchPath);
+        super(siteNode);
+        this.searchPath = searchPath;
         conditionService = new FutureConditionService();
+        seenNodes = new HashSet<>();
+    }
+
+    @Override public void execute(JCRSessionWrapper session, int offset, int limit)
+            throws RepositoryException, JSONException, JahiaException {
+        logger.debug("Building jcr sql query");
+        String query = "SELECT * FROM [jnt:content] AS parent \n"
+                + "INNER JOIN [jnt:conditionalVisibility] as child ON ISCHILDNODE(child,parent) \n"
+                + "INNER JOIN [jnt:startEndDateCondition] as condition ON ISCHILDNODE(condition,child) \n"
+                + "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "']) \n"
+                + "AND condition.start > CAST('" + LocalDateTime.now().toString() + "' AS DATE)\n"
+                + "ORDER BY parent.Name";
+        logger.debug(query);
+        fillReport(session, query, offset, limit);
+        totalContent = getTotalCount(session, query);
     }
 
     @Override public void addItem(JCRNodeWrapper node) throws RepositoryException {
         Map<String, String> futureConditions = conditionService.getConditions(node);
-        if (futureConditions.size() == 1) {
+        if (futureConditions.size() > 0 && !seenNodes.contains(node.getName())) {
             Map<String, String> map = new HashMap<>();
             map.put("name", node.getName());
             map.put("path", node.getPath());
             map.put("type", String.join("<br/>", node.getNodeTypes()));
             map.put("liveDate", futureConditions.values().stream().iterator().next());
             this.dataList.add(map);
+            this.seenNodes.add(node.getName());
         }
     }
 
