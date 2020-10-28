@@ -57,8 +57,9 @@ function initDataTable (id, url, pathCol = -1, multiLineCols = [], orderEnabled 
             {
                 "render": (data, type, row) => {
                     const checkMark = "<img src='/modules/content-reports/images/checkbox.svg' height='24px' width='24px'/>";
-                    const xMark = "<img src='/modules/content-reports/images/cross.png' height='24px' width='24px'/>";
-                    const hide = "<img src='/modules/content-reports/images/hide.svg' height='24px' width='24px' title='Not published'/>";
+                    const xMark = "<img src='/modules/content-reports/images/redx.svg' height='24px' width='24px'/>";
+                    const hide = "<img src='/modules/content-reports/images/hide.svg' height='24px' width='24px' title='Not visible in" +
+                        " live'/>";
                     const show = "<img src='/modules/content-reports/images/show.svg' height='24px' width='24px' title='Live' />";
                     if (data === "true") {
                         return checkMark;
