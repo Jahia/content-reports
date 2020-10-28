@@ -23,7 +23,9 @@
  */
 package org.jahia.modules.reports.service;
 
+import org.jahia.api.Constants;
 import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.visibility.VisibilityService;
 
 import javax.jcr.RepositoryException;
 import java.time.DayOfWeek;
@@ -41,12 +43,10 @@ import java.util.stream.Collectors;
  */
 public class LiveConditionService implements ConditionService {
     private final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
-    private final String CONDITIONALVISIBILITY_NT = "jnt:conditionalVisibility";
     private final String DAYOFWEEKCONDITION_NT = "jnt:dayOfWeekCondition";
     private final String STARTENDDATECONDITION_NT = "jnt:startEndDateCondition";
     private final String TIMEOFDAYCONDITION_NT = "jnt:timeOfDayCondition";
     public static final String CONDITIONALVISIBILITY_PROP = "j:conditionalVisibility";
-    private final String FORCED_MATCH_ALL_PROP = "j:forceMatchAllConditions";
     public static final String CURRENTSTATUS = "currentStatus";
     public static final String ISCONDITIONMATCHED = "isConditionMatched";
 
@@ -56,17 +56,15 @@ public class LiveConditionService implements ConditionService {
             return Collections.emptyMap();
         }
 
-        if (!conditionalVisibilityNode.getNodeTypes().contains(CONDITIONALVISIBILITY_NT)) {
+        if (!conditionalVisibilityNode.getNodeTypes().contains(Constants.JAHIANT_CONDITIONAL_VISIBILITY)) {
             return Collections.emptyMap();
         }
 
         Map<String, String> conditionsMap = new HashMap<>();
-        List<Boolean> matchConditions = new ArrayList<>();
 
-        boolean isConditionMatched = true;
+        boolean matchedAllConditions = true;
         for (JCRNodeWrapper childNode : conditionalVisibilityNode.getNodes()) {
             for (String nodeType : childNode.getNodeTypes()) {
-                boolean isMatched = false;
                 switch (nodeType) {
                     case DAYOFWEEKCONDITION_NT:
                         String dayOfWeek = Arrays.stream(childNode.getPropertyAsString("dayOfWeek").split(" ").clone())
@@ -77,62 +75,55 @@ public class LiveConditionService implements ConditionService {
                                 .map(String::toLowerCase)
                                 .collect(Collectors.joining(", "));
                         conditionsMap.put(childNode.getName(), String.format("Visible on [ %s ]", dayOfWeek));
-                        isMatched = checkDayOfWeek(childNode);
-                        isConditionMatched = isMatched && isConditionMatched;
+                        matchedAllConditions = checkDayOfWeek(childNode) && matchedAllConditions;
                         break;
                     case STARTENDDATECONDITION_NT:
-                        LocalDateTime startDate = LocalDateTime
-                                .parse(childNode.getPropertyAsString("start"), DateTimeFormatter.ISO_DATE_TIME);
-                        LocalDateTime endDate = LocalDateTime.parse(childNode.getPropertyAsString("end"), DateTimeFormatter.ISO_DATE_TIME);
-                        conditionsMap.put(childNode.getName(),
-                                String.format("Visible from %s to %s", startDate.format(DATETIME_FORMAT), endDate.format(DATETIME_FORMAT)));
-                        isMatched = checkStartEndDate(childNode);
-                        isConditionMatched = isMatched && isConditionMatched;
+                        StringBuilder dateConditionBuilder = new StringBuilder("Visible");
+                        String start = childNode.hasProperty("start") ? childNode.getPropertyAsString("start") : "";
+                        String end = childNode.hasProperty("end") ? childNode.getPropertyAsString("end") : "";
+                        LocalDateTime startDate;
+                        LocalDateTime endDate;
+                        if (!start.isEmpty()) {
+                            startDate = LocalDateTime
+                                    .parse(childNode.getPropertyAsString("start"), DateTimeFormatter.ISO_DATE_TIME);
+                            dateConditionBuilder.append(" starting from ").append(startDate.format(DATETIME_FORMAT));
+                        }
+                        if (!end.isEmpty()) {
+                            endDate = LocalDateTime.parse(childNode.getPropertyAsString("end"), DateTimeFormatter.ISO_DATE_TIME);
+                            dateConditionBuilder.append(" until ").append(endDate.format(DATETIME_FORMAT));
+                        }
+                        conditionsMap.put(childNode.getName(), dateConditionBuilder.toString());
+                        matchedAllConditions = checkStartEndDate(childNode) && matchedAllConditions;
                         break;
                     case TIMEOFDAYCONDITION_NT:
-                        String endHour = childNode.getPropertyAsString("endHour");
-                        String startHour = childNode.getPropertyAsString("startHour");
-                        String endMinute = childNode.getPropertyAsString("endMinute");
-                        String startMinute = childNode.getPropertyAsString("startMinute");
-                        LocalTime startTime = LocalTime.of(Integer.parseInt(startHour), Integer.parseInt(startMinute));
-                        LocalTime endTime = LocalTime.of(Integer.parseInt(endHour), Integer.parseInt(endMinute));
-                        conditionsMap
-                                .put(childNode.getName(), String.format("Visible from %s to %s", startTime.toString(), endTime.toString()));
-                        isMatched = checkTimeOfDay(childNode);
-                        isConditionMatched = isMatched && isConditionMatched;
+                        StringBuilder timeConditionBuilder = new StringBuilder("Visible");
+                        String startHour = childNode.hasProperty("startHour") ? childNode.getPropertyAsString("startHour") : "";
+                        String startMinute = childNode.hasProperty("startMinute") ? childNode.getPropertyAsString("startMinute") : "00";
+                        String endHour = childNode.hasProperty("endHour") ? childNode.getPropertyAsString("endHour") : "";
+                        String endMinute = childNode.hasProperty("endMinute") ? childNode.getPropertyAsString("endMinute") : "00";
+                        if (startHour.isEmpty() && endHour.isEmpty()) {
+                            timeConditionBuilder.append(" any time of the day");
+                        } else if (startHour.isEmpty()) {
+                            timeConditionBuilder.append(" until ").append(endHour).append(":").append(endMinute);
+                        } else if (endHour.isEmpty()) {
+                            timeConditionBuilder.append(" from ").append(startHour).append(":").append(startMinute);
+                        } else {
+                            timeConditionBuilder.append(" from ").append(startHour).append(":").append(startMinute)
+                                    .append(" until ").append(endHour).append(":").append(endMinute);
+                        }
+                        conditionsMap.put(childNode.getName(), timeConditionBuilder.toString());
+                        matchedAllConditions = checkTimeOfDay(startHour, startMinute, endHour, endMinute) && matchedAllConditions;
                         break;
                     default:
                         break;
                 }
-                matchConditions.add(isMatched);
             }
         }
-
-        boolean forceMatchAll = Boolean.parseBoolean(node.getPropertyAsString(FORCED_MATCH_ALL_PROP));
-        boolean currentStatus = getCurrentStatus(matchConditions, forceMatchAll);
-        conditionsMap.put(CURRENTSTATUS, currentStatus ? "visible" : "not visible");
-        conditionsMap.put(ISCONDITIONMATCHED, String.valueOf(isConditionMatched));
+        boolean isPublished = node.hasProperty(Constants.PUBLISHED) && node.getProperty(Constants.PUBLISHED).getBoolean();
+        boolean isVisibleInLive = VisibilityService.getInstance().matchesConditions(node) && isPublished;
+        conditionsMap.put(CURRENTSTATUS, isVisibleInLive ? "visible" : "not visible");
+        conditionsMap.put(ISCONDITIONMATCHED, String.valueOf(matchedAllConditions));
         return conditionsMap;
-    }
-
-    /**
-     * Determine if all conditions needs to be matched or
-     * just needed to satisfy one or more condition(s)
-     * @param matchedConditions
-     * @param forceMatchAll
-     * @return
-     */
-    private boolean getCurrentStatus(List<Boolean> matchedConditions, boolean forceMatchAll) {
-        boolean isMatched = false;
-        for (boolean condition : matchedConditions) {
-            isMatched = forceMatchAll || condition;
-            if (forceMatchAll && !condition) {
-                return false;
-            } else if (!forceMatchAll && condition) {
-                return true;
-            }
-        }
-        return isMatched;
     }
 
     private boolean checkDayOfWeek(JCRNodeWrapper node) throws RepositoryException {
@@ -148,22 +139,37 @@ public class LiveConditionService implements ConditionService {
             return false;
         }
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startDate = LocalDateTime.parse(node.getPropertyAsString("start"), DateTimeFormatter.ISO_DATE_TIME);
-        LocalDateTime endDate = LocalDateTime.parse(node.getPropertyAsString("end"), DateTimeFormatter.ISO_DATE_TIME);
-        return startDate.isBefore(now) && endDate.isAfter(now);
+        String start = node.hasProperty("start") ? node.getPropertyAsString("start") : "";
+        String end = node.hasProperty("end") ? node.getPropertyAsString("end") : "";
+        if (start.isEmpty() && end.isEmpty()) {
+            return false;
+        } else if (start.isEmpty()) {
+            return LocalDateTime.parse(end, DateTimeFormatter.ISO_DATE_TIME).isAfter(now);
+        } else if (end.isEmpty()) {
+            return LocalDateTime.parse(start, DateTimeFormatter.ISO_DATE_TIME).isBefore(now);
+        } else {
+            LocalDateTime startDate = LocalDateTime.parse(start, DateTimeFormatter.ISO_DATE_TIME);
+            LocalDateTime endDate = LocalDateTime.parse(end, DateTimeFormatter.ISO_DATE_TIME);
+            return startDate.isBefore(now) && endDate.isAfter(now);
+        }
     }
 
-    private boolean checkTimeOfDay(JCRNodeWrapper node) throws RepositoryException {
-        if (node.getNodeTypes().size() != 1 || !node.getNodeTypes().contains(TIMEOFDAYCONDITION_NT)) {
-            return false;
-        }
+    private boolean checkTimeOfDay(String startHour, String startMinute, String endHour, String endMinute) {
         LocalTime now = LocalTime.now();
-        String endHour = node.getPropertyAsString("endHour");
-        String startHour = node.getPropertyAsString("startHour");
-        String endMinute = node.getPropertyAsString("endMinute");
-        String startMinute = node.getPropertyAsString("startMinute");
-        LocalTime startTime = LocalTime.of(Integer.parseInt(startHour), Integer.parseInt(startMinute));
-        LocalTime endTime = LocalTime.of(Integer.parseInt(endHour), Integer.parseInt(endMinute));
-        return startTime.isBefore(now) && endTime.isAfter(now);
+        LocalTime startTime;
+        LocalTime endTime;
+        if (startHour.isEmpty() && endHour.isEmpty()) {
+            return true;
+        } else if (startHour.isEmpty()) {
+            endTime = LocalTime.of(Integer.parseInt(endHour), Integer.parseInt(endMinute));
+            return endTime.isAfter(now);
+        } else if (endHour.isEmpty()) {
+            startTime = LocalTime.of(Integer.parseInt(startHour), Integer.parseInt(startMinute));
+            return startTime.isBefore(now);
+        } else {
+            startTime = LocalTime.of(Integer.parseInt(startHour), Integer.parseInt(startMinute));
+            endTime = LocalTime.of(Integer.parseInt(endHour), Integer.parseInt(endMinute));
+            return startTime.isBefore(now) && endTime.isAfter(now);
+        }
     }
 }

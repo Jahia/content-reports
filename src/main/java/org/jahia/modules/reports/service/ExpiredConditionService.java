@@ -23,7 +23,9 @@
  */
 package org.jahia.modules.reports.service;
 
+import org.jahia.api.Constants;
 import org.jahia.services.content.JCRNodeWrapper;
+import org.jahia.services.visibility.VisibilityService;
 
 import javax.jcr.RepositoryException;
 import java.time.LocalDateTime;
@@ -36,23 +38,20 @@ import java.util.*;
  * @author nonico
  */
 public class ExpiredConditionService implements ConditionService {
-    private final String CONDITIONALVISIBILITY_NT = "jnt:conditionalVisibility";
-    private final String STARTENDDATECONDITION_NT = "jnt:startEndDateCondition";
-    private final String CONDITIONALVISIBILITY_PROP = "j:conditionalVisibility";
 
     @Override public Map<String, String> getConditions(JCRNodeWrapper node) throws RepositoryException {
-        JCRNodeWrapper conditionVisibilityNode = node.getNode(CONDITIONALVISIBILITY_PROP);
+        JCRNodeWrapper conditionVisibilityNode = node.getNode("j:conditionalVisibility");
         if (conditionVisibilityNode == null) {
             return Collections.emptyMap();
         }
-        if (!conditionVisibilityNode.getNodeTypes().contains(CONDITIONALVISIBILITY_NT)) {
+        if (!conditionVisibilityNode.getNodeTypes().contains(Constants.JAHIANT_CONDITIONAL_VISIBILITY)) {
             return Collections.emptyMap();
         }
 
         Map<String, LocalDateTime> conditionsMap = new HashMap<>(Collections.emptyMap());
         for (JCRNodeWrapper childNode : conditionVisibilityNode.getNodes()) {
             for (String nodeType : childNode.getNodeTypes()) {
-                if (STARTENDDATECONDITION_NT.equals(nodeType)) {
+                if (nodeType.equalsIgnoreCase("jnt:startEndDateCondition")) {
                     LocalDateTime endDateTime = LocalDateTime.parse(childNode.getPropertyAsString("end"), DateTimeFormatter.ISO_DATE_TIME);
                     if (endDateTime.isBefore(LocalDateTime.now())) {
                         conditionsMap.put(childNode.getName(), endDateTime);
