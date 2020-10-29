@@ -49,7 +49,11 @@ import org.jahia.modules.reports.service.LiveConditionService;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import java.util.HashMap;
@@ -57,25 +61,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.jahia.modules.reports.service.LiveConditionService.*;
+import static org.jahia.modules.reports.service.LiveConditionService.CURRENTSTATUS;
+import static org.jahia.modules.reports.service.LiveConditionService.ISCONDITIONMATCHED;
 
 /**
  * The ReportLiveContents Class.
  *
  * @author nonico
  */
-public class ReportLiveContents extends ReportByContentVisibility {
+public class ReportLiveContents extends QueryReport {
+    private static final Logger logger = LoggerFactory.getLogger(ReportLiveContents.class);
     private final ConditionService conditionService;
+    private String searchPath;
+    private long totalContent;
 
     public ReportLiveContents(JCRSiteNode siteNode, String searchPath) {
-        super(siteNode, searchPath);
+        super(siteNode);
+        this.searchPath = searchPath;
         this.conditionService = new LiveConditionService();
+    }
+
+    @Override public void execute(JCRSessionWrapper session, int offset, int limit)
+            throws RepositoryException, JSONException, JahiaException {
+        logger.debug("Building jcr sql query");
+        String query = "SELECT * FROM [jnt:content] AS parent \n"
+                + "INNER JOIN [jnt:conditionalVisibility] as child ON ISCHILDNODE(child,parent) \n"
+                + "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "'])";
+        logger.debug(query);
+        fillReport(session, query, offset, limit);
+        totalContent = getTotalCount(session, query);
     }
 
     @Override public void addItem(JCRNodeWrapper node) throws RepositoryException {
         Map<String,String> map = new HashMap<>();
         map.put("name", node.getName());
-        map.put("path", node.getPath());
+        map.put("path", node.getParent().getPath());
         map.put("type", String.join("<br/>",node.getNodeTypes()));
 
         Map<String, String> liveConditions = conditionService.getConditions(node);
@@ -85,9 +105,35 @@ public class ReportLiveContents extends ReportByContentVisibility {
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
 
-        map.put("currentStatus", liveConditions.getOrDefault("currentStatus", "false"));
+        map.put("currentStatus", liveConditions.getOrDefault("currentStatus", "not visible"));
         map.put("listOfConditions", conditions.isEmpty() ? null : String.join("<br/>", conditions));
         map.put("isConditionMatched", liveConditions.getOrDefault("isConditionMatched", "false"));
         this.dataList.add(map);
     }
+
+    @Override
+    public JSONObject getJson() throws JSONException, RepositoryException {
+
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jArray = new JSONArray();
+
+        for (Map<String, String> nodeMap : this.dataList) {
+            JSONArray item = new JSONArray();
+            item.put(nodeMap.get("name"));
+            item.put(nodeMap.get("path"));
+            item.put(nodeMap.get("type"));
+            item.put(nodeMap.get("listOfConditions"));
+            item.put(nodeMap.get("isConditionMatched"));
+            item.put(nodeMap.get("currentStatus"));
+            jArray.put(item);
+        }
+
+        jsonObject.put("recordsTotal", totalContent);
+        jsonObject.put("recordsFiltered", totalContent);
+        jsonObject.put("siteName", siteNode.getName());
+        jsonObject.put("siteDisplayableName", siteNode.getDisplayableName());
+        jsonObject.put("data", jArray);
+        return jsonObject;
+    }
+
 }
