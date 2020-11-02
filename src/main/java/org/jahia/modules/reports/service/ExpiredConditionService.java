@@ -25,7 +25,6 @@ package org.jahia.modules.reports.service;
 
 import org.jahia.api.Constants;
 import org.jahia.services.content.JCRNodeWrapper;
-import org.jahia.services.visibility.VisibilityService;
 
 import javax.jcr.RepositoryException;
 import java.time.LocalDateTime;

@@ -85,11 +85,11 @@ public class LiveConditionService implements ConditionService {
                             LocalDateTime startDate;
                             LocalDateTime endDate;
                             if (!start.isEmpty()) {
-                                startDate = LocalDateTime.parse(childNode.getPropertyAsString("start"), DateTimeFormatter.ISO_DATE_TIME);
+                                startDate = LocalDateTime.parse(start, DateTimeFormatter.ISO_DATE_TIME);
                                 dateConditionBuilder.append(" starting from ").append(startDate.format(DATETIME_FORMAT));
                             }
                             if (!end.isEmpty()) {
-                                endDate = LocalDateTime.parse(childNode.getPropertyAsString("end"), DateTimeFormatter.ISO_DATE_TIME);
+                                endDate = LocalDateTime.parse(end, DateTimeFormatter.ISO_DATE_TIME);
                                 dateConditionBuilder.append(" until ").append(endDate.format(DATETIME_FORMAT));
                             }
                             conditionsMap.put(childNode.getName(), dateConditionBuilder.toString());
