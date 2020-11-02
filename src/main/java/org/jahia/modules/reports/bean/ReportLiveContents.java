@@ -57,12 +57,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.time.ZoneId.systemDefault;
 import static org.jahia.modules.reports.service.LiveConditionService.CURRENTSTATUS;
 import static org.jahia.modules.reports.service.LiveConditionService.ISCONDITIONMATCHED;
 
@@ -76,7 +76,9 @@ public class ReportLiveContents extends QueryReport {
     private final ConditionService conditionService;
     private String searchPath;
     private long totalContent;
-    private long filteredContent;
+    private static final String IS_CONDITION_MATCHED_PROP = "isConditionMatched";
+    private static final String LIST_OF_CONDITIONS_PROP = "listOfConditions";
+    private static final String CURRENT_STATUS_PROP = "currentStatus";
 
     public ReportLiveContents(JCRSiteNode siteNode, String searchPath) {
         super(siteNode);
@@ -87,7 +89,7 @@ public class ReportLiveContents extends QueryReport {
     @Override public void execute(JCRSessionWrapper session, int offset, int limit)
             throws RepositoryException, JSONException, JahiaException {
         logger.debug("Building jcr sql query");
-        LocalDateTime now = LocalDateTime.now(ZoneOffset.systemDefault());
+        LocalDateTime now = LocalDateTime.now(systemDefault());
         String query = "SELECT * FROM [jnt:content] AS parent \n"
                 + "INNER JOIN [jnt:conditionalVisibility] as child ON ISCHILDNODE(child,parent) \n"
                 + "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "']) \n"
@@ -117,9 +119,9 @@ public class ReportLiveContents extends QueryReport {
             map.put("name", node.getName());
             map.put("path", node.getParent().getPath());
             map.put("type", String.join("<br/>", node.getNodeTypes()));
-            map.put("currentStatus", liveConditions.getOrDefault("currentStatus", "not visible"));
-            map.put("listOfConditions", conditions.isEmpty() ? null : String.join("<br/>", conditions));
-            map.put("isConditionMatched", liveConditions.getOrDefault("isConditionMatched", "false"));
+            map.put(CURRENT_STATUS_PROP, liveConditions.getOrDefault(CURRENT_STATUS_PROP, "not visible"));
+            map.put(LIST_OF_CONDITIONS_PROP, String.join("<br/>", conditions));
+            map.put(IS_CONDITION_MATCHED_PROP, liveConditions.getOrDefault(IS_CONDITION_MATCHED_PROP, "false"));
             this.dataList.add(map);
         }
     }
@@ -135,9 +137,9 @@ public class ReportLiveContents extends QueryReport {
             item.put(nodeMap.get("name"));
             item.put(nodeMap.get("path"));
             item.put(nodeMap.get("type"));
-            item.put(nodeMap.get("listOfConditions"));
-            item.put(nodeMap.get("isConditionMatched"));
-            item.put(nodeMap.get("currentStatus"));
+            item.put(nodeMap.get(LIST_OF_CONDITIONS_PROP));
+            item.put(nodeMap.get(IS_CONDITION_MATCHED_PROP));
+            item.put(nodeMap.get(CURRENT_STATUS_PROP));
             jArray.put(item);
         }
 
