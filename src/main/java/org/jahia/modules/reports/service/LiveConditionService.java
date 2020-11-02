@@ -78,22 +78,23 @@ public class LiveConditionService implements ConditionService {
                         matchedAllConditions = checkDayOfWeek(childNode) && matchedAllConditions;
                         break;
                     case STARTENDDATECONDITION_NT:
-                        StringBuilder dateConditionBuilder = new StringBuilder("Visible");
-                        String start = childNode.hasProperty("start") ? childNode.getPropertyAsString("start") : "";
-                        String end = childNode.hasProperty("end") ? childNode.getPropertyAsString("end") : "";
-                        LocalDateTime startDate;
-                        LocalDateTime endDate;
-                        if (!start.isEmpty()) {
-                            startDate = LocalDateTime
-                                    .parse(childNode.getPropertyAsString("start"), DateTimeFormatter.ISO_DATE_TIME);
-                            dateConditionBuilder.append(" starting from ").append(startDate.format(DATETIME_FORMAT));
+                        if (VisibilityService.getInstance().matchesConditions(node)) {
+                            StringBuilder dateConditionBuilder = new StringBuilder("Visible");
+                            String start = childNode.hasProperty("start") ? childNode.getPropertyAsString("start") : "";
+                            String end = childNode.hasProperty("end") ? childNode.getPropertyAsString("end") : "";
+                            LocalDateTime startDate;
+                            LocalDateTime endDate;
+                            if (!start.isEmpty()) {
+                                startDate = LocalDateTime.parse(childNode.getPropertyAsString("start"), DateTimeFormatter.ISO_DATE_TIME);
+                                dateConditionBuilder.append(" starting from ").append(startDate.format(DATETIME_FORMAT));
+                            }
+                            if (!end.isEmpty()) {
+                                endDate = LocalDateTime.parse(childNode.getPropertyAsString("end"), DateTimeFormatter.ISO_DATE_TIME);
+                                dateConditionBuilder.append(" until ").append(endDate.format(DATETIME_FORMAT));
+                            }
+                            conditionsMap.put(childNode.getName(), dateConditionBuilder.toString());
+                            matchedAllConditions = checkStartEndDate(childNode) && matchedAllConditions;
                         }
-                        if (!end.isEmpty()) {
-                            endDate = LocalDateTime.parse(childNode.getPropertyAsString("end"), DateTimeFormatter.ISO_DATE_TIME);
-                            dateConditionBuilder.append(" until ").append(endDate.format(DATETIME_FORMAT));
-                        }
-                        conditionsMap.put(childNode.getName(), dateConditionBuilder.toString());
-                        matchedAllConditions = checkStartEndDate(childNode) && matchedAllConditions;
                         break;
                     case TIMEOFDAYCONDITION_NT:
                         StringBuilder timeConditionBuilder = new StringBuilder("Visible");

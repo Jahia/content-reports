@@ -56,6 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,7 @@ public class ReportLiveContents extends QueryReport {
     private final ConditionService conditionService;
     private String searchPath;
     private long totalContent;
+    private long filteredContent;
 
     public ReportLiveContents(JCRSiteNode siteNode, String searchPath) {
         super(siteNode);
@@ -84,31 +86,41 @@ public class ReportLiveContents extends QueryReport {
     @Override public void execute(JCRSessionWrapper session, int offset, int limit)
             throws RepositoryException, JSONException, JahiaException {
         logger.debug("Building jcr sql query");
+        LocalDateTime now = LocalDateTime.now();
         String query = "SELECT * FROM [jnt:content] AS parent \n"
                 + "INNER JOIN [jnt:conditionalVisibility] as child ON ISCHILDNODE(child,parent) \n"
-                + "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "'])";
+                + "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "']) \n"
+                ;
+        String excludedNodesQuery = "SELECT * FROM [jnt:content] AS parent \n"
+                + "INNER JOIN [jnt:conditionalVisibility] as child ON ISCHILDNODE(child,parent) \n"
+                + "INNER JOIN [jnt:startEndDateCondition] as condition ON ISCHILDNODE(condition,child) \n"
+                + "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "']) \n"
+                + "AND (condition.start > CAST('"+ now.toString() +"' AS DATE) \n"
+                + "OR condition.end < CAST('"+ now.toString() +"' AS DATE)) \n"
+                ;
         logger.debug(query);
-        fillReport(session, query, offset, limit);
         totalContent = getTotalCount(session, query);
+        totalContent = totalContent - getTotalCount(session, excludedNodesQuery);
+        fillReport(session, query, offset, limit);
     }
 
     @Override public void addItem(JCRNodeWrapper node) throws RepositoryException {
-        Map<String,String> map = new HashMap<>();
-        map.put("name", node.getName());
-        map.put("path", node.getParent().getPath());
-        map.put("type", String.join("<br/>",node.getNodeTypes()));
-
         Map<String, String> liveConditions = conditionService.getConditions(node);
         List<String> conditions = liveConditions.entrySet().stream()
                 .filter(entry -> !entry.getKey().equalsIgnoreCase(ISCONDITIONMATCHED) &&
                         !entry.getKey().equalsIgnoreCase(CURRENTSTATUS))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
-
-        map.put("currentStatus", liveConditions.getOrDefault("currentStatus", "not visible"));
-        map.put("listOfConditions", conditions.isEmpty() ? null : String.join("<br/>", conditions));
-        map.put("isConditionMatched", liveConditions.getOrDefault("isConditionMatched", "false"));
-        this.dataList.add(map);
+        if (!conditions.isEmpty()) {
+            Map<String, String> map = new HashMap<>();
+            map.put("name", node.getName());
+            map.put("path", node.getParent().getPath());
+            map.put("type", String.join("<br/>", node.getNodeTypes()));
+            map.put("currentStatus", liveConditions.getOrDefault("currentStatus", "not visible"));
+            map.put("listOfConditions", conditions.isEmpty() ? null : String.join("<br/>", conditions));
+            map.put("isConditionMatched", liveConditions.getOrDefault("isConditionMatched", "false"));
+            this.dataList.add(map);
+        }
     }
 
     @Override
