@@ -26,6 +26,8 @@ package org.jahia.modules.reports.service;
 import org.jahia.api.Constants;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.visibility.VisibilityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import java.time.DayOfWeek;
@@ -42,11 +44,18 @@ import java.util.stream.Collectors;
  * @author nonico
  */
 public class LiveConditionService implements ConditionService {
+    private static final Logger logger = LoggerFactory.getLogger(LiveConditionService.class);
     private static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
     private static final String JAHIANT_DAY_OF_WEEK_CONDITION = "jnt:dayOfWeekCondition";
     private static final String JAHIANT_START_END_DATE_CONDITION = "jnt:startEndDateCondition";
     private static final String JAHIANT_TIME_OF_DAY_CONDITION = "jnt:timeOfDayCondition";
     private static final String CONDITIONAL_VISIBILITY_PROP = "j:conditionalVisibility";
+    private static final String START_HOUR = "startHour";
+    private static final String START_MINUTE = "startMinute";
+    private static final String END_HOUR = "endHour";
+    private static final String END_MINUTE = "endMinute";
+    private static final String START_DATE_PROPERTY = "start";
+    private static final String END_DATE_PROPERTY = "end";
     public static final String CURRENT_STATUS = "currentStatus";
     public static final String IS_CONDITION_MATCHED = "isConditionMatched";
 
@@ -86,45 +95,49 @@ public class LiveConditionService implements ConditionService {
                 matchedAllConditions = isConditionMatched && matchedAllConditions;
             }
         }
-        boolean isVisibleInLive = VisibilityService.getInstance().matchesConditions(node) &&
-                node.hasProperty(Constants.PUBLISHED) &&
-                node.getProperty(Constants.PUBLISHED).getBoolean();
-        conditionsMap.put(CURRENT_STATUS, isVisibleInLive ? "visible" : "not visible");
+        boolean currentStatus = isVisibleInLive(node);
+        conditionsMap.put(CURRENT_STATUS, currentStatus ? "visible" : "not visible");
         conditionsMap.put(IS_CONDITION_MATCHED, String.valueOf(matchedAllConditions));
         return conditionsMap;
+    }
+
+    private boolean isVisibleInLive(JCRNodeWrapper node) throws RepositoryException {
+        return VisibilityService.getInstance().matchesConditions(node) &&
+                node.hasProperty(Constants.PUBLISHED) &&
+                node.getProperty(Constants.PUBLISHED).getBoolean();
     }
 
     private boolean isStartEndDateConditionNode(JCRNodeWrapper node) {
         try {
             return node.isNodeType(JAHIANT_START_END_DATE_CONDITION);
         } catch (RepositoryException e) {
+            logger.error(e.getMessage());
             return false;
         }
     }
 
     private String getTimeOfDayCondition(JCRNodeWrapper childNode) throws RepositoryException {
-        StringBuilder timeConditionBuilder = new StringBuilder("Visible");
-        String startHour = childNode.hasProperty("startHour") ? childNode.getPropertyAsString("startHour") : "";
-        String startMinute = childNode.hasProperty("startMinute") ? childNode.getPropertyAsString("startMinute") : "00";
-        String endHour = childNode.hasProperty("endHour") ? childNode.getPropertyAsString("endHour") : "";
-        String endMinute = childNode.hasProperty("endMinute") ? childNode.getPropertyAsString("endMinute") : "00";
+        String timeCondition = "Visible";
+        String startHour = childNode.hasProperty(START_HOUR) ? childNode.getPropertyAsString(START_HOUR) : "";
+        String startMinute = childNode.hasProperty(START_MINUTE) ? childNode.getPropertyAsString(START_MINUTE) : "00";
+        String endHour = childNode.hasProperty(END_HOUR) ? childNode.getPropertyAsString(END_HOUR) : "";
+        String endMinute = childNode.hasProperty(END_MINUTE) ? childNode.getPropertyAsString(END_MINUTE) : "00";
         if (startHour.isEmpty() && endHour.isEmpty()) {
-            timeConditionBuilder.append(" any time of the day");
+            timeCondition += " any time of the day";
         } else if (startHour.isEmpty()) {
-            timeConditionBuilder.append(" until ").append(endHour).append(":").append(endMinute);
+            timeCondition += String.format(" until %s:%s", endHour, endMinute);
         } else if (endHour.isEmpty()) {
-            timeConditionBuilder.append(" from ").append(startHour).append(":").append(startMinute);
+            timeCondition += String.format(" from %s:%s", startHour, startMinute);
         } else {
-            timeConditionBuilder.append(" from ").append(startHour).append(":").append(startMinute)
-                    .append(" until ").append(endHour).append(":").append(endMinute);
+            timeCondition += String.format(" from %s:%s until %s:%s",startHour, startMinute, endHour, endMinute);
         }
-        return timeConditionBuilder.toString();
+        return timeCondition;
     }
 
     private String getStartEndDateCondition(JCRNodeWrapper childNode) throws RepositoryException {
         StringBuilder dateConditionBuilder = new StringBuilder("Visible");
-        String start = childNode.hasProperty("start") ? childNode.getPropertyAsString("start") : "";
-        String end = childNode.hasProperty("end") ? childNode.getPropertyAsString("end") : "";
+        String start = childNode.hasProperty(START_DATE_PROPERTY) ? childNode.getPropertyAsString(START_DATE_PROPERTY) : "";
+        String end = childNode.hasProperty(END_DATE_PROPERTY) ? childNode.getPropertyAsString(END_DATE_PROPERTY) : "";
         LocalDateTime startDate;
         LocalDateTime endDate;
         if (!start.isEmpty()) {
@@ -169,8 +182,8 @@ public class LiveConditionService implements ConditionService {
             return false;
         }
         LocalDateTime now = LocalDateTime.now();
-        String start = node.hasProperty("start") ? node.getPropertyAsString("start") : "";
-        String end = node.hasProperty("end") ? node.getPropertyAsString("end") : "";
+        String start = node.hasProperty(START_DATE_PROPERTY) ? node.getPropertyAsString(START_DATE_PROPERTY) : "";
+        String end = node.hasProperty(END_DATE_PROPERTY) ? node.getPropertyAsString(END_DATE_PROPERTY) : "";
         if (start.isEmpty() && end.isEmpty()) {
             return false;
         } else if (start.isEmpty()) {
@@ -188,10 +201,10 @@ public class LiveConditionService implements ConditionService {
         LocalTime now = LocalTime.now();
         LocalTime startTime;
         LocalTime endTime;
-        String startHour = childNode.hasProperty("startHour") ? childNode.getPropertyAsString("startHour") : "";
-        String startMinute = childNode.hasProperty("startMinute") ? childNode.getPropertyAsString("startMinute") : "00";
-        String endHour = childNode.hasProperty("endHour") ? childNode.getPropertyAsString("endHour") : "";
-        String endMinute = childNode.hasProperty("endMinute") ? childNode.getPropertyAsString("endMinute") : "00";
+        String startHour = childNode.hasProperty(START_HOUR) ? childNode.getPropertyAsString(START_HOUR) : "";
+        String startMinute = childNode.hasProperty(START_MINUTE) ? childNode.getPropertyAsString(START_MINUTE) : "00";
+        String endHour = childNode.hasProperty(END_HOUR) ? childNode.getPropertyAsString(END_HOUR) : "";
+        String endMinute = childNode.hasProperty(END_MINUTE) ? childNode.getPropertyAsString(END_MINUTE) : "00";
 
         if (startHour.isEmpty() && endHour.isEmpty()) {
             return true;
