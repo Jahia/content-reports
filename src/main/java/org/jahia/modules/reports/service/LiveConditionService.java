@@ -61,8 +61,11 @@ public class LiveConditionService implements ConditionService {
 
     @Override public Map<String, String> getConditions(JCRNodeWrapper node) throws RepositoryException {
         JCRNodeWrapper conditionalVisibilityNode = node.getNode(CONDITIONAL_VISIBILITY_PROP);
+        if (conditionalVisibilityNode == null ||
+                !conditionalVisibilityNode.getNodeTypes().contains(Constants.JAHIANT_CONDITIONAL_VISIBILITY)) {
+            return Collections.emptyMap();
+        }
         Map<String, String> conditionsMap = new HashMap<>();
-
         boolean matchedAllConditions = true;
         for (JCRNodeWrapper childNode : conditionalVisibilityNode.getNodes()) {
             for (String nodeType : childNode.getNodeTypes()) {
@@ -73,28 +76,32 @@ public class LiveConditionService implements ConditionService {
                 } else if (nodeType.equals(JAHIANT_TIME_OF_DAY_CONDITION)) {
                     conditionsMap.put(childNode.getName(), getTimeOfDayCondition(childNode));
                     isConditionMatched = checkTimeOfDay(childNode);
-                } else {
-                    Map<JCRNodeWrapper, Boolean> conditionMatchesDetails = VisibilityService.getInstance()
-                            .getConditionMatchesDetails(node);
-                    if (VisibilityService.getInstance().matchesConditions(node) || !conditionMatchesDetails.keySet().stream()
-                            .allMatch(this::isStartEndDateConditionNode)) {
-                        conditionsMap.put(childNode.getName(), getStartEndDateCondition(childNode));
-                        isConditionMatched = checkStartEndDate(childNode);
-                    }
+                } else if (nodeType.equals(JAHIANT_START_END_DATE_CONDITION) && containsRecurringConditions(node)) {
+                    conditionsMap.put(childNode.getName(), getStartEndDateCondition(childNode));
+                    isConditionMatched = checkStartEndDate(childNode);
                 }
                 matchedAllConditions = isConditionMatched && matchedAllConditions;
             }
         }
-        boolean currentStatus = isVisibleInLive(node);
-        conditionsMap.put(CURRENT_STATUS, currentStatus ? "visible" : "not visible");
+        conditionsMap.put(CURRENT_STATUS, getCurrentStatus(node));
         conditionsMap.put(IS_CONDITION_MATCHED, String.valueOf(matchedAllConditions));
         return conditionsMap;
     }
 
-    private boolean isVisibleInLive(JCRNodeWrapper node) throws RepositoryException {
-        return VisibilityService.getInstance().matchesConditions(node) &&
+    private boolean containsRecurringConditions(JCRNodeWrapper node) {
+        Map<JCRNodeWrapper, Boolean> conditionMatchesDetails = VisibilityService.getInstance()
+                .getConditionMatchesDetails(node);
+        return VisibilityService.getInstance().matchesConditions(node) ||
+                !conditionMatchesDetails.keySet().stream().allMatch(this::isStartEndDateConditionNode);
+    }
+
+    private String getCurrentStatus(JCRNodeWrapper node) throws RepositoryException {
+        if (VisibilityService.getInstance().matchesConditions(node) &&
                 node.hasProperty(Constants.PUBLISHED) &&
-                node.getProperty(Constants.PUBLISHED).getBoolean();
+                node.getProperty(Constants.PUBLISHED).getBoolean()) {
+            return "visible";
+        }
+        return "not visible";
     }
 
     private boolean isStartEndDateConditionNode(JCRNodeWrapper node) {
