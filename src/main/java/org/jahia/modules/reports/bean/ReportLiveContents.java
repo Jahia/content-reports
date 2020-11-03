@@ -63,8 +63,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.time.ZoneId.systemDefault;
-import static org.jahia.modules.reports.service.LiveConditionService.CURRENTSTATUS;
-import static org.jahia.modules.reports.service.LiveConditionService.ISCONDITIONMATCHED;
+import static org.jahia.modules.reports.service.LiveConditionService.CURRENT_STATUS;
+import static org.jahia.modules.reports.service.LiveConditionService.IS_CONDITION_MATCHED;
 
 /**
  * The ReportLiveContents Class.
@@ -110,8 +110,8 @@ public class ReportLiveContents extends QueryReport {
     @Override public void addItem(JCRNodeWrapper node) throws RepositoryException {
         Map<String, String> liveConditions = conditionService.getConditions(node);
         List<String> conditions = liveConditions.entrySet().stream()
-                .filter(entry -> !entry.getKey().equalsIgnoreCase(ISCONDITIONMATCHED) &&
-                        !entry.getKey().equalsIgnoreCase(CURRENTSTATUS))
+                .filter(entry -> !entry.getKey().equalsIgnoreCase(IS_CONDITION_MATCHED) &&
+                        !entry.getKey().equalsIgnoreCase(CURRENT_STATUS))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
         if (!conditions.isEmpty()) {
