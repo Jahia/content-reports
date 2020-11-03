@@ -61,36 +61,26 @@ public class LiveConditionService implements ConditionService {
 
     @Override public Map<String, String> getConditions(JCRNodeWrapper node) throws RepositoryException {
         JCRNodeWrapper conditionalVisibilityNode = node.getNode(CONDITIONAL_VISIBILITY_PROP);
-        if (!isValidConditionalNode(conditionalVisibilityNode)) {
-            return Collections.emptyMap();
-        }
-
         Map<String, String> conditionsMap = new HashMap<>();
 
         boolean matchedAllConditions = true;
         for (JCRNodeWrapper childNode : conditionalVisibilityNode.getNodes()) {
             for (String nodeType : childNode.getNodeTypes()) {
                 boolean isConditionMatched = false;
-                switch (nodeType) {
-                    case JAHIANT_DAY_OF_WEEK_CONDITION:
-                        conditionsMap.put(childNode.getName(), getDayOfWeekCondition(childNode));
-                        isConditionMatched = checkDayOfWeek(childNode);
-                        break;
-                    case JAHIANT_START_END_DATE_CONDITION:
-                        Map<JCRNodeWrapper, Boolean> conditionMatchesDetails = VisibilityService.getInstance()
-                                .getConditionMatchesDetails(node);
-                        if (VisibilityService.getInstance().matchesConditions(node) || !conditionMatchesDetails.keySet().stream()
-                                .allMatch(this::isStartEndDateConditionNode)) {
-                            conditionsMap.put(childNode.getName(), getStartEndDateCondition(childNode));
-                            isConditionMatched = checkStartEndDate(childNode);
-                        }
-                        break;
-                    case JAHIANT_TIME_OF_DAY_CONDITION:
-                        conditionsMap.put(childNode.getName(), getTimeOfDayCondition(childNode));
-                        isConditionMatched = checkTimeOfDay(childNode);
-                        break;
-                    default:
-                        break;
+                if (nodeType.equals(JAHIANT_DAY_OF_WEEK_CONDITION)) {
+                    conditionsMap.put(childNode.getName(), getDayOfWeekCondition(childNode));
+                    isConditionMatched = checkDayOfWeek(childNode);
+                } else if (nodeType.equals(JAHIANT_TIME_OF_DAY_CONDITION)) {
+                    conditionsMap.put(childNode.getName(), getTimeOfDayCondition(childNode));
+                    isConditionMatched = checkTimeOfDay(childNode);
+                } else {
+                    Map<JCRNodeWrapper, Boolean> conditionMatchesDetails = VisibilityService.getInstance()
+                            .getConditionMatchesDetails(node);
+                    if (VisibilityService.getInstance().matchesConditions(node) || !conditionMatchesDetails.keySet().stream()
+                            .allMatch(this::isStartEndDateConditionNode)) {
+                        conditionsMap.put(childNode.getName(), getStartEndDateCondition(childNode));
+                        isConditionMatched = checkStartEndDate(childNode);
+                    }
                 }
                 matchedAllConditions = isConditionMatched && matchedAllConditions;
             }
@@ -111,7 +101,7 @@ public class LiveConditionService implements ConditionService {
         try {
             return node.isNodeType(JAHIANT_START_END_DATE_CONDITION);
         } catch (RepositoryException e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             return false;
         }
     }
@@ -160,13 +150,6 @@ public class LiveConditionService implements ConditionService {
                 .map(String::toLowerCase)
                 .collect(Collectors.joining(", "));
         return String.format("Visible on [ %s ]", daysOfWeek);
-    }
-
-    private boolean isValidConditionalNode(JCRNodeWrapper node) throws RepositoryException {
-        if (node == null) {
-            return false;
-        }
-        return node.getNodeTypes().contains(Constants.JAHIANT_CONDITIONAL_VISIBILITY);
     }
 
     private boolean checkDayOfWeek(JCRNodeWrapper node) throws RepositoryException {
