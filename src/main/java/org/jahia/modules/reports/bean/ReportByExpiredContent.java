@@ -29,7 +29,6 @@ import org.jahia.modules.reports.service.ExpiredConditionService;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
-import org.jahia.services.visibility.VisibilityService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
