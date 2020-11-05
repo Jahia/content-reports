@@ -42,6 +42,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static java.time.ZoneId.systemDefault;
+
 /**
  * The ReportByExpiredContent class
  *
@@ -55,6 +57,11 @@ public class ReportByExpiredContent extends QueryReport {
     private Set<String> seenNodes;
 
 
+    /**
+     * Constructor for ReportByExpiredContent
+     * @param siteNode JCRSite node
+     * @param searchPath path on where to perform the queries
+     */
     public ReportByExpiredContent(JCRSiteNode siteNode, String searchPath) {
         super(siteNode);
         this.searchPath = searchPath;
@@ -64,16 +71,54 @@ public class ReportByExpiredContent extends QueryReport {
 
     @Override public void execute(JCRSessionWrapper session, int offset, int limit)
             throws RepositoryException, JSONException, JahiaException {
-        logger.debug("Building jcr sql query");
-        String query = "SELECT * FROM [jnt:content] AS parent \n"
-                + "INNER JOIN [jnt:conditionalVisibility] as child ON ISCHILDNODE(child,parent) \n"
-                + "INNER JOIN [jnt:startEndDateCondition] as condition ON ISCHILDNODE(condition,child) \n"
-                + "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "']) \n"
-                + "AND condition.end < CAST('" + LocalDateTime.now().toString() + "' AS DATE)\n"
-                + "ORDER BY parent.Name";
-        logger.debug(query);
-        fillReport(session, query, offset, limit);
-        totalContent = getTotalCount(session, query);
+        logger.debug("Building jcr sql queryNodesWithExpiredDates");
+        LocalDateTime now = LocalDateTime.now(systemDefault());
+
+        String queryConditionVisibilityNodes = "SELECT * FROM [jnt:content] AS parent \n"
+                + "INNER JOIN [jnt:conditionalVisibility] as child ON ISCHILDNODE(child,parent) \n";
+        String whereInSearchPath = "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "']) \n";
+        String innerJoinStartEndDateCondition = "INNER JOIN [jnt:startEndDateCondition] as condition ON ISCHILDNODE(condition,child)\n";
+        String innerJoinDayOfWeekCondition = "INNER JOIN [jnt:dayOfWeekCondition] as dow ON ISCHILDNODE(dow,child) \n";
+        String innerJoinTimeOfDayCondition = "INNER JOIN [jnt:timeOfDayCondition] as tod ON ISCHILDNODE(tod,child) \n";
+        String afterEndDate = "condition.end < CAST('"+ now.toString() +"' AS DATE)";
+
+        String queryNodesWithExpiredDates = queryConditionVisibilityNodes
+                + innerJoinStartEndDateCondition
+                + whereInSearchPath
+                + "AND " + afterEndDate;
+        logger.debug(queryNodesWithExpiredDates);
+
+        String queryStartEndNodesWithDayOfWeek = queryConditionVisibilityNodes
+                + innerJoinStartEndDateCondition
+                + innerJoinDayOfWeekCondition
+                + whereInSearchPath
+                + "AND " + afterEndDate;
+        logger.debug(queryStartEndNodesWithDayOfWeek);
+
+        String queryStartEndNodesWithTimeOfDay = queryConditionVisibilityNodes
+                + innerJoinStartEndDateCondition
+                + innerJoinTimeOfDayCondition
+                + whereInSearchPath
+                + "AND " + afterEndDate;
+        logger.debug(queryStartEndNodesWithTimeOfDay);
+
+        String queryStartEndNodesWithTimeOfDayAndDayOfWeek = queryConditionVisibilityNodes
+                + innerJoinStartEndDateCondition
+                + innerJoinTimeOfDayCondition
+                + innerJoinDayOfWeekCondition
+                + whereInSearchPath
+                + "AND " + afterEndDate;
+        logger.debug(queryStartEndNodesWithTimeOfDayAndDayOfWeek);
+
+        long totalNumOfNodesExpiredDates = getTotalCount(session, queryNodesWithExpiredDates);
+        long excludedNodes = getTotalCount(session, queryStartEndNodesWithDayOfWeek)
+                + getTotalCount(session, queryStartEndNodesWithTimeOfDay)
+                + getTotalCount(session, queryStartEndNodesWithTimeOfDayAndDayOfWeek);
+        totalContent = totalNumOfNodesExpiredDates - excludedNodes;
+        fillReport(session, queryNodesWithExpiredDates, offset, limit);
+        while (this.dataList.size() <= limit && this.dataList.size() != totalContent) {
+            fillReport(session, queryNodesWithExpiredDates, offset+limit, limit);
+        }
     }
 
     @Override public void addItem(JCRNodeWrapper node) throws RepositoryException {
