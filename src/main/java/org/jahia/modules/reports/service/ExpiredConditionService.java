@@ -50,7 +50,7 @@ public class ExpiredConditionService implements ConditionService {
         Map<String, LocalDateTime> conditionsMap = new HashMap<>(Collections.emptyMap());
         for (JCRNodeWrapper childNode : conditionVisibilityNode.getNodes()) {
             for (String nodeType : childNode.getNodeTypes()) {
-                if (nodeType.equals("jnt:startEndDateCondition")) {
+                if (nodeType.equalsIgnoreCase("jnt:startEndDateCondition")) {
                     LocalDateTime endDateTime = LocalDateTime.parse(childNode.getPropertyAsString("end"), DateTimeFormatter.ISO_DATE_TIME);
                     if (endDateTime.isBefore(LocalDateTime.now())) {
                         conditionsMap.put(childNode.getName(), endDateTime);

@@ -62,7 +62,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static java.time.ZoneId.of;
 import static java.time.ZoneId.systemDefault;
 import static org.jahia.modules.reports.service.LiveConditionService.CURRENT_STATUS;
 import static org.jahia.modules.reports.service.LiveConditionService.IS_CONDITION_MATCHED;
@@ -81,11 +80,6 @@ public class ReportLiveContents extends QueryReport {
     private static final String LIST_OF_CONDITIONS_PROP = "listOfConditions";
     private static final String CURRENT_STATUS_PROP = "currentStatus";
 
-    /**
-     * Constructor for ReportLiveContents
-     * @param siteNode JCRSite node
-     * @param searchPath path on where to perform the queries
-     */
     public ReportLiveContents(JCRSiteNode siteNode, String searchPath) {
         super(siteNode);
         this.searchPath = searchPath;
@@ -96,58 +90,21 @@ public class ReportLiveContents extends QueryReport {
             throws RepositoryException, JSONException, JahiaException {
         logger.debug("Building jcr sql query");
         LocalDateTime now = LocalDateTime.now(systemDefault());
-        String queryConditionVisibilityNodes = "SELECT * FROM [jnt:content] AS parent \n"
-                + "INNER JOIN [jnt:conditionalVisibility] as child ON ISCHILDNODE(child,parent) \n";
-        String whereInSearchPath = "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "']) \n";
-        String innerJoinStartEndDateCondition = "INNER JOIN [jnt:startEndDateCondition] as condition ON ISCHILDNODE(condition,child)\n";
-        String innerJoinDayOfWeekCondition = "INNER JOIN [jnt:dayOfWeekCondition] as dow ON ISCHILDNODE(dow,child) \n";
-        String innerJoinTimeOfDayCondition = "INNER JOIN [jnt:timeOfDayCondition] as tod ON ISCHILDNODE(tod,child) \n";
-        String beforeStartDate = "condition.start > CAST('"+ now.toString() +"' AS DATE)";
-        String afterEndDate = "condition.end < CAST('"+ now.toString() +"' AS DATE)";
-        String andWithInvalidDates = String.format("AND (%s OR %s)", beforeStartDate, afterEndDate);
-
-        String query = queryConditionVisibilityNodes + whereInSearchPath;
+        String query = "SELECT * FROM [jnt:content] AS parent \n"
+                + "INNER JOIN [jnt:conditionalVisibility] as child ON ISCHILDNODE(child,parent) \n"
+                + "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "']) \n"
+                ;
+        String excludedNodesQuery = "SELECT * FROM [jnt:content] AS parent \n"
+                + "INNER JOIN [jnt:conditionalVisibility] as child ON ISCHILDNODE(child,parent) \n"
+                + "INNER JOIN [jnt:startEndDateCondition] as condition ON ISCHILDNODE(condition,child) \n"
+                + "WHERE ISDESCENDANTNODE(parent,['" + searchPath + "']) \n"
+                + "AND (condition.start > CAST('"+ now.toString() +"' AS DATE) \n"
+                + "OR condition.end < CAST('"+ now.toString() +"' AS DATE)) \n"
+                ;
         logger.debug(query);
-
-        String queryInvalidStartEndDate = queryConditionVisibilityNodes
-                        + innerJoinStartEndDateCondition
-                        + whereInSearchPath
-                        + andWithInvalidDates;
-        logger.debug(queryInvalidStartEndDate);
-        String queryInvalidStartEndWithDayOfWeek = queryConditionVisibilityNodes
-                + innerJoinStartEndDateCondition
-                + innerJoinDayOfWeekCondition
-                + whereInSearchPath
-                + andWithInvalidDates;
-        logger.debug(queryInvalidStartEndWithDayOfWeek);
-
-
-        String queryInvalidStartEndWithTimeOfDay = queryConditionVisibilityNodes
-                + innerJoinStartEndDateCondition
-                + innerJoinTimeOfDayCondition
-                + whereInSearchPath
-                + andWithInvalidDates;
-        logger.debug(queryInvalidStartEndWithTimeOfDay);
-
-        String queryInvalidStartEndWithDayOfWeekAndTimeOfDay = queryConditionVisibilityNodes
-                + innerJoinStartEndDateCondition
-                + innerJoinDayOfWeekCondition
-                + innerJoinTimeOfDayCondition
-                + whereInSearchPath
-                + andWithInvalidDates;
-        logger.debug(queryInvalidStartEndWithDayOfWeekAndTimeOfDay);
-        long totalNumOfNodesWithConditionalVisibility = getTotalCount(session, query);
-        long excludedNodes =
-                getTotalCount(session, queryInvalidStartEndDate)
-                        - getTotalCount(session, queryInvalidStartEndWithDayOfWeek)
-                        - getTotalCount(session, queryInvalidStartEndWithTimeOfDay)
-                        - getTotalCount(session, queryInvalidStartEndWithDayOfWeekAndTimeOfDay);
-
-        totalContent = totalNumOfNodesWithConditionalVisibility - excludedNodes;
+        totalContent = getTotalCount(session, query);
+        totalContent = totalContent - getTotalCount(session, excludedNodesQuery);
         fillReport(session, query, offset, limit);
-        while (this.dataList.size() <= limit && this.dataList.size() != totalContent) {
-            fillReport(session, query, offset + limit, limit);
-        }
     }
 
     @Override public void addItem(JCRNodeWrapper node) throws RepositoryException {
