@@ -79,7 +79,7 @@ public class ReportByFutureContent extends QueryReport {
         String innerJoinStartEndDateCondition = "INNER JOIN [jnt:startEndDateCondition] as condition ON ISCHILDNODE(condition,child)\n";
         String innerJoinDayOfWeekCondition = "INNER JOIN [jnt:dayOfWeekCondition] as dow ON ISCHILDNODE(dow,child) \n";
         String innerJoinTimeOfDayCondition = "INNER JOIN [jnt:timeOfDayCondition] as tod ON ISCHILDNODE(tod,child) \n";
-        String beforeStartDate = "condition.start > CAST('" + now.toString() + "' AS DATE) ORDER BY parent.Name ASC";
+        String beforeStartDate = "condition.start > CAST('" + now.toString() + "' AS DATE)";
 
         String queryAllNodesWithFutureDates = queryConditionVisibilityNodes
                 + innerJoinStartEndDateCondition
