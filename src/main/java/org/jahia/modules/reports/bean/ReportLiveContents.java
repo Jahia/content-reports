@@ -145,9 +145,6 @@ public class ReportLiveContents extends QueryReport {
 
         totalContent = totalNumOfNodesWithConditionalVisibility - excludedNodes;
         fillReport(session, query, offset, limit);
-        while (this.dataList.size() <= limit && this.dataList.size() != totalContent) {
-            fillReport(session, query, offset + limit, limit);
-        }
     }
 
     @Override public void addItem(JCRNodeWrapper node) throws RepositoryException {

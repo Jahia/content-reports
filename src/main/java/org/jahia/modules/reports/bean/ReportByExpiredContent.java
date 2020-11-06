@@ -80,7 +80,7 @@ public class ReportByExpiredContent extends QueryReport {
         String innerJoinStartEndDateCondition = "INNER JOIN [jnt:startEndDateCondition] as condition ON ISCHILDNODE(condition,child)\n";
         String innerJoinDayOfWeekCondition = "INNER JOIN [jnt:dayOfWeekCondition] as dow ON ISCHILDNODE(dow,child) \n";
         String innerJoinTimeOfDayCondition = "INNER JOIN [jnt:timeOfDayCondition] as tod ON ISCHILDNODE(tod,child) \n";
-        String afterEndDate = "condition.end < CAST('"+ now.toString() +"' AS DATE)";
+        String afterEndDate = "condition.end < CAST('"+ now.toString() +"' AS DATE) ORDER BY parent.Name ASC";
 
         String queryNodesWithExpiredDates = queryConditionVisibilityNodes
                 + innerJoinStartEndDateCondition
@@ -116,9 +116,6 @@ public class ReportByExpiredContent extends QueryReport {
                 + getTotalCount(session, queryStartEndNodesWithTimeOfDayAndDayOfWeek);
         totalContent = totalNumOfNodesExpiredDates - excludedNodes;
         fillReport(session, queryNodesWithExpiredDates, offset, limit);
-        while (this.dataList.size() <= limit && this.dataList.size() != totalContent) {
-            fillReport(session, queryNodesWithExpiredDates, offset+limit, limit);
-        }
     }
 
     @Override public void addItem(JCRNodeWrapper node) throws RepositoryException {

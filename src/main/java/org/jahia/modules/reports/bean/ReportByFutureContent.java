@@ -117,9 +117,6 @@ public class ReportByFutureContent extends QueryReport {
                 + getTotalCount(session, queryFutureDatesWithDayOfWeekAndTimeOfDay);
         totalContent = totalNumOfNodesWithFutureDates - excludedNodeCount;
         fillReport(session, queryAllNodesWithFutureDates, offset, limit);
-        while(this.dataList.size() != totalContent) {
-            fillReport(session, queryAllNodesWithFutureDates, offset + limit, limit);
-        }
     }
 
     @Override public void addItem(JCRNodeWrapper node) throws RepositoryException {
@@ -127,7 +124,7 @@ public class ReportByFutureContent extends QueryReport {
         if (futureConditions.size() > 0 && !seenNodes.contains(node.getName())) {
             Map<String, String> map = new HashMap<>();
             map.put("name", node.getName());
-            map.put("path", node.getPath());
+            map.put("path", node.getParent().getPath());
             map.put("type", String.join("<br/>", node.getNodeTypes()));
             map.put("liveDate", futureConditions.values().stream().iterator().next());
             this.dataList.add(map);
