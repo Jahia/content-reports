@@ -1209,3 +1209,34 @@ function getAceAndAclInheritanceBreakRequest() {
     };
     return query;
 }
+      
+      
+function fillReportPublishedContent(baseUrl, loadingLabel){
+  
+    var pathTxt = $('#pathTxtPub').val();
+
+    if(pathTxt=='null' || pathTxt==''){
+        $('#pathTxtPub').removeClass("valid").addClass("invalid");
+        return;
+    }
+    else{
+        $('#pathTxtPub').removeClass("invalid");
+    }
+
+    var dateBegin = $("input[name='dateBeginPub']").val();
+    var dateEnd = $("input[name='dateEndPub']").val(); 
+  
+
+    var parameters = "&pathTxt='" + pathTxt + "&dateEnd=" + dateEnd + "&dateBegin=" + dateBegin;
+
+
+    // the loading message
+    ajaxindicatorstart(loadingLabel);
+    var actionUrl = getReportActionUrl(baseUrl, 25, parameters);
+
+    initDataTable ("publishedContentTable", actionUrl, -1, [], true, [0,3]);
+
+    ajaxindicatorstop();
+
+}      
+      
