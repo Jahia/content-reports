@@ -55,6 +55,15 @@ window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-markedForDel
     iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=24'
 });
 
+window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-publishedContent', {
+    targets: ['jcontent-content-reports'],
+    isSelectable: true,
+    label: 'content-reports:label.publishedContent',
+    requireModuleInstalledOnSite: 'content-reports',
+    requiredPermission: 'contentReports',
+    iframeUrl: window.contextJsParameters.contextPath + '/cms/editframe/default/$lang/sites/$site-key.content-reports.html?hideMenu=true&view=28'
+});
+
 window.jahia.uiExtender.registry.add('adminRoute', 'content-reports-language', {
     isSelectable: false,
     targets: ['jcontent-content-reports'],
