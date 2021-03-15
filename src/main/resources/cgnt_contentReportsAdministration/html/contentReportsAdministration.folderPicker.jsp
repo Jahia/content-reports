@@ -41,7 +41,7 @@
                     data:  [data],
                     onNodeSelected: function(event, node) {
                         $("#" + targetId + "").val(node.href);
-                        $('#windowPathPicker').modal('toggle');;
+                        $('#windowPathPicker').modal('toggle');
 
                     },
                 });
