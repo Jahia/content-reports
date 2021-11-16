@@ -86,7 +86,7 @@ public class ReportLockedContent extends QueryReport {
     @Override
     public void execute(JCRSessionWrapper session, int offset, int limit) throws RepositoryException, JSONException {
         String orderStatement = " order by item.[" + resultFields[sortCol] + "] " + order;
-        String pageQueryStr = "SELECT * FROM [jmix:editorialContent] AS item WHERE [jcr:lockOwner] is not null and ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])" + orderStatement;
+        String pageQueryStr = "SELECT * FROM [jmix:editorialContent] AS item WHERE [j:lockTypes] is not null and ISDESCENDANTNODE(item,['" + siteNode.getPath() + "'])" + orderStatement;
         fillReport(session, pageQueryStr, offset, limit);
         totalContent = getTotalCount(session, pageQueryStr);
     }
