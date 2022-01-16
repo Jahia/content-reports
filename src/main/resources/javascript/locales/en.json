@@ -20,6 +20,7 @@
     "lockedContent": "Locked content",
     "customCacheContent": "Custom cache content",
     "aclInheritanceBreak": "ACL inheritance break",
-    "overview": "Site overview"
+    "overview": "Site overview",
+    "contentTypes": "Content types"
   }
 }

@@ -1,0 +1,26 @@
+
+.root {
+  flex: 1 1 0;
+  width: 100%;
+  min-height: 0;
+  background-color: var(--color-gray_light);
+}
+
+.main {
+  flex: 1 1 0;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+  flex-direction: row;
+  margin: 10px;
+  background-color: #ffffff;
+}
+
+.container {
+  flex: 1 2 0;
+  order: 2;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}

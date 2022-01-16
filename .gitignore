@@ -6,3 +6,6 @@
 *.iml
 *.ipr
 target
+src/main/resources/javascript/apps/
+node
+node_modules
