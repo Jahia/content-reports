@@ -18,7 +18,6 @@
 <%--@elvariable id="renderContext" type="org.jahia.services.render.RenderContext"--%>
 <%--@elvariable id="currentResource" type="org.jahia.services.render.Resource"--%>
 <%--@elvariable id="url" type="org.jahia.services.render.URLGenerator"--%>
-<%--@elvariable id="vfsFactory" type="org.jahia.modules.external.vfs.factory.VFSMountPointFactory"--%>
 <template:addResources resources="reports.js" type="javascript" />
 <fmt:message key="cgnt_contentReports.report" var="labelReport"/>
 <fmt:message key="cgnt_contentReports.menu.contentReports.byAuthor" var="labelAuthor"/>
