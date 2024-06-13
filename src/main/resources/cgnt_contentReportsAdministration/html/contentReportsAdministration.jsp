@@ -90,6 +90,11 @@
                                         <fmt:message key="cgnt_contentReports.menu.contentReports.markedForDeletion"/>
                                     </a>
                                 </li>
+                                <li>
+                                    <a class="nav-menu-link" href="#" onclick="showView('28')">
+                                        <fmt:message key="cgnt_contentReports.menu.contentReports.publishedContent"/>
+                                    </a>
+                                </li>								
                                 <!--li>
                                     <a class="nav-menu-link" href="#" onclick="showView('5')">
                                         <fmt:message key="cgnt_contentReports.menu.contentReports.byTypeDetailed"/>
@@ -243,6 +248,10 @@
                 <div id="report-27" class="div-report">
                     <template:include view="futureContents"/>
                 </div>
+                <!-- Report for published content -->
+                <div id="report-28" class="div-report">
+                    <template:include view="publishedcontent"/>
+                </div>				
             </div>
         </div>
     </div>
