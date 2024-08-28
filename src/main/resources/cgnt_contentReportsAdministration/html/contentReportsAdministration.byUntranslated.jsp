@@ -46,6 +46,7 @@
     Resource r = (Resource) request.getAttribute("currentResource");
     final Locale currentLocale = (Locale) pageContext.getAttribute("uiLocale");
     Set<Locale> siteLocales = new TreeSet<Locale>(new Comparator<Locale>() {
+        @Override
         public int compare(Locale o1, Locale o2) {
             return o1.getDisplayName(currentLocale).compareTo(o2.getDisplayName(currentLocale));
         }
@@ -126,7 +127,8 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2">
-                        <button type="button" class="btn btn-default" onclick="callTreeView('pathTxtRDAU',null,'jnt:virtualsite,jnt:page,jnt:navMenuText')">
+                        <button type="button" class="btn btn-default"
+                                onclick="callTreeView('pathTxtRDAU',null,'jnt:virtualsite,jnt:page,jnt:navMenuText,jnt:contentFolder')">
                             <span class="glyphicon glyphicon-folder-open"></span>
                             &nbsp;<fmt:message key="cgnt_contentReports.report.browse"/>
                         </button>
