@@ -383,7 +383,7 @@ function fillReportByAllDateAndAuthor(baseUrl, gridLabel, totalLabel, loadingLab
 }
 
 function fillReportByUntranslated(baseUrl, gridLabel, totalLabel, loadingLabel){
-    var pathTxt = $('#pathTxtRDADA').val();
+    var pathTxt = $('#pathTxtRDAU').val();
     if(pathTxt=='null' || pathTxt==''){
         $('#pathTxtRDAU').removeClass("valid").addClass("invalid");
         return;
