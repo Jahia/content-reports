@@ -186,6 +186,9 @@ public class ContentReportAction extends Action {
                 return new ReportByExpiredContent(renderContext.getSite(), req.getParameter("searchPath"));
             case "27":
                 return new ReportByFutureContent(renderContext.getSite(), req.getParameter("searchPath"));
+            case "28":
+                return new ReportPublishedContent(renderContext.getSite(), req.getParameter("pathTxt").replaceAll("'", ""),
+                		req.getParameter("dateBegin"), req.getParameter("dateEnd"));                
             default:
                 throw new ContentReportException("Invalid reportId: " + reportId);
         }
