@@ -6,7 +6,8 @@
 // pathCol = number of the column to transform the path into a link
 /* severalLinesCol = numbers of the columns to display on several lines, cell format should be ["line1","line2","line3"]
   */
-function initDataTable (id, url, pathCol = -1, multiLineCols = [], orderEnabled = true, disabledSortingCols = []) {
+// textCols = numbers of the columns whose cells are displayed as plain text
+function initDataTable (id, url, pathCol = -1, multiLineCols = [], orderEnabled = true, disabledSortingCols = [], textCols = []) {
 
     // getting the table
     console.log($('#'+id));
@@ -23,16 +24,22 @@ function initDataTable (id, url, pathCol = -1, multiLineCols = [], orderEnabled 
         "columnDefs": [
             {
                 "render": function ( data, type, row ) {
+                    return (type === 'display' && typeof data === 'string') ? $('<div/>').text(data).html() : data;
+                },
+                "targets": textCols
+            },
+            {
+                "render": function ( data, type, row ) {
                     if (pathCol == -1) {
                         return data;
                     } else if (data == null) {
                         return "";
                     } else {
                         if(row.indexOf("nodePresentOnPage")!== -1){
-                            return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>";
+                            return newTabLink($('#baseEdit').val()+data+".html", data);
                         }else{
                             let value = data.substring(("/sites/"+$('#siteKey').val()).length, data.length);
-                            return "<a target=\"_blank\" href=\""+$('#contentManagerUrl').val()+value+"\">"+data+"</a>";
+                            return newTabLink($('#contentManagerUrl').val()+value, data);
                         }
                     }
                 },
@@ -111,7 +118,7 @@ function initDataTableWithoutAjax (id, pathCol = -1, orderEnabled = true, disabl
                     } else if (data == null) {
                         return "";
                     } else {
-                        return "<a target=\"_blank\" href=\""+$('#baseEdit').val()+data+".html\">"+data+"</a>";
+                        return newTabLink($('#baseEdit').val()+data+".html", data);
                     }
                 },
                 "targets": pathCol
@@ -126,6 +133,11 @@ function initDataTableWithoutAjax (id, pathCol = -1, orderEnabled = true, disabl
     } );
 
 }
+
+function newTabLink(href, text) {
+    return $('<a/>', {target: '_blank', href: href, text: text}).prop('outerHTML');
+}
+
 function getReportActionUrl(baseUrl, reportId, parameters){
     return  baseUrl + '.contentReport.do?reportId=' + reportId + ((parameters==null || parameters=='') ? '' : '&' + parameters);
 }
@@ -1040,7 +1052,7 @@ function fillReportWipContent(baseUrl, loadingLabel){
     ajaxindicatorstart(loadingLabel);
 
 
-    initDataTable ("wipContentTable", actionUrl, 4, [2], true, [2,4]);
+    initDataTable ("wipContentTable", actionUrl, 4, [2], true, [2,4], [3]);
 
     ajaxindicatorstop();
 
@@ -1185,7 +1197,7 @@ function fillReportPageAclInheritanceBreak(baseUrl, loadingLabel){
             // Distinct all entries
             result.filter((node, index, list) => {
                 return node.isDisplayableNode && list.map(nodeToMap => nodeToMap.path).indexOf(node.path) === index;
-            }).forEach(value =>  table.row.add([value.displayName, "<a target=\"_blank\" href=\""+$('#baseEdit').val()+value.path+".html\">"+value.path+"</a>"]).draw());
+            }).forEach(value =>  table.row.add([$('<div/>').text(value.displayName).html(), newTabLink($('#baseEdit').val()+value.path+".html", value.path)]).draw());
 
             ajaxindicatorstop();
         }
