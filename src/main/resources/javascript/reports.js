@@ -1052,7 +1052,7 @@ function fillReportWipContent(baseUrl, loadingLabel){
     ajaxindicatorstart(loadingLabel);
 
 
-    initDataTable ("wipContentTable", actionUrl, 4, [2], true, [2,4], [3]);
+    initDataTable ("wipContentTable", actionUrl, 4, [2], true, [2,4], [0,3]);
 
     ajaxindicatorstop();
 
