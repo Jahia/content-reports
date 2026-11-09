@@ -6,7 +6,8 @@
 // pathCol = number of the column to transform the path into a link
 /* severalLinesCol = numbers of the columns to display on several lines, cell format should be ["line1","line2","line3"]
   */
-function initDataTable (id, url, pathCol = -1, multiLineCols = [], orderEnabled = true, disabledSortingCols = []) {
+// textCols = numbers of the columns whose cells are displayed as plain text
+function initDataTable (id, url, pathCol = -1, multiLineCols = [], orderEnabled = true, disabledSortingCols = [], textCols = []) {
 
     // getting the table
     console.log($('#'+id));
@@ -21,6 +22,12 @@ function initDataTable (id, url, pathCol = -1, multiLineCols = [], orderEnabled 
         "dom": 'Blfrtip',
         "orderable": true,
         "columnDefs": [
+            {
+                "render": function ( data, type, row ) {
+                    return (type === 'display' && typeof data === 'string') ? $('<div/>').text(data).html() : data;
+                },
+                "targets": textCols
+            },
             {
                 "render": function ( data, type, row ) {
                     if (pathCol == -1) {
@@ -1040,7 +1047,7 @@ function fillReportWipContent(baseUrl, loadingLabel){
     ajaxindicatorstart(loadingLabel);
 
 
-    initDataTable ("wipContentTable", actionUrl, 4, [2], true, [2,4]);
+    initDataTable ("wipContentTable", actionUrl, 4, [2], true, [2,4], [0]);
 
     ajaxindicatorstop();
 
