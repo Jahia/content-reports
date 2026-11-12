@@ -47,13 +47,9 @@ function initDataTable (id, url, pathCol = -1, multiLineCols = [], orderEnabled 
             },
             {
                 "render": function ( data, type, row ) {
-                    var array = JSON.parse(data);
-                    var arrayLength = array.length;
-                    var multiLine = array[0];
-                    for (var i = 1; i < arrayLength; i++) {
-                        multiLine = multiLine.concat("<br/>", array[i]);
-                    }
-                    return multiLine;
+                    return JSON.parse(data).map(function (line) {
+                        return $('<div/>').text(line).html();
+                    }).join("<br/>");
                 },
                 "targets": multiLineCols
             },

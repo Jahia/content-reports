@@ -49,6 +49,7 @@ import org.jahia.api.Constants;
 import org.jahia.services.content.JCRContentUtils;
 import org.jahia.services.content.JCRNodeWrapper;
 import org.jahia.services.content.JCRSessionWrapper;
+import org.jahia.services.content.JCRValueWrapper;
 import org.jahia.services.content.decorator.JCRSiteNode;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,7 +58,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -119,11 +119,15 @@ public class ReportWipContent extends QueryReport {
         nodeMap.put("nodePath", node.getPath());
         nodeMap.put("nodeTypeName", node.getPrimaryNodeType().getLabel(this.defaultLocale));
         String WIPStatus = node.getPropertyAsString(Constants.WORKINPROGRESS_STATUS);
+        JSONArray wipLines = new JSONArray();
         if (WIPStatus.equals(Constants.WORKINPROGRESS_STATUS_LANG)){
-            nodeMap.put("nodeWip", Arrays.toString(Arrays.asList(node.getProperty(Constants.WORKINPROGRESS_LANGUAGES).getValues()).stream().map(s -> "\"" + s + "\"").toArray()));
+            for (JCRValueWrapper language : node.getProperty(Constants.WORKINPROGRESS_LANGUAGES).getValues()) {
+                wipLines.put(language.getString());
+            }
         } else {
-            nodeMap.put("nodeWip", "[\"" + WIPStatus + "\"]");
+            wipLines.put(WIPStatus);
         }
+        nodeMap.put("nodeWip", wipLines.toString());
 
         this.dataList.add(nodeMap);
     }
